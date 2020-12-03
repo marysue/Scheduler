@@ -11,14 +11,9 @@ class User(db.Model, UserMixin):
   username = db.Column(db.String(40), nullable = False, unique = True)
   email = db.Column(db.String(255), nullable = False, unique = True)
   hashed_password = db.Column(db.String(255), nullable = False)
-  # user_type = db.Column(db.Enum("admin", "contractor", "company", name="user_types"), nullable = False)
-  # until I can figure out how to drop the enum in flask db downgrade, I cannot use it
-  user_type = db.Column(db.Integer, nullable = False)
+  userType = db.Column(db.String(40), nullable = False)
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
-
-  contractors = db.relationship("Contractor", back_populates="user", cascade="all, delete-orphan")
-  companies = db.relationship("Company", back_populates="users", cascade="all, delete-orphan")
 
   @property
   def password(self):
@@ -39,5 +34,5 @@ class User(db.Model, UserMixin):
       "id": self.id,
       "username": self.username,
       "email": self.email,
-      "user_type": self.user_type
+      "userType": self.userType
     }

@@ -1,5 +1,4 @@
 from .db import db
-import enum as Enum
 from sqlalchemy import DateTime, func
 
 
@@ -15,47 +14,7 @@ class ContrLocation(db.Model):
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
-  contractors = db.relationship("Contractor", back_populates=("contrLocation"), cascade="all, delete-orphan")
-
-  @property #getter
-  def streetAddress1(self):
-    return self.streetAddress1
-
-  @streetAddress1.setter
-  def address1(self, addr1):
-      self.streetAddress1 = addr1
-
-  @property
-  def streetAddress2(self):
-      return self.streetAddress2
-
-  @streetAddress2.setter
-  def streetAddress2(self, addr2):
-      self.streetAddress2 = addr2
-
-  @property
-  def city(self):
-      return self.city
-
-  @city.setter
-  def city(self, city):
-      self.city = city
-
-  @property
-  def state(self):
-      return self.state
-
-  @state.setter
-  def state(self, state):
-      self.state = state
-
-  @property
-  def zip(self):
-      return self.zip
-
-  @zip.setter
-  def zip(self, zip):
-    self.zip = zip
+  contractors = db.relationship("Contractor", back_populates=("contrLocation"))
 
   def to_dict(self):
     return {
@@ -64,5 +23,11 @@ class ContrLocation(db.Model):
       "address2": self.address2,
       "city": self.city,
       "state": self.state,
-      "zip": self.zip
+      "zip": self.zip,
+      "contractor": {
+        "staffType": self.contractors.staffType,
+        "assigned": self.contractors.assigned,
+        "userId": self.contractors.userid_fk,
+        "calendarId": self.contractors.calendarId_fk
+      }
     }
