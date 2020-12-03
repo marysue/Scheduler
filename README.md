@@ -33,7 +33,7 @@ This is the backend for the Flask React project.
 
    ```bash
    //// -- Enums
-   Enum staff_type_enum {
+   Enum staffType_enum {
      dentist
      dentalHygenist
      dentalAssistant
@@ -41,7 +41,7 @@ This is the backend for the Flask React project.
      backOffice
    }
 
-   Enum user_type_enum {
+   Enum userType_enum {
      admin
      company
      contractor
@@ -51,14 +51,14 @@ This is the backend for the Flask React project.
    Table User as U {
      id int [pk, increment]
      username varchar
-     email varchar 
-     hashed_password varchar 
-     user_type user_type_enum
+     email varchar
+     hashed_password varchar
+     userType userType_enum
    }
 
    Table contractor as C {
      id int [pk, increment] // auto-increment
-     staff_type staff_type_enum
+     staffType staff_type_enum
      contrLocationId_fk int [ref: - CL.id]
      userid_fk int [ref: - U.id]
      calendarId_fk int [ref: - Cal.id]
@@ -76,11 +76,11 @@ This is the backend for the Flask React project.
 
    Table coLocation as OL {
      id int [pk, increment]
-     streetAddress1 varchar 
-     streetAddress2 varchar 
-     city varchar 
-     state varchar 
-     zip int 
+     streetAddress1 varchar
+     streetAddress2 varchar
+     city varchar
+     state varchar
+     zip int
    }
    Ref: Co.id < OL.id
 
@@ -103,21 +103,21 @@ This is the backend for the Flask React project.
 
    Table placements as P {
      id int [pk, increment]
-     contractorId_fk int 
-     companyId_fk int 
+     contractorId_fk int
+     companyId_fk int
      completed boolean
      startDate datetime
      endDate datetime
    }
-   Ref: C.id < P.id 
+   Ref: C.id < P.id
    Ref: Co.id < P.id
    ```
 6. Get into your pipenv, migrate your database, seed your database, and run your flask app
 
    ```bash
    pipenv run flask db init #create migration folder and files
-   pipenv run flask db migrate -m <fileName> #creates the 
-                              # alembic files and 
+   pipenv run flask db migrate -m <fileName> #creates the
+                              # alembic files and
                               # migrations dir.
    pipenv run flask db upgrade #updates the database
    ```
