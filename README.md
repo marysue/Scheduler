@@ -9,20 +9,119 @@ This is the backend for the Flask React project.
    ```bash
    git clone https://github.com/appacademy-starters/python-project-starter.git
    ```
-
 2. Install dependencies
 
-      ```bash
-      pipenv install --dev -r dev-requirements.txt && pipenv install -r requirements.txt
-      ```
-
+   ```bash
+   pipenv install --dev -r dev-requirements.txt && pipenv install -r requirements.txt
+   ```
 3. Create a **.env** file based on the example with proper settings for your
    development environment
-4. Setup your PostgreSQL user, password and database and make sure it matches your **.env** file
-
-5. Get into your pipenv, migrate your database, seed your database, and run your flask app
 
    ```bash
+
+   ```
+4. Setup your PostgreSQL user, password and database and make sure it matches your **.env** file
+
+   ```
+   CREATE USER scheduler_user WITH CREATEDB PASSWORD 'password;
+   CREATE DATABASE scheduler WITH OWNER scheduler_user;
+   ```
+5. Create your database models:
+   ![DBModels](./docs/images/dbModels.png)
+
+   Created by https://dbdiagram.io/d/5fc7dbf93a78976d7b7e436:
+
+   ```bash
+   //// -- Enums
+   Enum staff_type_enum {
+     dentist
+     dentalHygenist
+     dentalAssistant
+     frontOffice
+     backOffice
+   }
+
+   Enum user_type_enum {
+     admin
+     company
+     contractor
+   }
+
+   //// -- Tables and References
+   Table User as U {
+     id int [pk, increment]
+     username varchar
+     email varchar 
+     hashed_password varchar 
+     user_type user_type_enum
+   }
+
+   Table contractor as C {
+     id int [pk, increment] // auto-increment
+     staff_type staff_type_enum
+     contrLocationId_fk int [ref: - CL.id]
+     userid_fk int [ref: - U.id]
+     calendarId_fk int [ref: - Cal.id]
+   }
+
+   Table contrLocation as CL {
+     id int [pk, increment]
+     company_fk int [ref: > Co.id]
+     streetAddress1 varchar
+     streetAddress2 varchar
+     city varchar
+     state varchar
+     zip int
+   }
+
+   Table coLocation as OL {
+     id int [pk, increment]
+     streetAddress1 varchar 
+     streetAddress2 varchar 
+     city varchar 
+     state varchar 
+     zip int 
+   }
+   Ref: Co.id < OL.id
+
+   Table calendar as Cal {
+     id int [pk, increment]
+     datesAvail datetime
+     datesBlocked datetime
+   }
+
+   Table company as Co {
+     id int [pk, increment]
+     companyName varchar
+     contactName varchar
+     contactPhone varchar
+     email varchar
+     userId_fk int [ref: - U.id]
+     calendarId_fk int [ref: - Cal.id]
+   }
+
+
+   Table placements as P {
+     id int [pk, increment]
+     contractorId_fk int 
+     companyId_fk int 
+     completed boolean
+     startDate datetime
+     endDate datetime
+   }
+   Ref: C.id < P.id 
+   Ref: Co.id < P.id
+   ```
+6. Get into your pipenv, migrate your database, seed your database, and run your flask app
+
+   ```bash
+   pipenv run flask db init #create migration folder and files
+   pipenv run flask db migrate -m <fileName> #creates the 
+                              # alembic files and 
+                              # migrations dir.
+   pipenv run flask db upgrade #updates the database
+   ```
+7. ```bash
    pipenv shell
    ```
 
@@ -37,22 +136,23 @@ This is the backend for the Flask React project.
    ```bash
    flask run
    ```
+8. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
 
-6. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
+---
 
-***
 *IMPORTANT!*
-   If you add any python dependencies to your pipfiles, you'll need to regenerate your requirements.txt before deployment.
-   You can do this by running:
+If you add any python dependencies to your pipfiles, you'll need to regenerate your requirements.txt before deployment.
+You can do this by running:
 
-   ```bash
-   pipenv lock -r > requirements.txt
-   ```
+```bash
+pipenv lock -r > requirements.txt
+```
 
 *ALSO IMPORTANT!*
-   psycopg2-binary MUST remain a dev dependency because you can't install it on apline-linux.
-   There is a layer in the Dockerfile that will install psycopg2 (not binary) for us.
-***
+psycopg2-binary MUST remain a dev dependency because you can't install it on apline-linux.
+There is a layer in the Dockerfile that will install psycopg2 (not binary) for us.
+
+---
 
 ## Deploy to Heroku
 
@@ -64,13 +164,11 @@ This is the backend for the Flask React project.
    ```bash
    heroku login
    ```
-
 5. Login to the heroku container registry
 
    ```bash
    heroku container:login
    ```
-
 6. Update the `REACT_APP_BASE_URL` variable in the Dockerfile.
    This should be the full URL of your Heroku app: i.e. "https://flask-react-aa.herokuapp.com"
 7. Push your docker container to heroku from the root directory of your project.
@@ -79,20 +177,16 @@ This is the backend for the Flask React project.
    ```bash
    heroku container:push web -a {NAME_OF_HEROKU_APP}
    ```
-
 8. Release your docker container to heroku
 
    ```bash
    heroku container:release web -a {NAME_OF_HEROKU_APP}
    ```
-
 9. set up your database:
 
    ```bash
    heroku run -a {NAME_OF_HEROKU_APP} flask db upgrade
    heroku run -a {NAME_OF_HEROKU_APP} flask seed all
    ```
-
 10. Under Settings find "Config Vars" and add any additional/secret .env variables.
-
 11. profit
