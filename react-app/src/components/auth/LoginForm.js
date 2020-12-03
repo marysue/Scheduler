@@ -17,6 +17,16 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
     }
   };
 
+  const onDemoLogin = async (e) => {
+    e.preventDefault();
+    const user = await login("demo@demo.com", "password");
+    if (!user.errors) {
+      setAuthenticated(true);
+    } else {
+      setErrors(user.errors);
+    }
+  };
+
   const updateEmail = (e) => {
     setEmail(e.target.value);
   };
@@ -56,8 +66,13 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
           onChange={updatePassword}
         />
         <button type="submit">Login</button>
+
+      </div>
+      <div>
+        <button onClick={onDemoLogin} >DemoLogin</button>
       </div>
     </form>
+
   );
 };
 

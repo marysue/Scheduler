@@ -7,11 +7,12 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [userType, setUserType] = useState("");
 
   const onSignUp = async (e) => {
     e.preventDefault();
     if (password === repeatPassword) {
-      const user = await signUp(username, email, password);
+      const user = await signUp(username, email, password, userType);
       if (!user.errors) {
         setAuthenticated(true);
       }
@@ -21,6 +22,10 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
   const updateUsername = (e) => {
     setUsername(e.target.value);
   };
+
+  const updateUserType = (e) => {
+    setUserType(e.target.value);
+  }
 
   const updateEmail = (e) => {
     setEmail(e.target.value);
@@ -48,6 +53,15 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
           onChange={updateUsername}
           value={username}
         ></input>
+      </div>
+      <div>
+        <label>User Type ['admin', 'contractor', 'company']</label>
+        <input
+          type="text"
+          name="userType"
+          onChange={updateUserType}
+          value={userType}
+          ></input>
       </div>
       <div>
         <label>Email</label>
