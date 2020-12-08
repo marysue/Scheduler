@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 function UsersList() {
+  console.log("Entered UserList")
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

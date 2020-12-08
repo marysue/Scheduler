@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 function User() {
+  console.log("Entered User");
   const [user, setUser] = useState({});
   // Notice we use useParams here instead of getting the params
   // From props.

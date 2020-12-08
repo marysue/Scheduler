@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Redirect } from 'react-router-dom';
 import { signUp } from '../../services/auth';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
@@ -15,9 +16,13 @@ import { Button,
          Select,
          Typography,
         } from '@material-ui/core';
+import { setUserName, setUserEmail, setUserType, setUserId } from '../../store/authentication';
 
-const SignUpForm = ({authenticated, setAuthenticated}) => {
-  const [open, setOpen] = useState('true');
+
+const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
+  console.log("SignUpForm:  Entered signupform...");
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(openDialog);
   const [errors, setErrors] = useState('');
   const [values, setValues] = useState({
     email: '',
@@ -55,10 +60,13 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
     if (values.password === values.repeatPassword) {
       const user = await signUp(values.username, values.email, values.password, values.userType);
       if (!user.errors) {
-        setAuthenticated(true);
+        alert("Entering onSignup ...");
         setOpen(false);
-        setErrors('');
-        window.localStorage.setItem("currentUser", user.id)
+        dispatch(setUserEmail(user.email));
+        dispatch(setUserId(user.id));
+        dispatch(setUserName(user.username));
+        dispatch(setUserType(user.userType));
+        window.localStorage.setItem("currentUser",user.id)
       } else {
         setErrors(user.errors);
       }
@@ -72,9 +80,10 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
     setValues({...values, [prop]: event.target.value});
   }
 
-  if (authenticated) {
-    return <Redirect to="/" />;
-  }
+  // if (authenticated) {
+  //   alert("SignUpForm:  User is authenticated ... redirecting to '/'");
+  //   return <Redirect to="/" />;
+  // }
 
   if (window.localStorage.getItem("currentUser")) {
     window.location.replace("/");
@@ -89,7 +98,6 @@ const SignUpForm = ({authenticated, setAuthenticated}) => {
       return false;
     }
   });
-
 
   return (
     <>

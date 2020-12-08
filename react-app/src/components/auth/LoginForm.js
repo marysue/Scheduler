@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Redirect } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+// import { Redirect } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import { login } from "../../services/auth";
+//import { login } from "../../services/auth";
+import { login } from "../../store/authentication"
 import Alert from '@material-ui/lab/Alert';
 import { Button,
          Dialog,
@@ -11,15 +13,17 @@ import { Button,
          makeStyles,
          Typography,
          } from '@material-ui/core';
+import { setUserEmail, setUserName, setUserId, setUserType } from '../../store/authentication';
 
-const LoginForm = ({ authenticated, setAuthenticated }) => {
-
+const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
+    console.log("Entered LoginForm")
+    const dispatch = useDispatch();
     const [values, setValues] = useState({
         email: '',
         password: ''
       });
-    const [open, setOpen] = useState(true);
-    const [submitted, setSubmitted] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [submitted, setSubmitted] = useState();
     const [errors, setErrors] = useState();
     const useStyles = makeStyles((theme) => ({
         MuiGrid: {
@@ -45,53 +49,64 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
     }));
     const classes = useStyles();
 
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    useEffect (() => {
+        setSubmitted(false);
+        setOpen(openDialog);
+    }, [openDialog]);
+    // const handleClickOpen = () => {
+    //     setOpen(true);
+    // };
 
     const handleSignIn = async (e) => {
         if (e) { e.preventDefault()};
+        console.log("inside handleSignIn...");
         const user = await login(values.email, values.password);
         if (!user.errors) {
-        //   setAuthenticated(true);
-        // console.log(setAuthenticated)
-          setOpen(false);
-          setValues({['email']:''});
-          setValues({['password']:''});
-          setErrors('');
-          window.localStorage.setItem("currentUser",user.id)
-        //   return <Redirect to="/" />
-        window.location.href="/workouts"
+            setAuthenticated(true);
+            setOpen(false);
+            dispatch(setUserEmail(user.email));
+            dispatch(setUserId(user.id));
+            dispatch(setUserName(user.username));
+            dispatch(setUserType(user.userType));
+            console.log("user object: ", user);
+            console.log("user object:  ", user);
+            window.localStorage.setItem("currentUser",user.id)
+            //return <Redirect to="/" />
+            window.location.href="/"
         } else {
           setErrors(user.errors);
         }
     };
 
     const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+        setValues({ ...values, [prop]: event.target.value });
     };
 
-    const handleSubmit = () => {
-        setSubmitted(true , () => {
-            setTimeout(() => setSubmitted(false), 5000);
-        });
-    }
-    const goToSignUp = (e) => {
-        e.preventDefault()
-        return <Redirect to="/sign-up" />
-      }
+    // const handleSubmit = () => {
+    //     setSubmitted(true , () => {
+    //         setTimeout(() => setSubmitted(false), 5000);
+    //     });
+    // }
+    // const goToSignUp = (e) => {
+    //     e.preventDefault()
+    //     return <Redirect to="/sign-up" />
+    //   }
 
 
 
     const loginDemo = async () => {
         const user = await login('demo@aa.io', 'password');
         if (!user.errors) {
-        //   setAuthenticated(true);
+            console.log("LoginDemo - received the following user info: ", user);
+            dispatch(setUserEmail(user.email));
+            dispatch(setUserId(user.id));
+            dispatch(setUserName(user.username));
+            dispatch(setUserType(user.userType));
+            window.localStorage.setItem("currentUser",user.id)
+            console.log("user object: ", user);
+            setAuthenticated(true);
           setOpen(false);
-          setValues({['email']:''});
-          setValues({['password']:''});
-          setErrors('')
+
           //return <Redirect to="/" />
           window.localStorage.setItem("currentUser",user.id)
           window.location.href="/"
@@ -100,15 +115,19 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
         }
     };
     if(window.localStorage.getItem("currentUser")){
-        window.location.replace("/workouts")
+        window.location.replace("/")
     }
+    if (!open) {
+        console.log("open is not defined or false...")
+        return null
+    } else {
 
         return (
             <div>
 
                 <Dialog open={open} style={{width:"100%"}} onClose={handleSignIn} aria-labelledby="form-dialog-title">
-                    <div>
-                         <img src="CadenceLogo.png" className={classes.img}></img>
+                    <div style={{marginTop:"40px"}}>
+                         <img src="fullLogo.png" alt="Placement Scheduler Logo" style={{width:"75%"}} className={classes.img}></img>
                         <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Sign In
                         </Typography>
                     </div>
@@ -162,7 +181,7 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
                             <Grid container direction="column" justify="center" alignItems="center" spacing={2}>
                                 <Grid container item xs={10} justify="center">
                                     <Typography  style={{marginTop:"40px", marginBottom:"40px"}} align="center" color="primary" >
-                                    <Link href="/sign-up" >Create your Cadence account</Link>
+                                    <Link href="/sign-up" >Create your Placement Scheduler account</Link>
                                     </Typography>
                                     <Button variant="contained" style={{marginBottom:"20px", alignItems:"flex-end"}} onClick={loginDemo} color="primary">Demo Login</Button>
                                 </Grid>
@@ -194,6 +213,7 @@ const LoginForm = ({ authenticated, setAuthenticated }) => {
 
 
     );
+    }
 }
 
 export default LoginForm;
