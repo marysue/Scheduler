@@ -82,6 +82,7 @@ Database model is stored on https://dbdiagram.io/d/5fc7dbf93a78976d7b7e436b
 ![Database Model](./docs/images/DBModel.png)
 
 ```bash
+//// -- Tables and References
 Table User as U {
   id int [pk, increment]
   username varchar
@@ -98,7 +99,7 @@ Table contractor as C {
   datesBlockedArr datetime
 }
 
-Table contrLocation as CL {
+Table contractorContact as CL {
   id int [pk, increment]
   streetAddress1 varchar
   streetAddress2 varchar
@@ -108,7 +109,7 @@ Table contrLocation as CL {
   contactPhone varchar
 }
 
-Table coLocation as OL {
+Table companyContact as OL {
   id int [pk, increment]
   streetAddress1 varchar 
   streetAddress2 varchar 
@@ -133,16 +134,13 @@ Table company as Co {
 
 Table placements as P {
   id int [pk, increment]
-  contractorId_fk int [ref: -  C.id]
-  companyId_fk int [ref: - Co.id]
+  contractorId_fk int [ref: >  C.id]
+  companyId_fk int [ref: > Co.id]
   startDate datetime
   endDate datetime
 }
-```
-
-
-
-
-
 
 ```
+
+
+1. 1. 3. 1. ```
