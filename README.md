@@ -6,6 +6,26 @@ This automated system matches contractors with companies in need of assistance i
 
 The contractor marks their schedules as open, the company creates their request for the type of employee they desire as well as the dates required, and the agency may view the placements made, gaining an insight into how their placements are being utilized.
 
+Checkout the live site at:  https://placement-scheduler.herokuapp.com/
+
+# Build to-do:
+
+To run this application locally, you'll need to download this git repo and do the following:
+
+1.  Create a postgreSQL database user with CREATEDB role.
+2.  Create a postgreSQL database with owner <yourPostgreSQL db user>
+3.  Set your .env as shown in the ./.env.example file, modifying to use your database and owner information.
+4.  Set your react-app/.env as shown in the react-app/.env.example file
+5.  In the root directory of this project, run "pipenv install"
+6.  In the react-app directory, run "npm install"
+7.  In the root directory of this project run "pipenv shell"
+    a.  Initialize your flask db by running "flask db init"
+    b.  Create your database migrations by running "flask db migrate"
+    c.  Now migrate your database tables to your postgreSQL db by running "flask db upgrade"
+    d.  You're ready to start the app.  Run "flask run" to start your backend server
+8.  In the react-app directory, you're ready to start your frontend:  "npm start"
+
+
 # Routes Needed
 
 ## Backend Route
