@@ -59,23 +59,21 @@ The contractor marks their schedules as open, the company creates their request 
    ```
 
    ## Frontend Routes
-
-
-1. '/login'
+8. '/login'
 
    ![Login Page](./docs/images/Login.png)
-2. '/sign-up'
+9. '/sign-up'
    ![Sign Up Page](./docs/images/SignUp.png)
-3. '/companyProfile'
-   ![Company Profile](./docs/images/CompanyProfile.png)
-4. '/contractorProfile'
-   ![Contractor Profile](./docs/images/ContractorProfile.png)
-5. '/companyCalendar'
-   ![Company Calendar](./docs/images/CompanyCalendar.png)
-6. '/contractorCalendar'
-   ![Contractor Calendar](./docs/images/ContractorCalendar.png)
-7. '/agencyCalendar'
-   ![Agency Calendar](./docs/images/AgencyCalendar.png)
+10. '/companyProfile'
+    ![Company Profile](./docs/images/CompanyProfile.png)
+11. '/contractorProfile'
+    ![Contractor Profile](./docs/images/ContractorProfile.png)
+12. '/companyCalendar'
+    ![Company Calendar](./docs/images/CompanyCalendar.png)
+13. '/contractorCalendar'
+    ![Contractor Calendar](./docs/images/ContractorCalendar.png)
+14. '/agencyCalendar'
+    ![Agency Calendar](./docs/images/AgencyCalendar.png)
 
 # Database Model
 
@@ -140,4 +138,11 @@ Table placements as P {
   startDate datetime
   endDate datetime
 }
+```
+
+
+
+
+
+
 ```
