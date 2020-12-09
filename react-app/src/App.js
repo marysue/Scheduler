@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { CssBaseline } from "@material-ui/core";
 import Theme from "./Theme"
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import LoginForm from "./components/auth/LoginForm";
-import SignUpForm from "./components/auth/SignUpForm";
 import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
+import SplashPage from "./components/SplashPage";
 import { authenticate } from "./services/auth";
+import Calendar from "./components/CalendarComponent/Calendar";
+import SignUpForm from "./components/auth/SignUpForm"
+import "./index.css";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
 
   useEffect(() => {
     (async() => {
@@ -20,12 +24,16 @@ function App() {
       if (!user.errors) {
         setAuthenticated(true);
         window.localStorage.setItem("currentUser", user.id)
+        console.log("Set localStorage to currentUser and authenticated = true");
+      } else {
+        console.log("received errors in setting authenticated...")
       }
       setLoaded(true);
     })();
   }, []);
 
   if (!loaded) {
+    console.log("Not loaded ... returning null");
     return null;
   }
 
@@ -33,25 +41,39 @@ function App() {
     <CssBaseline>
       <Theme>
         <BrowserRouter>
-          <NavBar setAuthenticated={setAuthenticated} />
-          <Route path="/login" exact={true}>
-            <LoginForm
-              authenticated={authenticated}
-              setAuthenticated={setAuthenticated}
-            />
-          </Route>
-          <Route path="/sign-up" exact={true}>
-            <SignUpForm authenticated={authenticated} setAuthenticated={setAuthenticated} />
-          </Route>
-          <ProtectedRoute path="/users" exact={true} authenticated={authenticated}>
-            <UsersList/>
-          </ProtectedRoute>
-          <ProtectedRoute path="/users/:userId" exact={true} authenticated={authenticated}>
-            <User />
-          </ProtectedRoute>
-          <ProtectedRoute path="/" exact={true} authenticated={authenticated}>
-            <h1>My Home Page</h1>
-          </ProtectedRoute>
+
+            <NavBar setAuthenticated={setAuthenticated} />
+            <Switch>
+              <Route path="/" exact={true}>
+                <SplashPage></SplashPage>
+              </Route>
+              <Route path="/login" exact={true}>
+                <LoginForm
+                  authenticated={authenticated}
+                  setAuthenticated={setAuthenticated}
+                  openDialog={true}
+                />
+              </Route>
+              <Route path="/sign-up">
+                <SignUpForm
+                  openDialog={true}
+                  authenticated={authenticated}
+                  setAuthenticated={setAuthenticated}>
+                </SignUpForm>
+              </Route>
+              <ProtectedRoute path="/users" exact={true} authenticated={authenticated}>
+                <UsersList/>
+              </ProtectedRoute>
+              <ProtectedRoute path="/users/:userId" exact={true} authenticated={authenticated}>
+                <User />
+              </ProtectedRoute>
+              <ProtectedRoute path="/" exact={true} authenticated={authenticated}>
+                <h1>My Home Page</h1>
+              </ProtectedRoute>
+              <ProtectedRoute path="/calendar" exact={true} authenticated={authenticated}>
+                <Calendar  />
+              </ProtectedRoute>
+              </Switch>
         </BrowserRouter>
         </Theme>
     </CssBaseline>

@@ -3,12 +3,23 @@ import { NavLink } from 'react-router-dom';
 import LogoutButton from './auth/LogoutButton';
 
 const NavBar = ({ setAuthenticated }) => {
+  console.log("Entered NavBar, only using setAuthenticate to pass to logout button");
   return (
     <nav>
       <ul>
         <li>
           <NavLink to="/" exact={true} activeClassName="active">
             Home
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/splashPage" exact={true} activeClassName="active">
+          Splash Page
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/calendar" exact={true} activeClassName="active">
+            Calendar
           </NavLink>
         </li>
         <li>
