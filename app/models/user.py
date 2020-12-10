@@ -1,7 +1,7 @@
 from .db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from sqlalchemy import DateTime, func, Enum
+from sqlalchemy import DateTime, func
 
 
 class User(db.Model, UserMixin):
@@ -10,8 +10,8 @@ class User(db.Model, UserMixin):
   id = db.Column(db.Integer, primary_key = True)
   username = db.Column(db.String(40), nullable = False, unique = True)
   email = db.Column(db.String(255), nullable = False, unique = True)
-  hashed_password = db.Column(db.String(255), nullable = False)
   userType = db.Column(db.String(40), nullable = False)
+  hashed_password = db.Column(db.String(255), nullable = False)
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 

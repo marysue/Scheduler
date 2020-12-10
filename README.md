@@ -52,7 +52,7 @@ To run this application locally, you'll need to download this git repo and do th
    2. GET:  Populates the Contractor Profile information.
       Returns the following object from contractor and contrLocation tables::
       ```{ id, contractorName, addr1, addr2, city, state, zip, phone }```
-3. 'schedule/${id}/&lt;dateFrom-dateTo&gt;'
+3. 'schedule/${id}/\<dateFrom-dateTo\>;'
 
    1. POST:  Id in URL is companyId.  Company chooses contractor to work for them.
       Takes dateFrom-dateTo and splits on hyphen, then updates the placement table with the selected contractor id, dateFrom and dateTo rows, as well as adding the dateFrom to dateTo dates to the datesBlocked array of the contractor.
@@ -72,7 +72,7 @@ To run this application locally, you'll need to download this git repo and do th
       { [user.username, user.email, contractor.id, contractor.staff_type, contrLocation: { streetAddress1, streetAddress2, city, state, zip, contactPhone }, contractor.datesBlockedArr]
       ```
 6. 'schedule/'
-7. GET:  Returns ALL users placed. This is for the agency to understand when placements occur.
+   1. GET:  Returns ALL users placed. This is for the agency to understand when placements occur.
 
    ```bash
    { [placements: {company: companyName, companyLocation: { coLocation.streetAddress1, coLocation.streetAddress2, coLocation.city, coLocation.state, coLocation.zip, coLocation.contactName, coLocation.contactEmail, coLocation.contactPhone} contractor: { contractor.id, contractor.staff_type contrLocation: { contrLocation.streetAddress1, contrLocation.streetAddress2, contrLocation.city, contrLocation.state, contrLocation.zip, contrLocation.contactPhone}} ]
@@ -80,7 +80,6 @@ To run this application locally, you'll need to download this git repo and do th
 
    ## Frontend Routes
 8. '/login'
-
    ![Login Page](./docs/images/Login.png)
 9. '/sign-up'
    ![Sign Up Page](./docs/images/SignUp.png)
@@ -103,54 +102,58 @@ Database model is stored on https://dbdiagram.io/d/5fc7dbf93a78976d7b7e436b
 
 ```bash
 //// -- Tables and References
+
+Table BlockedDates as B {
+  id int [pk, increment]
+  contractorId_fk int [ref: > C.id]
+  blocked datetime
+}
 Table User as U {
   id int [pk, increment]
   username varchar
-  email varchar 
-  hashed_password varchar 
+  email varchar
   user_type user_type_enum
+  hashed_password varchar
 }
 
 Table contractor as C {
   id int [pk, increment] // auto-increment
-  staff_type staff_type_enum
-  contrLocationId_fk int [ref: - CL.id]
   userid_fk int [ref: - U.id]
-  datesBlockedArr datetime
+  staff_type staff_type_enum
 }
 
 Table contractorContact as CL {
   id int [pk, increment]
-  streetAddress1 varchar
-  streetAddress2 varchar
+  contractorId_fk int [ref: - C.id]
+  name varchar
+  phone varchar
+  email varchar
+  addr1 varchar
+  addr2 varchar
   city varchar
   state varchar
   zip int
-  contactPhone varchar
 }
 
 Table companyContact as OL {
   id int [pk, increment]
-  streetAddress1 varchar 
-  streetAddress2 varchar 
-  city varchar 
-  state varchar 
-  zip int 
-  contactName varchar 
-  contactPhone varchar
-  contactEmail varchar
   company_fk int [ref: > Co.id]
+  locationName varchar
+  name varchar
+  phone varchar
+  email varchar
+  addr1 varchar
+  addr2 varchar
+  city varchar
+  state varchar
+  zip int
 }
-
-
 
 Table company as Co {
   id int [pk, increment]
-  companyName varchar
   userId_fk int [ref: - U.id]
-  coLocation_fk int
+  companyName varchar
 }
-
 
 Table placements as P {
   id int [pk, increment]
@@ -160,7 +163,6 @@ Table placements as P {
   endDate datetime
 }
 
+
+
 ```
-
-
-1. 1. 3. 1. ```

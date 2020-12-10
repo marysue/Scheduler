@@ -14,12 +14,15 @@ class Placement(db.Model):
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
+  company = db.relationship("Company", back_populates="placements")
+  contractor = db.relationship("Contractor", back_populates="placements")
+
   def to_dict(self):
     return {
       "id": self.id,
+      "contractor": self.contractor.to_dict(),
+      "company": self.company.to_dict(),
       "startDate": self.startDate,
       "endDate": self.endDate,
-      "completed": self.completed,
-      "contractorId": self.contractorId_fk,
-      "companyId": self.companyId_fk
+
     }
