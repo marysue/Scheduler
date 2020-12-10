@@ -30,98 +30,18 @@ This is the backend for the Flask React project.
    ![DBModels](./docs/images/dbModels.png)
 
    Created by https://dbdiagram.io/d/5fc7dbf93a78976d7b7e436:
-
-   ```bash
-   //// -- Enums
-   Enum staffType_enum {
-     dentist
-     dentalHygenist
-     dentalAssistant
-     frontOffice
-     backOffice
-   }
-
-   Enum userType_enum {
-     admin
-     company
-     contractor
-   }
-
-   //// -- Tables and References
-   Table User as U {
-     id int [pk, increment]
-     username varchar
-     email varchar
-     hashed_password varchar
-     userType userType_enum
-   }
-
-   Table contractor as C {
-     id int [pk, increment] // auto-increment
-     staffType staff_type_enum
-     contrLocationId_fk int [ref: - CL.id]
-     userid_fk int [ref: - U.id]
-     calendarId_fk int [ref: - Cal.id]
-   }
-
-   Table contrLocation as CL {
-     id int [pk, increment]
-     company_fk int [ref: > Co.id]
-     streetAddress1 varchar
-     streetAddress2 varchar
-     city varchar
-     state varchar
-     zip int
-   }
-
-   Table coLocation as OL {
-     id int [pk, increment]
-     streetAddress1 varchar
-     streetAddress2 varchar
-     city varchar
-     state varchar
-     zip int
-   }
-   Ref: Co.id < OL.id
-
-   Table calendar as Cal {
-     id int [pk, increment]
-     datesAvail datetime
-     datesBlocked datetime
-   }
-
-   Table company as Co {
-     id int [pk, increment]
-     companyName varchar
-     contactName varchar
-     contactPhone varchar
-     email varchar
-     userId_fk int [ref: - U.id]
-     calendarId_fk int [ref: - Cal.id]
-   }
-
-
-   Table placements as P {
-     id int [pk, increment]
-     contractorId_fk int
-     companyId_fk int
-     completed boolean
-     startDate datetime
-     endDate datetime
-   }
-   Ref: C.id < P.id
-   Ref: Co.id < P.id
-   ```
 6. Get into your pipenv, migrate your database, seed your database, and run your flask app
 
    ```bash
+
    pipenv run flask db init #create migration folder and files
    pipenv run flask db migrate -m <fileName> #creates the
                               # alembic files and
                               # migrations dir.
    pipenv run flask db upgrade #updates the database
    ```
-7. ```bash
+
+   ```bash
    pipenv shell
    ```
 
