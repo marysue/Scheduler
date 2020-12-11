@@ -7,7 +7,7 @@ class Contractor(db.Model):
 
   id = db.Column(db.Integer, primary_key = True)
   staffType = db.Column(db.String(40), nullable = False)
-  userid_fk = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
+  userid_fk = db.Column(db.Integer, db.ForeignKey("users.id"), unique=True, nullable = False)
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
@@ -20,7 +20,6 @@ class Contractor(db.Model):
       "id": self.id,
       "userId": self.userid_fk,
       "staffType": self.staffType,
-      "contractorContact": self.contractorContact.to_dict(),
       "placements": [placement.to_dict() for placement in self.placements],
       "blockedDates": [date.to_dict() for date in self.blockedDates],
     }

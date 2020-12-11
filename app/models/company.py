@@ -19,4 +19,6 @@ class Company(db.Model):
       "id": self.id,
       "userId": self.userId_fk,
       "companyName": self.companyName,
-  } 
+      "companyContact": [contact.to_dict() for contact in self.companyContact],
+      "placements": [placement.to_dict() for placement in self.placements],
+    }

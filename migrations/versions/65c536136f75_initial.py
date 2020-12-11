@@ -1,8 +1,8 @@
-"""empty message
+"""Initial
 
-Revision ID: b4dcda917760
+Revision ID: 65c536136f75
 Revises: 
-Create Date: 2020-12-10 11:08:16.705431
+Create Date: 2020-12-10 17:45:54.933138
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b4dcda917760'
+revision = '65c536136f75'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -46,7 +46,8 @@ def upgrade():
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['userid_fk'], ['users.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('userid_fk')
     )
     op.create_table('blockedDates',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -76,7 +77,7 @@ def upgrade():
     )
     op.create_table('contractorContacts',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('contractorContactId_fk', sa.Integer(), nullable=False),
+    sa.Column('contractorId_fk', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('phone', sa.String(length=12), nullable=True),
     sa.Column('email', sa.String(length=50), nullable=True),
@@ -87,8 +88,9 @@ def upgrade():
     sa.Column('zip', sa.String(length=10), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['contractorContactId_fk'], ['contractors.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['contractorId_fk'], ['contractors.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('contractorId_fk')
     )
     op.create_table('placements',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -97,8 +99,10 @@ def upgrade():
     sa.Column('completed', sa.Boolean(), nullable=False),
     sa.Column('contractorId_fk', sa.Integer(), nullable=False),
     sa.Column('companyId_fk', sa.Integer(), nullable=False),
+    sa.Column('companyContactId_fk', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.ForeignKeyConstraint(['companyContactId_fk'], ['companyContacts.id'], ),
     sa.ForeignKeyConstraint(['companyId_fk'], ['companies.id'], ),
     sa.ForeignKeyConstraint(['contractorId_fk'], ['contractors.id'], ),
     sa.PrimaryKeyConstraint('id')

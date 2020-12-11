@@ -12,6 +12,9 @@ def seed_blockedDates():
     bd6 = BlockedDate(contractorId_fk=2, blocked=datetime.strptime('12/29/20', '%m/%d/%y'))
     bd7 = BlockedDate(contractorId_fk=2, blocked=datetime.strptime('01/01/21', '%m/%d/%y'))
     bd8 = BlockedDate(contractorId_fk=3, blocked=datetime.strptime('12/31/20', '%m/%d/%y'))
+    bd9 = BlockedDate(contractorId_fk=1, blocked=datetime.strptime('11/10/20', '%m/%d/%y'))
+    bd10 = BlockedDate(contractorId_fk=1, blocked=datetime.strptime('11/11/20', '%m/%d/%y'))
+    bd11 = BlockedDate(contractorId_fk=1, blocked=datetime.strptime('11/12/20', '%m/%d/%y'))
 
     db.session.add(bd1)
     db.session.add(bd2)
@@ -21,6 +24,9 @@ def seed_blockedDates():
     db.session.add(bd6)
     db.session.add(bd7)
     db.session.add(bd8)
+    db.session.add(bd9)
+    db.session.add(bd10)
+    db.session.add(bd11)
 
     db.session.commit()
 
