@@ -20,10 +20,12 @@ class CompanyContact(db.Model):
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
   company = db.relationship("Company", back_populates=("companyContact"))
+  placements = db.relationship("Placement", back_populates=("companyContact"))
 
   def to_dict(self):
     return {
       "id": self.id,
+      "companyId": self.company.id,
       "companyName": self.companyName,
       "name": self.name,
       "phone": self.phone,
@@ -33,5 +35,5 @@ class CompanyContact(db.Model):
       "city": self.city,
       "state": self.state,
       "zip": self.zip,
-      "company": self.company.to_dict(),
+
     }

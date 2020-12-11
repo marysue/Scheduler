@@ -6,7 +6,7 @@ class ContractorContact(db.Model):
   __tablename__ = 'contractorContacts'
 
   id = db.Column(db.Integer, primary_key = True)
-  contractorContactId_fk = db.Column(db.Integer, db.ForeignKey("contractors.id"), nullable = False)
+  contractorId_fk = db.Column(db.Integer, db.ForeignKey("contractors.id"), unique=True, nullable = False)
   name = db.Column(db.String(50), nullable = False)
   phone = db.Column(db.String(12), nullable = True)
   email = db.Column(db.String(50), nullable = True)
@@ -23,7 +23,7 @@ class ContractorContact(db.Model):
   def to_dict(self):
     return {
       "id": self.id,
-      "contractorId": self.contractorContactId_fk,
+      "contractorId": self.contractorId_fk,
       "name": self.name,
       "phone": self.phone,
       "email": self.email,
@@ -32,5 +32,4 @@ class ContractorContact(db.Model):
       "city": self.city,
       "state": self.state,
       "zip": self.zip,
-      "contractor": self.contractor.to_dict(),
     }

@@ -10,7 +10,7 @@ def seed_contractors():
     c5 = Contractor(staffType='Dental Hygenist', userid_fk=6)
     c6 = Contractor(staffType='Dental Hygenist', userid_fk=7)
     c7 = Contractor(staffType='Front Office', userid_fk=8)
-    c8 = Contractor(staffType='Front Office', userid_fk=8)
+    c8 = Contractor(staffType='Front Office', userid_fk=9)
 
     db.session.add(c1)
     db.session.add(c2)

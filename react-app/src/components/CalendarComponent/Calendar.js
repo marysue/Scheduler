@@ -18,7 +18,7 @@ export default function Calendar() {
   function isSelected(day) {
     //new
     //
-    if (dateRange.start != '') {
+    if (dateRange.start !== '') {
       const start = dateRange.start;
       const end = dateRange.end;
       const currentDay = day.format();

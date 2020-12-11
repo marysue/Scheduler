@@ -16,6 +16,6 @@ class BlockedDate(db.Model):
   def to_dict(self):
     return {
       "id": self.id,
-      "contractor": self.contractor.to_dict(),
+      "contractorId": self.contractor.id,
       "blocked": self.blocked,
   }

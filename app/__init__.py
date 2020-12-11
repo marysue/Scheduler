@@ -8,6 +8,10 @@ from flask_login import LoginManager
 from .models import db, User
 from .api.user_routes import user_routes
 from .api.auth_routes import auth_routes
+from .api.company_routes import company_routes
+from .api.contractor_routes import contractor_routes
+from .api.placement_routes import placement_routes
+from .api.blockedDates_routes import blockedDate_routes
 
 from .seeds import seed_commands
 
@@ -30,6 +34,10 @@ app.cli.add_command(seed_commands)
 app.config.from_object(Config)
 app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
+app.register_blueprint(company_routes, url_prefix='/api/company')
+app.register_blueprint(contractor_routes, url_prefix='/api/contractor')
+app.register_blueprint(placement_routes, url_prefix='/api/placement')
+app.register_blueprint(blockedDate_routes, url_prefix='/api/blocked')
 db.init_app(app)
 Migrate(app, db)
 
