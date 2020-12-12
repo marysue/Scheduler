@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, session, request
 from app.models import db, CompanyContact, Company
-from app.forms import CompanyContactForm
+from app.forms import CompanyContactForm, CompanyForm
 from flask_login import login_required
 
 company_routes = Blueprint('company', __name__)
@@ -14,9 +14,24 @@ def validation_errors_to_error_messages(validation_errors):
         for error in validation_errors[field]:
             errorMessages.append(f"{field} : {error}")
     return errorMessages
+#Creates a new company for a given user id
+@company_routes.route('/add/<int:id>', methods=['POST'])
+# @login_required
+def addCompany(id):
+    form = CompanyForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
+    if form.validate_on_submit():
+        newCompany = Company(
+            userId_fk=id,
+            companyName=form.data['companyName'],
+        )
+        db.session.add(newCompany)
+        db.session.commit()
+        return newCompany.to_dict()
+    return { 'errors': validation_errors_to_error_messages(form.errors)}
 
 #Creates a new company contact for a given company id
-@company_routes.route('/<int:id>', methods=['POST'])
+@company_routes.route('/contact/<int:id>', methods=['POST'])
 # @login_required
 def addCompanyContact(id):
     form = CompanyContactForm()
@@ -44,4 +59,4 @@ def addCompanyContact(id):
 # @login_required
 def getCompanyContact(id):
     contactInfo =  Company.query.get(id)
-    return contactInfo.to_dict()
+    return {"companyContacts": [contactInfo.to_dict()]}

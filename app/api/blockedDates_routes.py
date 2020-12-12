@@ -37,7 +37,7 @@ def addBlockedDate(id):
 @blockedDate_routes.route('/<int:id>', methods=['GET'])
 # @login_required
 def getBlockedDates(id):
-    today = datetime.datetime.now()
+    today = datetime.now()
     blockedDates =  BlockedDate.query.filter(
         BlockedDate.contractorId_fk == id, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
     return ({"blockedDates": [blockedDate.to_dict() for blockedDate in blockedDates]})
@@ -45,7 +45,7 @@ def getBlockedDates(id):
 @blockedDate_routes.route('/', methods=['GET'])
 #@login_required
 def getAllBlockedDates():
-    today = datetime.datetime.now()
+    today = datetime.now()
     blockedDates = BlockedDate.query.filter(
         BlockedDate.blocked >= today).all()
     return ({"blockedDates": [blockedDate.to_dict() for blockedDate in blockedDates]})

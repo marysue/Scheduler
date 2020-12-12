@@ -19,6 +19,7 @@ class ContractorContact(db.Model):
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
   contractor = db.relationship("Contractor", back_populates=("contractorContact"))
+  
 
   def to_dict(self):
     return {

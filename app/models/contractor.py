@@ -20,6 +20,16 @@ class Contractor(db.Model):
       "id": self.id,
       "userId": self.userid_fk,
       "staffType": self.staffType,
-      "placements": [placement.to_dict() for placement in self.placements],
-      "blockedDates": [date.to_dict() for date in self.blockedDates],
+      # "placements": [placement.to_dict() for placement in self.placements],
+      # "blockedDates": [date.to_dict() for date in self.blockedDates],
+    }
+
+  def less_to_dict(self):
+    return {
+      "id": self.id,
+      "userId": self.userid_fk,
+      "staffType": self.staffType,
+      "contractorContact": self.contractorContact[0].to_dict(),#[contact.to_dict() for contact in self.contractorContact],
+      # "placementIds": [placement.id for placement in self.placements],
+      # "blockedDateIds": [date.id for date in self.blockedDates],
     }
