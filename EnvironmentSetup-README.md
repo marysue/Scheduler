@@ -56,7 +56,7 @@ This is the backend for the Flask React project.
    ```bash
    flask run
    ```
-8. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
+7. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
 
 ---
 

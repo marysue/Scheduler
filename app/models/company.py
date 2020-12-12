@@ -11,7 +11,7 @@ class Company(db.Model):
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
-  companyContact = db.relationship("CompanyContact", back_populates="company")
+  companyContacts = db.relationship("CompanyContact", back_populates="company")
   placements = db.relationship("Placement", back_populates="company")
 
   def to_dict(self):
@@ -19,6 +19,13 @@ class Company(db.Model):
       "id": self.id,
       "userId": self.userId_fk,
       "companyName": self.companyName,
-      "companyContact": [contact.to_dict() for contact in self.companyContact],
-      "placements": [placement.to_dict() for placement in self.placements],
+      "companyContacts": [contact.to_dict() for contact in self.companyContacts],
+      # "placements": [placement.to_dict() for placement in self.placements],
+    }
+
+  def less_to_dict(self):
+    return {
+      "id": self.id,
+      "userId": self.userId_fk,
+      "companyName": self.companyName,
     }

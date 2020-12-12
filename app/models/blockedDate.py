@@ -7,6 +7,7 @@ class BlockedDate(db.Model):
 
   id = db.Column(db.Integer, primary_key = True)
   contractorId_fk = db.Column(db.Integer, db.ForeignKey("contractors.id"), nullable = False)
+  companyContactId_fk = db.Column(db.Integer, db.ForeignKey("companyContacts.id"), nullable = False)
   blocked = db.Column(db.DateTime, nullable = False)
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
@@ -16,6 +17,7 @@ class BlockedDate(db.Model):
   def to_dict(self):
     return {
       "id": self.id,
-      "contractorId": self.contractor.id,
+      "contractorId": self.contractorId_fk,
+      "companyContact": self.companyContactId_fk,
       "blocked": self.blocked,
   }

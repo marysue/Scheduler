@@ -19,7 +19,7 @@ class CompanyContact(db.Model):
   created_at = db.Column(db.DateTime, default=db.func.now())
   updated_at = db.Column(db.DateTime, default=db.func.now())
 
-  company = db.relationship("Company", back_populates=("companyContact"))
+  company = db.relationship("Company", back_populates=("companyContacts"))
   placements = db.relationship("Placement", back_populates=("companyContact"))
 
   def to_dict(self):
