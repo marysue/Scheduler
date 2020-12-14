@@ -8,9 +8,12 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
 import SplashPage from "./components/SplashPage";
+import CompanyInfo from "./components/CompanyInfo";
+import ContractorInfo from "./components/ContractorInfo";
 import { authenticate } from "./services/auth";
 import Calendar from "./components/CalendarComponent/Calendar";
 import SignUpForm from "./components/auth/SignUpForm"
+import ContractorView from "./components/ContractorView";
 import "./index.css";
 
 function App() {
@@ -61,6 +64,15 @@ function App() {
                   setAuthenticated={setAuthenticated}>
                 </SignUpForm>
               </Route>
+              <ProtectedRoute path="/companyInfo" exact={true} authenticated={authenticated}>
+                <CompanyInfo></CompanyInfo>
+              </ProtectedRoute>
+              <Route path="/contractorInfo" exact={true} authenticated={authenticated}>
+                <ContractorInfo></ContractorInfo>
+              </Route>
+              <ProtectedRoute path="/contractorCalendar" exact={true} authenticated={authenticated}>
+                <ContractorView></ContractorView>
+              </ProtectedRoute>
               <ProtectedRoute path="/users" exact={true} authenticated={authenticated}>
                 <UsersList/>
               </ProtectedRoute>

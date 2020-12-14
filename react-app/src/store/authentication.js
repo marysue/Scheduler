@@ -22,6 +22,7 @@ export const EMAIL = 'user/authentication/EMAIL';
 export const SET_USER_EMAIL = 'user/authentication/SET_USER_EMAIL';
 export const REMOVE_USER_EMAIL = 'user/authentication/REMOVE_USER_EMAIL';
 
+
 //actions
 export const setUserType = userType => ({ type: SET_USER_TYPE, userType });
 export const removeUserType = () => ({ type: REMOVE_USER_TYPE });
@@ -35,6 +36,7 @@ export const setUserEmail = emailAddress => ({ type: SET_USER_EMAIL, emailAddres
 export const removeUserEmail = () => ({type: REMOVE_USER_EMAIL});
 export const setUserId = id => ({ type: SET_USER_ID, id})
 export const removeUserId = () => ({ type: REMOVE_USER_ID})
+
 
 
 //reducer
@@ -185,7 +187,7 @@ export const loadToken = () => {
         email,
         password,
         userType
-      }),
+      })
     });
     return await response.json();
   }

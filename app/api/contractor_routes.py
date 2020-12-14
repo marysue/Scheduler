@@ -4,6 +4,7 @@ from app.forms import ContractorContactForm, ContractorForm
 from flask_login import login_required
 from datetime import datetime
 from datetime import timedelta
+from urllib.parse import unquote
 
 contractor_routes = Blueprint('contractor', __name__)
 
@@ -56,12 +57,38 @@ def addContractorContact(id):
         return newContact.to_dict()
     return { 'errors': validation_errors_to_error_messages(form.errors)}
 
+@contractor_routes.route('/<int:userId>', methods=['GET'])
+# @login_required
+def getContractorId(userId):
+    contractor = Contractor.query.filter(Contractor.userid_fk == userId).all()
+    if (len(contractor) > 0):
+        return { "contractorId": contractor[0].id }
+    else:
+        return {'errors': ['Not Found']}, 404
 
-@contractor_routes.route('/<int:id>', methods=['GET'])
+@contractor_routes.route('/contact/<int:id>', methods=['GET'])
 # @login_required
 def getContractorContact(id):
     contactInfo =  ContractorContact.query.get(id)
     return contactInfo.to_dict()
+
+@contractor_routes.route('/info/<int:userId>', methods=['GET'])
+# @login_required
+def getContractorInfo(userId):
+    contractorInfo = Contractor.query.filter(Contractor.userid_fk == userId).all()
+    if (len(contractorInfo) > 0):
+        contractorContact = ContractorContact.query.filter(ContractorContact.contractorId_fk == contractorInfo[0].id).all()
+
+    if (len(contractorInfo) > 0):
+        ci = contractorInfo[0].to_dict()
+        cc = contractorContact[0].to_dict()
+        print('ci: ', ci)
+        print('cc: ', cc)
+        return { "contractorId": ci["id"], "staffType": ci["staffType"], "userId": ci["userId"],
+                "contactId": cc["id"], "name": cc["name"], "phone": cc["phone"], "email": cc["email"],
+                "addr1": cc["addr1"], "addr2": cc["addr2"], "city": cc["city"], "state": cc["state"], "zip": cc["zip"] }
+    else:
+        return {'errors': ['Not Found']}, 404
 
 def datesArray(dateRange):
     #split dateRange on "/"
@@ -84,7 +111,8 @@ def getAvailableContractors():
     print("requestArgs: ", request.args['staffType'])
     staffType = request.args['staffType']
     print("staff Type ", staffType, " is ", type(staffType))
-    dateRange = request.args['dateRange']
+    URIContractors = request.args['dateRange']
+    dateRange = unquote(URIContractors)
     contractors = Contractor.query.filter(Contractor.staffType == staffType).all()
     print("Received contractors:  ", contractors)
     dateRangeArray = datesArray(dateRange)
