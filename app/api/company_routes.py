@@ -55,8 +55,24 @@ def addCompanyContact(id):
     return { 'errors': validation_errors_to_error_messages(form.errors)}
 
 #Returns ALL locations for a given company, as well as company information
-@company_routes.route('/<int:id>', methods=['GET'])
+@company_routes.route('/info/<int:id>', methods=['GET'])
 # @login_required
 def getCompanyContact(id):
     contactInfo =  Company.query.get(id)
-    return {"companyContacts": [contactInfo.to_dict()]}
+    if (contactInfo):
+        return contactInfo.to_dict()
+    else:
+        return {'errors': ['Not Found']}, 404
+
+#Returns company object for given user id
+@company_routes.route('/<int:userId>', methods=['GET'])
+# @login_required
+def getCompany(userId):
+    company = Company.query.filter(Company.userId_fk == userId).all();
+    print('Company: ', company)
+    if (len(company) > 0):
+        ci = company[0].to_dict()
+        print("ci:  ", ci["companyContacts"])
+        return { "id": ci["id"], "userId": ci["userId"], "companyName": ci["companyName"], "companyContacts": ci["companyContacts"] }
+    else:
+        return {'errors': ['Not Found']}, 404

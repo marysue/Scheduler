@@ -4,7 +4,7 @@ import Header from "./header";
 import { v4 as uuidv4 } from 'uuid';
 import buildCalendar from './build';
 
-export default function Calendar() {
+export default function Calendar({datesBlocked, setDatesBlocked}) {
   console.log("Entered calendar ...");
   const [calendar, setCalendar] = useState([]);
   const [datesSelected, setDatesSelected] = useState([]);
@@ -15,18 +15,21 @@ export default function Calendar() {
     setCalendar(buildCalendar(selectedDate));
   }, [selectedDate]);
 
+  useEffect( () => {
+
+
+  }, []);
+
   function isSelected(day) {
-    //new
-    //
     if (dateRange.start !== '') {
       const start = dateRange.start;
       const end = dateRange.end;
       const currentDay = day.format();
 
-      // console.log(`Start: ${start}  End:  ${end}    CurrentDay: ${currentDay}`);
+      //console.log(`Start: ${start}  End:  ${end}    CurrentDay: ${currentDay}`);
       // console.log(`currentDay.isBefore(${start}) : ${moment(currentDay).isBefore(start)}`);
+      // console.log(`currentDay: (${currentDay} === ${start} || ${currentDay} === ${end}) ${moment(currentDay).isAfter(start) && moment(currentDay).isBefore(end)}`);
 
-      console.log(`currentDay: (${currentDay} === ${start} || ${currentDay} === ${end}) ${moment(currentDay).isAfter(start) && moment(currentDay).isBefore(end)}`);
       const inRange = moment(currentDay).isAfter(start) && moment(currentDay).isBefore(end)
       const isBorderDate = currentDay === end || currentDay === start;
 
@@ -57,7 +60,10 @@ export default function Calendar() {
   }
 
   function dayStyles(day) {
-    if (isSelected(day)) {
+    if (isSelected(day) || dayInBlocked(day)) {
+        //Once I figure out how to compare dates
+        //compare blocked dates to this day, and if
+        //in blocked dates, also return "selected"
         return "selected";
     }
 
@@ -78,17 +84,97 @@ export default function Calendar() {
   // function currYear() {
   //   return value.format("YYYY");
   // }
+  const addDateToBlocked = (day) => {
 
-  function handleDateClicked(e, day) {
-    console.log("Need to figure out what date was clicked:  ", day.format());
-    console.log("Received e.nativeEvent.shiftKey: ", e.nativeEvent.shiftKey);
-    if (day < moment(new Date()).startOf("day")) return;
-
-    if (dateRange.start === '') {
-       dateRange.start = day.format();
-       dateRange.end = day.format();
+    if (!dayInBlocked(day)) {
+      let blocked = [ ...datesBlocked];
+      blocked.push(day.format());
+      setDatesBlocked(blocked);
     }
 
+  }
+
+  const removeDateBlocked = (day) => {
+      let found = false;
+      for (let i=0; i < datesBlocked.length; i++) {
+        let [month, date, year]    = new Date(datesBlocked[i]).toLocaleDateString("en-US").split("/")
+        const newMoment = moment.utc([year, month - 1, date]);
+        if (newMoment.isSame(day, 'day')) {
+          //I have index of the day, now remove it
+          let newBlocked = [ ...datesBlocked]
+          newBlocked.splice(i, 1);
+          setDatesBlocked(newBlocked);
+          found = true;
+        }
+      }
+      if (!found) {
+        console.log("Failed to remove ", day.format('MM/DD/YY'), " from ", datesBlocked)
+      }
+  }
+
+
+  const unsetDateBlocked = (day) => {
+    for (let i = 0; i < datesBlocked.length; i++) {
+      if (day.isSame(datesBlocked[i])) {
+        console.log("We matched on a date blocked")
+      }
+    }
+  }
+
+  function dayInBlocked(day) {
+    for (let i=0; i < datesBlocked.length; i++) {
+      console.log("datesBlocked[", i, "]: ", datesBlocked[i], " and datesBlocked.length: ", datesBlocked.length);
+      let [month, date, year]    = new Date(datesBlocked[i]).toLocaleDateString("en-US").split("/")
+      const newMoment = moment.utc([year, month - 1, date]);
+      if (newMoment.isSame(day, 'day')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const addDateRangeToBlocked = () => {
+    if (dateRange.start !== undefined && dateRange.end !== undefined) {
+      addDateToBlocked(dateRange.start);
+      //Get 5 days from today:
+      //var startdate = moment("2020-12-10");
+      //new_date = moment(startdate, "DD-MM-YYYY").add('days', 5);
+
+      //Get difference in days:
+      //var a = moment([2007, 0, 29]);
+      //var b = moment[2007, 0, 28]);
+      //a.diff(b, 'days');  // => 1
+
+      const diff = dateRange.start.diff(dateRange.end, 'days');
+      console.log("difference: ", diff);
+
+      if (diff > 1) {
+        for (let i=1; i < diff - 1; i++) {
+          let tmpDay = dateRange.start;
+          tmpDay.add(i, 'day');
+          console.log("Next day is:  ", tmpDay.format('MM/DD/YYYY'));
+          addDateToBlocked(tmpDay);
+        }
+        addDateToBlocked(dateRange.end);
+        console.log("New blocked dates:  ", datesBlocked);
+      }
+    }
+  }
+
+  function handleDateClicked(e, day) {
+    if (dayInBlocked(day)) {
+      removeDateBlocked(day);
+      console.log("Removed:  ", datesBlocked)
+
+    }
+    if (day < moment(new Date()).startOf("day")) {
+      console.log("Day selected was less than today. Just returning out of click handler");
+       return;
+    }
+     if (dateRange.start === undefined) {
+      setDateRange({'start': day.format(), 'end': day.format()});
+
+    }
     if (e.nativeEvent.shiftKey) {
         if (day.format() > dateRange.start) {
                 dateRange.end = day.format()
@@ -100,12 +186,10 @@ export default function Calendar() {
         dateRange.start = day.format();
         dateRange.end = day.format();
       }
-
-    console.log("Date range is:  ", dateRange);
-
+    addDateToBlocked(day);
     const newArr = [ ...datesSelected, day.format() ];
     setDatesSelected(newArr);
-    console.log("Dates selected:  ", datesSelected);
+    console.log("Dates selected:  ", datesSelected)
   }
 
   return (

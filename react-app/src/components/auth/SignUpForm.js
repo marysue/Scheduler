@@ -16,7 +16,7 @@ import { Button,
          Select,
          Typography,
         } from '@material-ui/core';
-import { setUserName, setUserEmail, setUserType, setUserId } from '../../store/authentication';
+import { setUserEmail, setUserName, setUserId, setUserType } from '../../store/authentication';
 
 
 const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
@@ -60,33 +60,40 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
     if (values.password === values.repeatPassword) {
       const user = await signUp(values.username, values.email, values.password, values.userType);
       if (!user.errors) {
-        alert("Entering onSignup ...");
         setOpen(false);
         dispatch(setUserEmail(user.email));
         dispatch(setUserId(user.id));
         dispatch(setUserName(user.username));
         dispatch(setUserType(user.userType));
         window.localStorage.setItem("currentUser",user.id)
+        if (user.userType === "company") {
+          console.log("Redirecting to companyInfo ...")
+          return <Redirect to="/companyInfo" />
+        } else if (user.userType === "contractor") {
+          console.log("Redirecting to contractorInfo")
+          return <Redirect to="/contractorInfo" />
       } else {
         setErrors(user.errors);
       }
     } else {
       console.log("Passwords did not match ... ");
     }
-  };
+  }
+}
 
   const handleChange = (prop) => (event) => {
-    console.log("Inside handleChange for prop: ", prop, " and event.target.value: ", event.target.value)
     setValues({...values, [prop]: event.target.value});
   }
 
-  // if (authenticated) {
-  //   alert("SignUpForm:  User is authenticated ... redirecting to '/'");
-  //   return <Redirect to="/" />;
-  // }
+  if (authenticated) {
+    alert("SignUpForm:  User is authenticated ... redirecting to '/'");
+    return <Redirect to="/" />;
+  }
 
   if (window.localStorage.getItem("currentUser")) {
-    window.location.replace("/");
+    console.log("SignUpForm: Current user found, redirecting to '/'")
+    return <Redirect to="/" />;
+    //window.location.replace("/");
   }
 
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {
@@ -105,7 +112,7 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
         <div>
           <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Create Your Placement Scheduler Account</Typography>
         </div>
-
+        { errors ? <div className={classes.root}><Alert severity="error">{errors}</Alert></div> : null}
         <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
           <Grid container direction="column" justify="center" alignItems="center" spacing={2}>
           <div className={classes.root}>
@@ -144,15 +151,15 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
               <FormControl className={classes.formControl} style={{width:"100%", marginBottom:"20px"}}>
                 <InputLabel htmlFor="userType-helper" style={{paddingLeft:"15px"}}>User Type</InputLabel>
                 <Select
-                value={values.userType}
-                onChange={handleChange('userType')}
-                input={<OutlinedInput name='userType' id='userType-helper' />}
-              >
-                <MenuItem value=""><em>None</em></MenuItem>
-                <MenuItem value={"admin"}>Admin</MenuItem>
-                <MenuItem value={"contractor"}>Contractor</MenuItem>
-                <MenuItem value={"company"}>Company</MenuItem>
-              </Select>
+                  value={values.userType}
+                  onChange={handleChange('userType')}
+                  input={<OutlinedInput name='userType' id='userType-helper' />}
+                >
+                  <MenuItem value=""><em>None</em></MenuItem>
+                  <MenuItem value={"admin"}>Admin</MenuItem>
+                  <MenuItem value={"contractor"}>Contractor</MenuItem>
+                  <MenuItem value={"company"}>Company</MenuItem>
+                </Select>
               </FormControl>
 
 

@@ -6,11 +6,11 @@
   }
 
   .calendar .header {
-    background-color: lightblue;
+    background-color: blue;
     text-align: center;
     min-height: 2rem;
     line-height: 2rem;
-    color: var(--black);
+    color: white;
     font-family: var(--font-book);
     font-weight: 700;
     display: flex;
@@ -25,7 +25,7 @@
   }
 
   .calendar .body {
-    border: 1px solid lightblue;
+    border: 1px solid blue;
   }
 
   .calendar .header .previous {
@@ -93,5 +93,6 @@
 }
 
   .calendar .day div.today {
-    background-color: lightblue;
+    background-color: blue;
+    color: white;
   }

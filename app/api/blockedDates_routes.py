@@ -40,7 +40,9 @@ def getBlockedDates(id):
     today = datetime.now()
     blockedDates =  BlockedDate.query.filter(
         BlockedDate.contractorId_fk == id, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
-    return ({"blockedDates": [blockedDate.to_dict() for blockedDate in blockedDates]})
+
+    # return ({"blocked": retVal})
+    return ({"blockedDates": [blocked.to_dict() for blocked in blockedDates]})
 
 @blockedDate_routes.route('/', methods=['GET'])
 #@login_required

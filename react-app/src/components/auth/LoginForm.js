@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-// import { Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 //import { login } from "../../services/auth";
 import { login } from "../../store/authentication"
@@ -14,6 +14,8 @@ import { Button,
          Typography,
          } from '@material-ui/core';
 import { setUserEmail, setUserName, setUserId, setUserType } from '../../store/authentication';
+import { getContractorInfo,setContractorId, setContractorName, setContractorPhone, setContractorEmail, setContractorAddr1, setContractorAddr2, setContractorCity, setContractorState, setContractorZip } from '../../store/contractor';
+import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip } from '../../store/company';
 
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     console.log("Entered LoginForm")
@@ -56,23 +58,74 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     // const handleClickOpen = () => {
     //     setOpen(true);
     // };
+    const setLoginDetails = (userId) => {
+        setAuthenticated(true);
+        setOpen(false);
+        window.localStorage.setItem("currentUser", userId)
+    }
+
+    const dispatchLoginInfo = (email, id, username, userType) => {
+        dispatch(setUserEmail(email));
+        dispatch(setUserId(id));
+        dispatch(setUserName(username));
+        dispatch(setUserType(userType));
+    }
+
+    const dispatchSetContractorInfo = ( contractorId, email, name, phone, addr1, addr2, city, state, zip ) => {
+        dispatch(setContractorId(contractorId));
+        dispatch(setContractorEmail(email));
+        dispatch(setContractorName(name));
+        dispatch(setContractorPhone(phone));
+        dispatch(setContractorAddr1(addr1));
+        dispatch(setContractorAddr2(addr2));
+        dispatch(setContractorCity(city));
+        dispatch(setContractorState(state));
+        dispatch(setContractorZip(zip));
+    }
+
+    const dispatchSetCompanyInfo = (companyId, companyName, name, email, phone, addr1, addr2, city, state, zip) => {
+        dispatch(setCompanyId(companyId));
+        dispatch(setCompanyName(companyName));
+        dispatch(setCompanyContactName(name));
+        dispatch(setCompanyEmail(email));
+        dispatch(setCompanyPhone(phone));
+        dispatch(setCompanyAddr1(addr1));
+        dispatch(setCompanyAddr2(addr2));
+        dispatch(setCompanyCity(city));
+        dispatch(setCompanyState(state));
+        dispatch(setCompanyZip(zip));
+    }
 
     const handleSignIn = async (e) => {
         if (e) { e.preventDefault()};
-        console.log("inside handleSignIn...");
         const user = await login(values.email, values.password);
         if (!user.errors) {
-            setAuthenticated(true);
-            setOpen(false);
-            dispatch(setUserEmail(user.email));
-            dispatch(setUserId(user.id));
-            dispatch(setUserName(user.username));
-            dispatch(setUserType(user.userType));
-            console.log("user object: ", user);
-            console.log("user object:  ", user);
-            window.localStorage.setItem("currentUser",user.id)
-            //return <Redirect to="/" />
-            window.location.href="/"
+            dispatchLoginInfo(user.email, user.id, user.username, user.userType)
+            setLoginDetails(user.id);
+            console.log("User type:  ", user.userType)
+            if (user.userType === "contractor") {
+                const contractor = await getContractorInfo(user.id);
+                if (!contractor.errors) {
+                    console.log("Login: setting contractorInfo in Redux Store")
+                    dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
+                } else {
+                    setErrors(contractor.errors);
+                    console.log("LoginForm: No contractor info yet ... need to get it")
+                    return <Redirect to="/contractorInfo" />
+                }
+            } else if (user.userType === "company") {
+                const company = await getCompany(user.id);
+                if (!company.errors) {
+                    console.log("Login: setting companyInfo in Redux Store")
+                    dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
+                } else {
+                    setErrors(company.errors);
+                    console.log("LoginForm: No company info yet ... need to get it")
+                    return <Redirect to="/companyInfo" />
+                }
+            }
+            console.log("LoginForm:  Done logging in. Redirecting to '/' ...");
+            return <Redirect to="/" />
         } else {
           setErrors(user.errors);
         }
@@ -95,7 +148,8 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
 
     const loginDemo = async () => {
-        const user = await login('demo@aa.io', 'password');
+        // const user = await login('demo@aa.io', 'password');
+        const user = await login('da2@da2.com', 'password');
         if (!user.errors) {
             console.log("LoginDemo - received the following user info: ", user);
             dispatch(setUserEmail(user.email));
@@ -105,18 +159,44 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             window.localStorage.setItem("currentUser",user.id)
             console.log("user object: ", user);
             setAuthenticated(true);
-          setOpen(false);
+            setOpen(false);
+            window.localStorage.setItem("currentUser",user.id)
+            if (user.userType === "contractor") {
+                const contractor = await getContractorInfo(user.id);
+                if (!contractor.errors) {
+                    console.log("LoginDemo: setting contractorId")
+                    dispatch(setContractorId(contractor.contractorId));
+                } else {
+                    setErrors(contractor.errors);
+                    console.log("LoginForm: LoginDemo: No contractor info yet ... need to get it")
+                    return <Redirect to="/contractorInfo" />
+                }
+            } else if (user.userType === "company") {
+                const company = await getCompany(user.id);
+                if (!company.errors) {
+                    console.log("LoginDemo: setting companyId");
+                    dispatch(setCompanyId(company.companyId));
+                } else {
+                    setErrors(company.errors);
+                    console.log("LoginForm: LoginDemo: No company info. Redirecting ...");
+                    return <Redirect to="/companyInfo" />
+                }
+            }
 
-          //return <Redirect to="/" />
-          window.localStorage.setItem("currentUser",user.id)
-          window.location.href="/"
+            //   window.location.href="/"
+            console.log("LoginForm: finished logging in and redirecting to '/'");
+            return <Redirect to="/" />
         } else {
           setErrors(user.errors);
         }
     };
+
     if(window.localStorage.getItem("currentUser")){
-        window.location.replace("/")
+        console.log("LoginForm: currentUser in local storage ... redirecting to '/'");
+        return <Redirect to="/" />
+        // window.location.replace("/")
     }
+
     if (!open) {
         console.log("open is not defined or false...")
         return null
