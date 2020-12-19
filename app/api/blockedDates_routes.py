@@ -3,6 +3,7 @@ from app.models import db, BlockedDate
 from app.forms import BlockedDateForm
 from flask_login import login_required
 from datetime import datetime
+from urllib.parse import unquote
 
 blockedDate_routes = Blueprint('blocked', __name__)
 
@@ -17,21 +18,37 @@ def validation_errors_to_error_messages(validation_errors):
     return errorMessages
 
 #Creates a new blocked date for contractor <id>
-@blockedDate_routes.route('/<int:id>', methods=['POST'])
+@blockedDate_routes.route('/<int:contractorId>', methods=['POST'])
 # @login_required
-def addBlockedDate(id):
+def addBlockedDate(contractorId):
     form = BlockedDateForm()
     form['csrf_token'].data = request.cookies['csrf_token']
 
     if form.validate_on_submit():
-        newBlockedDate = BlockedDate(
-            contractorId_fk=id,
-            blocked=datetime.strptime(form.data['blocked'], '%Y-%m-%d %H:%M:%S')
-        )
-        db.session.add(newBlockedDate)
+        blockedArr = []
+        blockedStr = unquote(form.data['blocked'])
+        blockedArr = blockedStr.split(",")
+        print("BlockedArr: ", blockedArr)
+        for x in range(0, len(blockedArr)):
+            blockedObj=datetime.strptime(blockedArr[x], '%m/%d/%Y')
+            print("BlockedObj:  ", blockedObj)
+            blockedDate = BlockedDate.query.filter(BlockedDate.contractorId_fk == contractorId, BlockedDate.blocked == blockedObj).order_by(BlockedDate.blocked).all()
+            if (len(blockedDate) == 0):
+                newBlockedDate = BlockedDate(
+                     contractorId_fk=contractorId,
+                     blocked=blockedObj,
+                )
+                db.session.add(newBlockedDate)
         db.session.commit()
-        return newBlockedDate.to_dict()
-    return { 'errors': validation_errors_to_error_messages(form.errors)}
+        today = datetime.now()
+        # allBlocked = BlockedDate.query.filter(BlockedDate.contractorId_fk== contractorId, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
+        return 'ok' # {"blockedDates": [blocked.to_dict() for blocked in allBlocked]}
+    else:
+        print("Form errors: ", form.errors)
+        return 'ok'
+
+
+
 
 #Returns ALL blocked dates for a given contractor <id>
 @blockedDate_routes.route('/<int:id>', methods=['GET'])

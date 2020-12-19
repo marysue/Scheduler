@@ -5,5 +5,4 @@ from app.models import BlockedDate
 
 
 class BlockedDateForm(FlaskForm):
-    contractorId_fk = IntegerField('contractor id', validators=[DataRequired()])
     blocked = StringField('blocked date', validators=[DataRequired()])

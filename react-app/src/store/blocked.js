@@ -27,6 +27,7 @@ export default function reducer (state = {}, action) {
             return newState;
         }
         case SET_BLOCKED: {
+            //Setting an array of moment objects here
             const newState = { ...state};
             newState.blocked = action.blocked;
             console.log("Setting blocked: ", newState.blocked);
@@ -46,6 +47,20 @@ export default function reducer (state = {}, action) {
 export const createBlocked = async (contractorId, blocked) => {
     //Not sure if I need to URI encode startDate, endDate - see contractor as I uri encoded a fetch call there
     // for an example.  If I do uri encode it, it needs to be uncoded on the backend as well
+    console.log("Blocked:  ");
+
+    let blockedStr = '';
+    for (let i = 0; i < blocked.length; i++) {
+        console.log(blocked[i])
+        blockedStr += blocked[i].format('MM/DD/YYYY') //toString();
+        if (i !== blocked.length - 1) {
+            blockedStr += ','
+        }
+    }
+    const xmitStr = blockedStr //encodeURI(blockedStr);
+    console.log(xmitStr)
+    console.log("ContractorId: ", contractorId)
+
     const response = await fetch(`/api/blocked/${contractorId}`, {
       method: "POST",
       headers: {
@@ -53,7 +68,7 @@ export const createBlocked = async (contractorId, blocked) => {
       },
       body: JSON.stringify({
           contractorId,
-          blocked
+          blocked: xmitStr
         })
     });
     return await response.json();

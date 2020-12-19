@@ -4,6 +4,37 @@ import Header from "./header";
 import { v4 as uuidv4 } from 'uuid';
 import buildCalendar from './build';
 import DayCard from './DayCard';
+import GridComponent from './GridComponent'
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+
+const useStyles = makeStyles((theme) => ({
+    container: {
+      maxWidth: "1463px",
+      flexBasis: "100%",
+      display: 'grid',
+      gridAutoFlow: 'row',
+      gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr",
+      margin: "0px",
+      padding: "0px",
+    //   gridColumnGap: "0px",
+    //   gridGap: '0px',
+    },
+    paper: {
+      padding: theme.spacing(1),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+      whiteSpace: 'nowrap',
+      marginBottom: theme.spacing(1),
+    //   width: '100%',
+    //   height: '100%',
+    },
+    divider: {
+    //   margin: theme.spacing(2, 0),
+    },
+  }));
+
 
 
 export default function Calendar({datesBlocked, placementDates, setDatesBlocked, }) {
@@ -12,7 +43,7 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
   const [selectedDate, setSelectedDate] = useState(moment());
   const [dateRange, setDateRange] = useState({ 'start': '', 'end':''})
   const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
-
+  const classes = useStyles();
   useEffect(() => {
     setCalendar(buildCalendar(selectedDate));
   }, [selectedDate]);
@@ -191,39 +222,39 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
   }
 
   return (
+      <>
+
     <div className="calendar">
       <Header value={selectedDate} onChange={setSelectedDate} />
-
-      <div className="body">
-        <div className="day-names">
+    </div>
+          <Grid container spacing={1} className={classes.container}>
           {["S", "M", "T", "W", "T", "F", "S"].map((d) => {
             const uuid = uuidv4();
-            return (<div className="week"  key={uuid}>{d}</div>)
+            return (<Grid item xs={10} alignItems="flex-center" className="week" key={uuid}><center ><h2>{d}</h2></center></Grid>)
           })}
-        </div>
-        {calendar.map((week, wi) => {
-          const uuid = uuidv4();
-           wi = wi+uuid;
 
-          return (
-          <div key={wi}>
-            {week.map((day, di) => {
-              di = di+uuid;
-              return (
-              <div
-                key={day.format()}
-                className="day"
-                onClick={(e) => {handleDateClicked(e,day)}}
-              >
-                 <div className={dayStyles(day)}>
-                   {day.format("D").toString()}
-                 </div>
-               </div>
-            )
-          })}
-          </div>
-        )})}
-      </div>
-    </div>
+                {calendar.map((week, wi) => {
+                const uuid = uuidv4();
+                wi = wi+uuid;
+
+                return (
+                    <>
+
+                    { week.map((day, di) => {
+                    di = di+uuid;
+                    return (
+                        <>
+                            <Grid item xs={10}>
+                                <DayCard handleDateClicked={handleDateClicked} day={day}></DayCard>
+                            </Grid>
+                        </>
+                    )
+                })}
+
+                </>
+                )})}
+
+    </Grid>
+    </>
   );
 }

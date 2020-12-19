@@ -2,14 +2,14 @@
 .calendar {
     box-sizing: border-box;
     font-size: 1rem;
-    max-width: 800px;
+    max-width: 1146px;
   }
 
   .calendar .header {
-    background-color: blue;
+    background-color: rgb(61,61,61);
     text-align: center;
     min-height: 2rem;
-    line-height: 2rem;
+    line-height: 8rem;
     color: white;
     font-family: var(--font-book);
     font-weight: 700;
@@ -19,29 +19,31 @@
   .calendar .day-names {
     display: flex;
     flex-wrap: wrap;
-    max-width: 800px;
+    max-width: 1146px;
     margin: 0 auto;
     align-items: center;
+    color: white;
+
   }
 
   .calendar .body {
-    border: 1px solid blue;
+
   }
 
   .calendar .header .previous {
     flex: 1;
     text-align: left;
-    margin-left: 1rem;
+    margin-left: 10rem;
   }
 
   .calendar .header .next {
     flex: 1;
     text-align: right;
-    margin-right: 1rem;
+    margin-right: 10rem;
   }
 
   .calendar .week {
-    background-color: white;
+    background-color: rgb(61,61,61);
     width: calc(100% / 7);
     height: 66px;
     line-height: 66px;
@@ -84,6 +86,11 @@
   .calendar .day div.selected {
     background-color: red;
     color: var(--white);
+    font-weight: bold;
+  }
+
+  .calendar .day div.placement {
+    background-color: lightblue;
     font-weight: bold;
   }
 

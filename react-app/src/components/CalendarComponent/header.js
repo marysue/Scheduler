@@ -27,13 +27,13 @@ export default function CalendarHeader({ value, onChange }) {
         className="previous"
         onClick={() => !thisMonth() && onChange(prevMonth())}
       >
-        {!thisMonth() ? String.fromCharCode(171) : null}
+        <h1>{!thisMonth() ? String.fromCharCode(171) : null}</h1>
       </div>
       <div className="current">
-        {currMonthName()} {currYear()}
+        <h1>{currMonthName()} {currYear()}</h1>
       </div>
       <div className="next" onClick={() => onChange(nextMonth())}>
-        {String.fromCharCode(187)}
+        <h1>{String.fromCharCode(187)}</h1>
       </div>
     </div>
   );
