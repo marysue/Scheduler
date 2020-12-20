@@ -4,22 +4,26 @@ import Header from "./header";
 import { v4 as uuidv4 } from 'uuid';
 import buildCalendar from './build';
 import DayCard from './DayCard';
-import GridComponent from './GridComponent'
+import BlockedCard from './BlockedCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-      maxWidth: "1463px",
-      flexBasis: "100%",
+      maxWidth: "1054px",
+      // flexBasis: "100%",
       display: 'grid',
-      gridAutoFlow: 'row',
+      // gridAutoFlow: 'row',
       gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr",
-      margin: "0px",
-      padding: "0px",
+      // margin: "0px",
+      // padding: "0px",
     //   gridColumnGap: "0px",
     //   gridGap: '0px',
+    gridColumnStart: '1',
+    gridColumnEnd: '7',
+    gridTemplateColumns: "repeat(7, 150px)",
+    borderRadius: "4px",
+    // gridTemplateRows: "150px",
     },
     paper: {
       padding: theme.spacing(1),
@@ -37,13 +41,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, placementDates, setDatesBlocked, }) {
+export default function Calendar({datesBlocked, placements, placementDates, setDatesBlocked, }) {
   console.log("*****************************Calendar: Entered calendar****************************");
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   const [dateRange, setDateRange] = useState({ 'start': '', 'end':''})
   const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
+  console.log("DatesBlocked: ", datesBlocked);
   useEffect(() => {
     setCalendar(buildCalendar(selectedDate));
   }, [selectedDate]);
@@ -60,7 +65,6 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
       return(inRange || isBorderDate)
     }
   }
-
   function dayInPlacements(day) {
 
     for (let i=0; i < placementDates.length; i++) {
@@ -74,11 +78,9 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
   function beforeToday(day) {
     return moment(day).isBefore(new Date(), "day");
   }
-
   function isToday(day) {
     return moment(new Date()).isSame(day, "day");
   }
-
   function dayStyles(day) {
     //if (isSelected(day) || dayInBlocked(day)) {
       if (dayInBlocked(day)) {
@@ -98,15 +100,12 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
     }
     return "";
   }
-
   // function currMonthName() {
   //   return value.format("MMMM");
   // }
-
   // function currYear() {
   //   return value.format("YYYY");
   // }
-
   const printDatesArray = (da) => {
 
     for (let i = 0; i < da.length; i++) {
@@ -127,8 +126,7 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
      //printDatesArray(datesBlocked);
     }
 
-}
-
+  }
   const removeDateBlocked = (day) => {
       console.log("removeDateBlocked:  removing : ", day.format("MM/DD/YYYY"), " from blocked ");
       let found = false;
@@ -158,8 +156,6 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
         console.log("Failed to remove ", day.format('MM/DD/YY'), " from ", datesBlocked)
       }
   }
-
-
   function dayInBlocked(day) {
 
     for (let i=0; i < datesBlocked.length; i++) {
@@ -171,7 +167,6 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
       }
     return false;
   }
-
   const addDateRangeToBlocked = (start, end) => {
     //Only execute this function if the local state dateRange start and end have values
     console.log("addDateRangeToBlocked: ", start.format('MM/DD/YYYY'), " to ", end.format('MM/DD/YYYY'));
@@ -201,7 +196,6 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
     }
     removeDateBlocked(thisDay) //remove the end date
   }
-
   function handleDateClicked(e, day) {
     console.log("Day is: ", day)
     printDatesArray(datesBlocked)
@@ -223,38 +217,49 @@ export default function Calendar({datesBlocked, placementDates, setDatesBlocked,
 
   return (
       <>
-
-    <div className="calendar">
-      <Header value={selectedDate} onChange={setSelectedDate} />
-    </div>
-          <Grid container spacing={1} className={classes.container}>
-          {["S", "M", "T", "W", "T", "F", "S"].map((d) => {
-            const uuid = uuidv4();
-            return (<Grid item xs={10} alignItems="flex-center" className="week" key={uuid}><center ><h2>{d}</h2></center></Grid>)
-          })}
-
-                {calendar.map((week, wi) => {
+        <div >
+        <Grid container spacing={2} style={{color: "white", maxWidth: "1050px"}} spacing={1} xs={12} >
+            <Grid item xs={12}>
+                <div className="calendar">
+                  <Header value={selectedDate} onChange={setSelectedDate} />
+                </div>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} style={{color: "white", backgroundColor: "#616161", maxWidth: "1048px", marginBottom:"5px"}} className={classes.container} gridGap="10px" spacing={1} xs={12} >
+              {["S", "M", "T", "W", "T", "F", "S"].map((d) => {
                 const uuid = uuidv4();
-                wi = wi+uuid;
-
                 return (
-                    <>
+                  <Grid item alignItems="flex-center" className="week"  key={uuid}>
+                    <div>
+                      <center ><h2 >{d}</h2></center>
+                      </div>
+                  </Grid>
+                )
+              })}
+          </Grid>
+          <Grid container className={classes.container} spacing={1} xs={12}>
+            {calendar.map((week, wi) => {
+            const uuid = uuidv4();
+            wi = wi+uuid;
 
-                    { week.map((day, di) => {
-                    di = di+uuid;
-                    return (
-                        <>
-                            <Grid item xs={10}>
-                                <DayCard handleDateClicked={handleDateClicked} day={day}></DayCard>
-                            </Grid>
-                        </>
-                    )
+            return (
+              <>
+
+                { week.map((day, di) => {
+                  di = di+uuid;
+                  return (
+                          <Grid  item >
+                            {  dayInBlocked(day) ?
+                              <BlockedCard handleDateClicked={handleDateClicked} day={day}></BlockedCard> :
+                              <DayCard placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day}></DayCard> }
+                          </Grid>
+                  )
                 })}
-
-                </>
-                )})}
-
-    </Grid>
+              </>
+            )})}
+          </Grid>
+      </div>
     </>
+
   );
 }

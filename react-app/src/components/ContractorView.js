@@ -86,6 +86,7 @@ const ContractorView = () => {
                 }
                 setPlacements(placementObj);
                 setPlacementDates(pd);
+                console.log("Placement dates set:  ", placementDates);
             } else {
                 console.log("Errors getting placements:  ", p.errors);
             }

@@ -12,16 +12,17 @@ const useStyles = makeStyles({
   root: {
     width: "145px",
     height: "150px",
+    // width: "150px",
+    // height: "150px",
+    //display: "grid",
     backgroundColor: "#616161",
     color: "white",
+    // padding: "2px",
     borderRadius: "4px",
-  },
-  before: {
-    width: "145px",
-    height: "150px",
-    backgroundColor: "#C5C9Cb",
-    color: "white",
-    borderRadius: "4px",
+    // padding: "10px",
+    // paddingRight: "0px",
+    // margin: "0px",
+    // marginRight: "0px",
   },
   bullet: {
     display: 'inline-block',
@@ -36,21 +37,17 @@ const useStyles = makeStyles({
   },
 });
 
-export default function DayCard({datesBlocked, placements, placementDates, day, handleDateClicked}) {
+export default function BlockedCard({datesBlocked, placementDates, day, handleDateClicked}) {
 
     const classes = useStyles();
     function dayInPlacements(day) {
-      console.log("Placement dates: ", placementDates)
-      if (placementDates) {
+
         for (let i=0; i < placementDates.length; i++) {
            if (moment(day).isSame(placementDates[i], 'day')) {
              return true;
            }
           }
-         return false;
-      } else {
-          console.log("No placementDates...");
-      }
+        return false;
 
       }
       function beforeToday(day) {
@@ -95,28 +92,15 @@ export default function DayCard({datesBlocked, placements, placementDates, day, 
 const testHandler = (e, day) => {
     alert('TestHandler clicked');
 }
-if (!day) {
-  return null
- } else if (beforeToday(day)) {
-    return (
-    <Card className={classes.before}>
-      <CardContent>
-        <div>{day.format("D").toString()}</div>
-        { dayInPlacements(day) ?
-          <div>Placement found</div> : null }
-      </CardContent>
-    </Card>
-    )
-  } else {
+if (day) {
   return (
     <Card className={classes.root}>
       <CardContent onClick={ (e) => handleDateClicked(e, day)}>
         <div>{day.format("D").toString()}</div>
-        { dayInPlacements(day) ?
-          <div>Placement found</div> : null }
+        <img src="blocked.png" alt="Blocked Day"></img>
       </CardContent>
     </Card>
     // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>
   );
-  }
-  }
+} else { return null }
+}

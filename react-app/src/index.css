@@ -6,7 +6,9 @@
   }
 
   .calendar .header {
-    background-color: rgb(61,61,61);
+    background-color: rgb(97,97,97);
+    border-radius: 4px;
+    margin-bottom: 2px;
     text-align: center;
     min-height: 2rem;
     line-height: 8rem;
@@ -40,6 +42,7 @@
     flex: 1;
     text-align: right;
     margin-right: 10rem;
+    width: 1050px;
   }
 
   .calendar .week {
@@ -53,7 +56,8 @@
     font-weight: 400;
   }
   .calendar .week div {
-    width: 100%;
+    /* width: 100%; */
+    width: calc(100% / 7);
   }
 
   .calendar .day {
@@ -80,7 +84,7 @@
   }
 
   .calendar .day div.before {
-    color: grey;
+    color: rgb(208,208,208)
   }
 
   .calendar .day div.selected {
@@ -103,3 +107,29 @@
     background-color: blue;
     color: white;
   }
+
+  /* Styles for calendar test */
+.month-container {
+  display: grid;
+  grid-template-columns: 1;
+  text-align: center;
+}
+.days-of-week-container,
+.calendar-container {
+  display: grid;
+  grid-template-columns: repeat(7, 150px);
+  text-align: right;
+}
+
+/* Because this example was hard-coded, we KNOW that the first */
+/* date goes in Sunday - grid-column: 7.  Taking that away places */
+/* the first date on Monday (grid column 1) */
+.calendar-container div:first-child {
+  grid-column: 7;
+}
+
+.calendar-container div:hover {
+  background-color: red;
+  color: white;
+  cursor: pointer;
+}

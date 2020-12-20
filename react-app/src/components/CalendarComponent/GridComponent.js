@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 1fr)',
     gridGap: theme.spacing(3),
-    width: '150px',
-    height: '150px',
+    // width: '150px',
+    // height: '150px',
   },
   paper: {
     padding: theme.spacing(1),
@@ -19,8 +19,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     whiteSpace: 'nowrap',
     marginBottom: theme.spacing(1),
-    width: '150px',
-    height: '150px',
+    // width: '150px',
+    // height: '150px',
   },
   divider: {
     margin: theme.spacing(2, 0),
