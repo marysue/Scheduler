@@ -17,5 +17,5 @@ class BlockedDate(db.Model):
     return {
       "id": self.id,
       "contractorId": self.contractorId_fk,
-      "blocked": self.blocked,
+      "blocked": str(self.blocked).replace(" GMT", ""),
   }

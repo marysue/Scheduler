@@ -11,7 +11,7 @@
     margin-bottom: 2px;
     text-align: center;
     min-height: 2rem;
-    line-height: 8rem;
+    /* line-height: 8rem; */
     color: white;
     font-family: var(--font-book);
     font-weight: 700;
@@ -49,7 +49,7 @@
     background-color: rgb(61,61,61);
     width: calc(100% / 7);
     height: 66px;
-    line-height: 66px;
+    /* line-height: 66px; */
     text-align: center;
     text-transform: uppercase;
     color: var(--black);
@@ -80,7 +80,7 @@
     position: relative;
     color: blue;
     z-index: 100;
-    line-height: 44px;
+    /* line-height: 44px; */
   }
 
   .calendar .day div.before {

@@ -11,7 +11,7 @@ import moment from 'moment';
 const useStyles = makeStyles({
   root: {
     width: "145px",
-    height: "150px",
+    height: "100px",
     // width: "150px",
     // height: "150px",
     //display: "grid",
@@ -43,7 +43,7 @@ export default function BlockedCard({datesBlocked, placementDates, day, handleDa
     function dayInPlacements(day) {
 
         for (let i=0; i < placementDates.length; i++) {
-           if (moment(day).isSame(placementDates[i], 'day')) {
+           if (moment(day).local().isSame(placementDates[i], 'day')) {
              return true;
            }
           }
@@ -51,11 +51,11 @@ export default function BlockedCard({datesBlocked, placementDates, day, handleDa
 
       }
       function beforeToday(day) {
-        return moment(day).isBefore(new Date(), "day");
+        return moment(day).local().isBefore(new Date(), "day");
       }
 
       function isToday(day) {
-        return moment(new Date()).isSame(day, "day");
+        return moment(new Date()).isSame(day, "day").local();
       }
     const bull = <span className={classes.bullet}>•</span>;
 
@@ -64,7 +64,7 @@ export default function BlockedCard({datesBlocked, placementDates, day, handleDa
         for (let i=0; i < datesBlocked.length; i++) {
           //console.log("Calendar: dayInBlocked(", day.format("MM/DD/YYYY"), " matches: ", datesBlocked[i].format("MM/DD/YYYY"), " : ", moment(day).isSame(datesBlocked[i], 'day'));
           // console.log("datesBlocked[i] is a ", (typeof datesBlocked[i]));
-           if (moment(day).isSame(datesBlocked[i], 'day')) {
+           if (moment(day).local().isSame(datesBlocked[i], 'day')) {
              return true;
            }
           }

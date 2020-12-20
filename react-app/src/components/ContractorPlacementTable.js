@@ -319,7 +319,7 @@ const ContractorPlacementTable = ({placements}) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow>
+                    <TableRow key={index}>
                       <TableCell align="left">{row.companyName}</TableCell>
                       <TableCell align="right">{row.contact}</TableCell>
                       <TableCell align="right">{row.phone}</TableCell>

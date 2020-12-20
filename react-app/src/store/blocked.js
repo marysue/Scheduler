@@ -52,14 +52,13 @@ export const createBlocked = async (contractorId, blocked) => {
     let blockedStr = '';
     for (let i = 0; i < blocked.length; i++) {
         console.log(blocked[i])
-        blockedStr += blocked[i].format('MM/DD/YYYY') //toString();
+        blockedStr += blocked[i].format('MM/DD/YYYY hh:mm:ss') //toString();
+
         if (i !== blocked.length - 1) {
             blockedStr += ','
         }
     }
-    const xmitStr = blockedStr //encodeURI(blockedStr);
-    console.log(xmitStr)
-    console.log("ContractorId: ", contractorId)
+    const xmitStr = encodeURI(blockedStr);
 
     const response = await fetch(`/api/blocked/${contractorId}`, {
       method: "POST",

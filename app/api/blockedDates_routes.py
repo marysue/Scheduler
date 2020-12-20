@@ -27,12 +27,30 @@ def addBlockedDate(contractorId):
     if form.validate_on_submit():
         blockedArr = []
         blockedStr = unquote(form.data['blocked'])
-        blockedArr = blockedStr.split(",")
+        print("blockedStr = ", blockedStr)
+        if (blockedStr == ''):
+            blockedArr = []
+        else:
+            blockedArr = blockedStr.split(",")
         print("BlockedArr: ", blockedArr)
+        #get all date for this contractor
+        allDates = BlockedDate.query.filter(BlockedDate.contractorId_fk == contractorId).all()
+        for x in range(0, len(allDates)):
+            inArray = False
+            print("Looking at allDates[", x, "]: ", allDates[x].to_dict())
+            for y in range(0, len(blockedArr)):
+                print("Looking at blockedArr[", y, "]: ", blockedArr[y])
+                if (blockedArr[y] == allDates[x].blocked):
+                    inArray = True
+            if (inArray == False):
+                BlockedDate.query.filter(BlockedDate.id == allDates[x].id).delete()
+
+        # if date is not in array, add date to array
         for x in range(0, len(blockedArr)):
-            blockedObj=datetime.strptime(blockedArr[x], '%m/%d/%Y')
-            print("BlockedObj:  ", blockedObj)
+            blockedObj=datetime.strptime(blockedArr[x], '%m/%d/%Y %I:%M:%S')
+            print("Storing date as: ", blockedObj)
             blockedDate = BlockedDate.query.filter(BlockedDate.contractorId_fk == contractorId, BlockedDate.blocked == blockedObj).order_by(BlockedDate.blocked).all()
+            #if this date is not in blocked date, then add it.
             if (len(blockedDate) == 0):
                 newBlockedDate = BlockedDate(
                      contractorId_fk=contractorId,
@@ -41,8 +59,8 @@ def addBlockedDate(contractorId):
                 db.session.add(newBlockedDate)
         db.session.commit()
         today = datetime.now()
-        # allBlocked = BlockedDate.query.filter(BlockedDate.contractorId_fk== contractorId, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
-        return 'ok' # {"blockedDates": [blocked.to_dict() for blocked in allBlocked]}
+        allBlocked = BlockedDate.query.filter(BlockedDate.contractorId_fk== contractorId, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
+        return {"blockedDates": [blocked.to_dict() for blocked in allBlocked]}
     else:
         print("Form errors: ", form.errors)
         return 'ok'
@@ -59,6 +77,8 @@ def getBlockedDates(id):
         BlockedDate.contractorId_fk == id, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
 
     # return ({"blocked": retVal})
+    print("****************************************************")
+    print("Returning blockedDates: ", [blockedDate.to_dict() for blockedDate in blockedDates])
     return ({"blockedDates": [blocked.to_dict() for blocked in blockedDates]})
 
 @blockedDate_routes.route('/', methods=['GET'])
@@ -67,4 +87,5 @@ def getAllBlockedDates():
     today = datetime.now()
     blockedDates = BlockedDate.query.filter(
         BlockedDate.blocked >= today).all()
+
     return ({"blockedDates": [blockedDate.to_dict() for blockedDate in blockedDates]})

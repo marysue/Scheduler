@@ -24,8 +24,8 @@ class Placement(db.Model):
       "contractor": self.contractor.less_to_dict(),
       "company": self.company.less_to_dict(),
       "companyContact": self.companyContact.to_dict(),
-      "startDate": self.startDate,
-      "endDate": self.endDate,
+      "startDate": str(self.startDate).replace(" GMT", ""),
+      "endDate": str(self.endDate).replace(" GMT", ""),
     }
 
   def less_to_dict(self):
@@ -33,6 +33,6 @@ class Placement(db.Model):
       "id": self.id,
       "contractors": [contractor.less_to_dict() for contractor in self.contractor],
       "companyContacts": [companyContact.less_to_dict() for companyContact in self.companyContact],
-      "startDate": self.startDate,
-      "endDate": self.endDate,
+      "startDate": str(self.startDate).replace(" GMT", ""),
+      "endDate": str(self.endDate).replace(" GMT", "")
   }

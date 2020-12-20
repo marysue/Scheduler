@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'grid',
     gridTemplateColumns: 'repeat(7, 1fr)',
-    gridGap: theme.spacing(3),
     // width: '150px',
     // height: '150px',
   },

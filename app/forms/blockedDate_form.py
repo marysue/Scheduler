@@ -5,4 +5,4 @@ from app.models import BlockedDate
 
 
 class BlockedDateForm(FlaskForm):
-    blocked = StringField('blocked date', validators=[DataRequired()])
+    blocked = StringField('blocked date')

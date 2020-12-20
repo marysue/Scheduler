@@ -44,6 +44,9 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeContractorZip());
 
     window.localStorage.removeItem("currentUser")
+    window.localStorage.removeItem("user_id")
+    window.localStorage.removeItem("contractorId")
+    window.localStorage.removeItem("companyId")
   };
 
   return <button onClick={onLogout}>Logout</button>;
