@@ -72,6 +72,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     }
 
     const dispatchSetContractorInfo = ( contractorId, email, name, phone, addr1, addr2, city, state, zip ) => {
+        window.localStorage.setItem("contractorId", contractorId);
         dispatch(setContractorId(contractorId));
         dispatch(setContractorEmail(email));
         dispatch(setContractorName(name));
@@ -84,6 +85,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     }
 
     const dispatchSetCompanyInfo = (companyId, companyName, name, email, phone, addr1, addr2, city, state, zip) => {
+        window.localStorage.setItem("companyId", companyId)
         dispatch(setCompanyId(companyId));
         dispatch(setCompanyName(companyName));
         dispatch(setCompanyContactName(name));
@@ -162,10 +164,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             setOpen(false);
             window.localStorage.setItem("currentUser",user.id)
             if (user.userType === "contractor") {
+
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
                     console.log("LoginDemo: setting contractorId")
                     dispatch(setContractorId(contractor.contractorId));
+                    window.localStorage.setItem("contractorId", contractor.contractorId);
                 } else {
                     setErrors(contractor.errors);
                     console.log("LoginForm: LoginDemo: No contractor info yet ... need to get it")
@@ -176,6 +180,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 if (!company.errors) {
                     console.log("LoginDemo: setting companyId");
                     dispatch(setCompanyId(company.companyId));
+                    window.localStorage.setItem("companyId", company.companyId);
                 } else {
                     setErrors(company.errors);
                     console.log("LoginForm: LoginDemo: No company info. Redirecting ...");
@@ -190,8 +195,10 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
           setErrors(user.errors);
         }
     };
-
-    if(window.localStorage.getItem("currentUser")){
+    if (window.localStorage.getItem("contractorId")) {
+        console.log("LoginForm: contractorId in local storage ... redirecting to ContractorView")
+        return <Redirect to="/contractorCalendar"></Redirect>
+    } else if (window.localStorage.getItem("currentUser")){
         console.log("LoginForm: currentUser in local storage ... redirecting to '/'");
         return <Redirect to="/" />
         // window.location.replace("/")
