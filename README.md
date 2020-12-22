@@ -12,19 +12,18 @@ Checkout the live site at:  https://placement-scheduler.herokuapp.com/
 
 To run this application locally, you'll need to download this git repo and do the following:
 
-1.  Create a postgreSQL database user with CREATEDB role.
-2.  Create a postgreSQL database with owner <yourPostgreSQL db user>
-3.  Set your .env as shown in the ./.env.example file, modifying to use your database and owner information.
-4.  Set your react-app/.env as shown in the react-app/.env.example file
-5.  In the root directory of this project, run "pipenv install"
-6.  In the react-app directory, run "npm install"
-7.  In the root directory of this project run "pipenv shell"
-    a.  Initialize your flask db by running "flask db init"
-    b.  Create your database migrations by running "flask db migrate"
-    c.  Now migrate your database tables to your postgreSQL db by running "flask db upgrade"
-    d.  You're ready to start the app.  Run "flask run" to start your backend server
-8.  In the react-app directory, you're ready to start your frontend:  "npm start"
-
+1. Create a postgreSQL database user with CREATEDB role.
+2. Create a postgreSQL database with owner <yourPostgreSQL db user>
+3. Set your .env as shown in the ./.env.example file, modifying to use your database and owner information.
+4. Set your react-app/.env as shown in the react-app/.env.example file
+5. In the root directory of this project, run "pipenv install"
+6. In the react-app directory, run "npm install"
+7. In the root directory of this project run "pipenv shell"
+   a.  Initialize your flask db by running "flask db init"
+   b.  Create your database migrations by running "flask db migrate"
+   c.  Now migrate your database tables to your postgreSQL db by running "flask db upgrade"
+   d.  You're ready to start the app.  Run "flask run" to start your backend server
+8. In the react-app directory, you're ready to start your frontend:  "npm start"
 
 # Routes Needed
 
@@ -72,6 +71,7 @@ To run this application locally, you'll need to download this git repo and do th
       { [user.username, user.email, contractor.id, contractor.staff_type, contrLocation: { streetAddress1, streetAddress2, city, state, zip, contactPhone }, contractor.datesBlockedArr]
       ```
 6. 'schedule/'
+
    1. GET:  Returns ALL users placed. This is for the agency to understand when placements occur.
 
    ```bash
@@ -79,19 +79,19 @@ To run this application locally, you'll need to download this git repo and do th
    ```
 
    ## Frontend Routes
-8. '/login'
+7. '/login'
    ![Login Page](./docs/images/Login.png)
-9. '/sign-up'
+8. '/sign-up'
    ![Sign Up Page](./docs/images/SignUp.png)
-10. '/companyProfile'
-    ![Company Profile](./docs/images/CompanyProfile.png)
-11. '/contractorProfile'
+9. '/companyProfile'
+   ![Company Profile](./docs/images/CompanyProfile.png)
+10. '/contractorProfile'
     ![Contractor Profile](./docs/images/ContractorProfile.png)
-12. '/companyCalendar'
+11. '/companyView'
     ![Company Calendar](./docs/images/CompanyCalendar.png)
-13. '/contractorCalendar'
+12. '/contractorView'
     ![Contractor Calendar](./docs/images/ContractorCalendar.png)
-14. '/agencyCalendar'
+13. '/agencyView'
     ![Agency Calendar](./docs/images/AgencyCalendar.png)
 
 # Database Model

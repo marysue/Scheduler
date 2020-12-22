@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from 'react-router-dom';
 //import { logout } from "../../services/auth";
 import { logout } from '../../store/authentication';
 import { useDispatch } from 'react-redux';
@@ -12,7 +13,8 @@ const LogoutButton = ({setAuthenticated}) => {
 
   const onLogout = async (e) => {
     console.log("onLogout...")
-    await logout();
+    const retVal = await logout();
+    if (!retVal.errors) {
 
     setAuthenticated(false);
 
@@ -21,6 +23,7 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeUserEmail());
     dispatch(removeToken());
     dispatch(removeUserType());
+
     dispatch(removeCompanyId());
     dispatch(removeCompanyName());
     dispatch(removeCompanyContactName());
@@ -44,9 +47,15 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeContractorZip());
 
     window.localStorage.removeItem("currentUser")
-    window.localStorage.removeItem("user_id")
+    window.localStorage.removeItem("userId")
     window.localStorage.removeItem("contractorId")
     window.localStorage.removeItem("companyId")
+    window.localStorage.removeItem("agencyId");
+
+    return <Redirect to='/'></Redirect>
+    } else {
+      console.log("LogoutButton:  Errors logging out: ", retVal.errors);
+    }
   };
 
   return <button onClick={onLogout}>Logout</button>;

@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-// import { Redirect } from 'react-router-dom';
-import Calendar from './CalendarComponent/Calendar'
-//import DatesBlocked from './DatesBlocked'
 import { getAllBlocked, setBlocked, createBlocked } from '../store/blocked';
 import { Button } from '@material-ui/core';
 import { getContractorPlacements } from '../store/placement';
 import  ContractorPlacementTable  from './ContractorPlacementTable';
-import DayCard from './CalendarComponent/DayCard';
-import NewCalendar from './CalendarComponent/NewCalendar';
+import Calendar from './CalendarComponent/NewCalendar';
 import { setContractorId } from '../store/contractor';
 
 const ContractorView = () => {
@@ -124,7 +120,7 @@ const ContractorView = () => {
     } else {
         return (
             <>
-                <NewCalendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></NewCalendar>
+                <Calendar key={"contrCalendar"} datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
                 <Button onClick={saveDates} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
                 <ContractorPlacementTable placements={placements}></ContractorPlacementTable>

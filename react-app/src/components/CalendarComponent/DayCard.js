@@ -135,11 +135,11 @@ if (!day) {
     )
   } else {
   return (
-    <Card className={classes.root}>
-      <CardContent onClick={ (e) => handleDateClicked(e, day)}>
-        <div>{day.format("D").toString()}</div>
+    <Card key={"cardKey" } className={classes.root}>
+      <CardContent key={"cardContent"} onClick={ (e) => handleDateClicked(e, day)}>
+        <div key={day.format("D").toString()} >{day.format("D").toString()}</div>
         { dayInPlacements(day) && placementIndex(day) >= 0 ?
-          <div>{placements[placementIndex(day)].companyName}</div> : null }
+          <div key={placementIndex(day)}>{placements[placementIndex(day)].companyName}</div> : null }
       </CardContent>
     </Card>
     // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>

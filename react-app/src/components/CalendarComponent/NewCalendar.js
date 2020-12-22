@@ -227,18 +227,18 @@ export default function Calendar({datesBlocked, placements, placementDates, setD
   return (
       <>
         <div >
-        <Grid container spacing={2} style={{color: "white", maxWidth: "1050px"}} spacing={1} xs={12} >
-            <Grid item xs={12}>
+        <Grid key={"gridKey"} container spacing={2} style={{color: "white", maxWidth: "1050px"}} spacing={1} >
+            <Grid key={"gridItemKey"} item xs={12}>
                 <div className="calendar">
-                  <Header value={selectedDate} onChange={setSelectedDate} />
+                  <Header  key={"header1"} value={selectedDate} onChange={setSelectedDate}/>
                 </div>
             </Grid>
           </Grid>
-          <Grid container spacing={1} style={{color: "white", backgroundColor: "#616161", maxWidth: "1048px", marginBottom:"5px"}} className={classes.container}  spacing={1} xs={12} >
+          <Grid key={"2ndGridContainer"} container alignItems="center" spacing={1} style={{color: "white", backgroundColor: "#616161", maxWidth: "1048px", marginBottom:"5px"}} className={classes.container}  spacing={1}>
               {["S", "M", "T", "W", "T", "F", "S"].map((d) => {
                 const uuid = uuidv4();
                 return (
-                  <Grid item alignItems="flex-center" className="week"  key={uuid}>
+                  <Grid item className="week"  key={uuid}>
                     <div>
                       <center ><h2 >{d}</h2></center>
                       </div>
@@ -246,7 +246,7 @@ export default function Calendar({datesBlocked, placements, placementDates, setD
                 )
               })}
           </Grid>
-          <Grid container className={classes.container} spacing={1} xs={12}>
+          <Grid key={"3rdGridContainer"} container className={classes.container} spacing={1}>
             {calendar.map((week, wi) => {
             const uuid = uuidv4();
             wi = wi+uuid;
@@ -257,10 +257,10 @@ export default function Calendar({datesBlocked, placements, placementDates, setD
                 { week.map((day, di) => {
                   di = di+uuid;
                   return (
-                          <Grid  item key={di}>
+                          <Grid item key={di}>
                             {  dayInBlocked(day) ?
-                              <BlockedCard handleDateClicked={handleDateClicked} day={day}></BlockedCard> :
-                              <DayCard placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day}></DayCard> }
+                              <BlockedCard key={di+"blocked"} handleDateClicked={handleDateClicked} day={day}></BlockedCard> :
+                              <DayCard key={di+"day"} placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day}></DayCard> }
                           </Grid>
                   )
                 })}
