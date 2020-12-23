@@ -109,3 +109,6 @@ export const getContractorPlacements = async (contractorId) => {
         }});
     return await response.json();
 }
+
+// export const getContractorCalendarDates = async (contractorId) => {
+//     const response = await fetch('/api/placement/contractor/'
