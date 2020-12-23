@@ -116,3 +116,45 @@ def getAllPlacements(id):
 def getAllContrPlacements(id):
     placements = Placement.query.filter(Placement.contractorId_fk == id).order_by(Placement.startDate).all()
     return {"placements": [placement.to_dict() for placement in placements]}
+
+@placement_routes.route('/company/calendarInfo/<int:companyId>', methods=['GET'])
+def getPlacementDateInfo(companyId):
+    placements =  Placement.query.filter(Placement.companyId_fk == companyId).order_by(Placement.startDate).all()
+    placementStruct = createPlacements([placement.to_dict() for placement in placements])
+    return placementStruct
+
+def createPlacementTableInfo(placements):
+    placementInfo = []
+    for placement in placements:
+        contractorInfo = {
+            "contractorInfo": {
+                "name": placement["contractor"]["contractorContact"]["name"],
+                "phone": placement["contractor"]["contractorContact"]["phone"],
+                "email": placement["contractor"]["contractorContact"]["email"],
+                "staffType": placement["contractor"]["staffType"],
+                "city": placement["contractor"]["contractorContact"]["city"],
+                "startDate": str(datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")),
+                "endDate": str(datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S"))
+            }
+        }
+        placementInfo.append(contractorInfo)
+
+    return placementInfo
+
+@placement_routes.route('/company/tableInfo/<int:companyId>', methods=['GET'])
+def getPlacementTableInfo(companyId):
+    placements = Placement.query.filter(Placement.companyId_fk == companyId).order_by(Placement.startDate).all()
+    placementTableStruct = createPlacementTableInfo([placement.to_dict() for placement in placements])
+    return {"placements": placementTableStruct}
+
+@placement_routes.route('/agency/calendarInfo', methods=['GET'])
+def getAllPlacementDateInfo():
+    placements = Placement.query.order_by(Placement.startDate).all()
+    placementStruct  = createPlacements([placement.to_dict() for placement in placements])
+    return placementStruct
+
+@placement_routes.route('/agency/tableInfo', methods=['GET'])
+def getAllTableInfo():
+    placements = Placement.query.order_by(Placement.startDate).all()
+    placementStruct  = createPlacementTableInfo([placement.to_dict() for placement in placements])
+    return {"placements": placementStruct}
