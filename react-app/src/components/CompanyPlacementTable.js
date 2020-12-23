@@ -50,11 +50,11 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'companyName', numeric: false, disablePadding: true, label: 'Company Name' },
-  { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
+  { id: 'contractorName', numeric: false, disablePadding: true, label: 'Contractor Name' },
+  { id: 'staffType', numeric: false, disablePadding: false, label: 'Staff Type' },
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
+  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
   { id: 'startDate', numeric: true, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
@@ -103,12 +103,14 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
+  // marginLeft: "10px",
 };
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: theme.spacing(2),
+    paddingLeft: "10px",
     paddingRight: theme.spacing(1),
+    marginLeft: "10px",
   },
   highlight:
     theme.palette.type === 'light'
@@ -178,6 +180,9 @@ const useStyles = makeStyles((theme) => ({
   table: {
     minWidth: 750,
   },
+  tableCell: {
+    paddingLeft: '20px',
+  },
   visuallyHidden: {
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -191,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractorPlacementTable = ({placements}) => {
+const CompanyPlacementTable = ({placements}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -209,14 +214,14 @@ const ContractorPlacementTable = ({placements}) => {
   for (let i=0; i < placements.length; i++) {
       let start = moment(placements[i].startDate).format('MM/DD/YYYY');
       let end = moment(placements[i].endDate).format('MM/DD/YYYY');
-      let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
+      // let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
       rows.push(createData(
-        placements[i].companyName,
-        placements[i].contactName,
+        placements[i].name,
+        placements[i].staffType,
         // placements[i].contactPhone,
         '925-866-1111',
-        placements[i].contactEmail,
-        address,
+        placements[i].email,
+        placements[i].city,
         start,
         end, ));
       }
@@ -253,25 +258,25 @@ const ContractorPlacementTable = ({placements}) => {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
+  // const handleClick = (event, name) => {
+  //   const selectedIndex = selected.indexOf(name);
+  //   let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    setSelected(newSelected);
-  };
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -286,15 +291,15 @@ const ContractorPlacementTable = ({placements}) => {
     setDense(event.target.checked);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  // const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
+    <div   className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} padding={"none"}/>
-        <TableContainer>
+        <TableContainer className={classes.tableCell} >
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
@@ -302,7 +307,6 @@ const ContractorPlacementTable = ({placements}) => {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              paddingLeft="10px"
               classes={classes}
               numSelected={selected.length}
               order={order}
@@ -310,23 +314,24 @@ const ContractorPlacementTable = ({placements}) => {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                  // const isItemSelected = isSelected(row.name);
+                  // const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
-                    <TableRow key={index}>
+                    <TableRow  key={index}>
                       <TableCell align="left">{row.companyName}</TableCell>
-                      <TableCell align="right">{row.contact}</TableCell>
-                      <TableCell align="right">{row.phone}</TableCell>
-                      <TableCell align="right">{row.email}</TableCell>
-                      <TableCell align="right">{row.address}</TableCell>
+                      <TableCell align="left">{row.contact}</TableCell>
+                      <TableCell align="left">{row.phone}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.address}</TableCell>
                       <TableCell align="right">{row.startDate}</TableCell>
-                      <TableCell align="right">{row.endDate}</TableCell>
+                      <TableCell align="left">{row.endDate}</TableCell>
                     </TableRow>
                   );
                 })}
@@ -356,4 +361,4 @@ const ContractorPlacementTable = ({placements}) => {
   );
 }
 
-export default ContractorPlacementTable;
+export default CompanyPlacementTable;

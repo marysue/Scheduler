@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-// import { Redirect } from 'react-router-dom';
-import Calendar from './CalendarComponent/Calendar'
-//import DatesBlocked from './DatesBlocked'
-import { getAllBlocked, setBlocked, createBlocked } from '../store/blocked';
 import { Button } from '@material-ui/core';
 import { getCompanyPlacements } from '../store/placement';
 import  CompanyPlacementTable  from './CompanyPlacementTable';
-import NewCalendar from './CalendarComponent/NewCalendar';
+import NewCalendar from './CalendarComponent/Calendar';
 import { setCompanyId } from '../store/company';
 
 const CompanyView = () => {
@@ -17,24 +13,50 @@ const CompanyView = () => {
     const companyId = useSelector(state => state.company.companyId);
     const [placements, setPlacements] = useState([]);
     const [placementDates, setPlacementDates] = useState([]);
+    console.log(" *********Entered Company View**************")
+    console.log("placementDates array length: ", placementDates.length);
 
-    function getDateRange(startDate, endDate) {
-        let start = moment(startDate).local();
-        let end = moment(endDate).local();
-        // console.log("Local start date:  ", start.format('MM/DD/YY hh:mm:ss'))
+    // function printRange(message, range) {
+    //     console.log(message);
+    //     for (let i = 0; i < range.length; i++) {
+    //         console.log("     range[", i, "]: ", range[i].format('MM/DD/YYYY hh:mm:ss'));
+    //     }
+    // }
+
+    function getDateRange(startDate, endDate, pdArr) {
+
+        let start = moment(startDate);
+        let end = moment(endDate);
 
         let diff = end.diff(start, 'days') + 1;
         let thisDay = start.local().format('MM/DD/YYYY');
-        let range = [];
-        range.push(start)
-        for (let i = 1; i !== diff + 1; i++) {
-            let tmpDay = moment(thisDay).local();
-            range.push(tmpDay);
-            thisDay = tmpDay.add(1, 'day').format('MM/DD/YYYY hh:mm:ss')
+        let range = [...pdArr];
+        for (let i = 0; i < range; i++) {
+            console.log("     range[", i, "]: ", range[i].format('MM/DD/YYYY hh:mm:ss'))
         }
-        // for (let i = 0; i < range.length; i++) {
-        //     console.log("range[", i, "]: ", range[i].format('MM/DD/YYYY hh:mm:ss'));
-        // }
+        //range.push(start)
+        for (let i = 1; i !== diff + 1; i++) {
+            let duplicate = false;
+            let tmpDay = moment(thisDay).local();
+
+            for (let k = 0; k < range.length; k++) {
+                let rangeStart = range[k].startOf('day');
+                let tmpStart = tmpDay.startOf('day');
+
+                if (rangeStart.isSame(tmpStart)) {
+                    duplicate = true;
+                }
+            }
+
+            if (!duplicate) {
+                range.push(tmpDay);
+            }
+            let tmpTmpDay = moment(tmpDay.format("MM/DD/YYYY hh:mm:ss"))
+            thisDay = tmpTmpDay.add(1, 'day').format('MM/DD/YYYY hh:mm:ss')
+        }
+        for (let i = 0; i < range.length; i++) {
+            console.log("range[", i, "]: ", range[i].format('MM/DD/YYYY hh:mm:ss'));
+        }
         return range;
     }
 
@@ -47,28 +69,50 @@ const CompanyView = () => {
         }
         (async() => {
             const placements = await getCompanyPlacements(companyId);
+            console.log("************ Placement dates array length: ", placementDates.length)
             if (!placements.errors) {
                 let pl = placements["placements"]
                 const placementArr = []
+                let placementDatesArr = []
                 for (let i = 0; i < pl.length; i++) {
                     // console.log("Received date blocked: ", pl[i].blocked)
                     const startDate = moment(pl[i].startDate.replace(" GMT", "")).format('MM/DD/YYYY HH:mm:ss')
                     const endDate = moment(pl[i].endDate.replace(" GMT", "")).format('MM/DD/YYYY HH:mm:ss')
-                    const name = pl[i].contractor.name;
-                    const email = pl[i].contractor.email;
-                    const phone = pl[i].contractor.phone;
-                    const city = pl[i].contractor.city;
+                    const name = pl[i].contractor.contractorContact.name;
+                    const email = pl[i].contractor.contractorContact.email;
+                    const phone = pl[i].contractor.contractorContact.phone;
+                    const city = pl[i].contractor.contractorContact.city;
+                    const staffType = pl[i].contractor.staffType;
                     const contractorId = pl[i].contractor.id
                     // console.log("date: ", date);
                     // console.log("Tranforming into moment: ", moment(date).format('MM/DD/YYYY HH:mm:ss'));
                     // console.log("Transforming into local : ", moment(pl[i].blocked).local());
-                    placementArr.push({startDate, endDate, name, email, phone, city, contractorId});
+                    placementArr.push({startDate, endDate, name, email, phone, city, staffType, contractorId});
+
+                    const pd = getDateRange(startDate, endDate, placementDatesArr);
+                    console.log("Received from getDateRange: ")
+                    // for (let k=0; k < pd.length || k == 5; k++) {
+                    //     console.log("     dateRange[", k, "]: ", pd[k].format('MM/DD/YYYY hh:mm:ss'))
+                    // }
+                    console.log("Before setting PlacementDates in useEffect: ")
+                    for (let k=0; k < placementDatesArr.length; k++) {
+                        console.log("     placementDates[", k, "]: ", placementDatesArr[k].format('MM/DD/YYYY hh:mm:ss'))
+                    }
+                    placementDatesArr = ([...pd])
+                    console.log("After updating PlacementDates: ")
+                    for (let k=0; k < placementDatesArr.length || k === 5; k++) {
+                        console.log("      placementDatesArr[", k, "]: ", placementDatesArr[k].format('MM/DD/YYYY hh:mm:ss'))
+                    }
+                    console.log("Placement date for [", i, "]: ", pd)
+                    // setPlacementDates(...placementDates, ...pd)
                 }
                 console.log("Placement array in CompanyView: ")
-                for (let i = 0; i < placementArr.length; i++) {
+                for (let i = 0; i < placementArr.length || i === 5; i++) {
                     console.log("placementArr[", i, "]:  ", placementArr[i])
                 }
-                // setPlacements(placementArr);
+                setPlacements(placementArr);
+                setPlacementDates([...placementDatesArr])
+                console.log("Placement dates: ", placementDatesArr);
             } else {
                 console.log("CompanyView:  Error from getAllPlacements fetch call");
             }

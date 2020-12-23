@@ -1,11 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { requirePropFactory } from '@material-ui/core';
 import moment from 'moment';
 
 const useStyles = makeStyles({
@@ -59,43 +55,9 @@ export default function DayCard({datesBlocked, placements, placementDates, day, 
         console.log("DayCard: beforeToday(day)");
         return moment(day).local().isBefore(new Date(), "day");
       }
-      function isToday(day) {
-        console.log("DayCard: isToday(day)");
-        return moment(new Date()).isSame(day, "day");
-      }
+
     // const bull = <span className={classes.bullet}>•</span>;
-    function dayInBlocked(day) {
-      // console.log("DayCard: dayInBlocked(day)")
 
-        for (let i=0; i < datesBlocked.length; i++) {
-          //console.log("Calendar: dayInBlocked(", day.format("MM/DD/YYYY"), " matches: ", datesBlocked[i].format("MM/DD/YYYY"), " : ", moment(day).isSame(datesBlocked[i], 'day'));
-          // console.log("datesBlocked[i] is a ", (typeof datesBlocked[i]));
-           if (moment(day).isSame(datesBlocked[i], 'day')) {
-             return true;
-           }
-          }
-        return false;
-      }
-    function dayStyles(day) {
-      // console.log("DayCard: dayStyles(day)");
-    //if (isSelected(day) || dayInBlocked(day)) {
-      if (dayInBlocked(day)) {
-        return "selected";
-    }
-
-    if (dayInPlacements(day)) {
-      return "placement";
-    }
-
-    if (beforeToday(day)) {
-      return "before";
-    }
-
-    if (isToday(day)) {
-      return "today";
-    }
-    return "";
-  }
     function placementIndex(day) {
       for (let i=0; i<placements.length; i++) {
         const start = moment(placements[i].startDate)
@@ -117,10 +79,6 @@ export default function DayCard({datesBlocked, placements, placementDates, day, 
       }
     }
 
-
-const testHandler = (e, day) => {
-    alert('TestHandler clicked');
-}
 if (!day) {
   return null
  } else if (beforeToday(day)) {

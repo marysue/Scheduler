@@ -14,10 +14,10 @@ import { Button,
         } from '@material-ui/core';
 
 import { makeStyles  } from '@material-ui/core/styles';
-import { addCompany, addCompanyContact, setCompanyId, setCompanyName, setCompanyContactName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip} from '../store/company'
+import { addCompany, addCompanyContact, setCompanyId, setCompanyName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip} from '../store/company'
 
 
-const CompanyInfo = ({authenticated}) => {
+const CompanyInfo = () => {
   const userId = useSelector(state => state.authentication.userId);
   console.log("User id is now set to:  ", userId);
   console.log("Company Info:  Entered company info...");

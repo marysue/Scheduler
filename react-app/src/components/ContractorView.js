@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-import { getAllBlocked, setBlocked, createBlocked } from '../store/blocked';
+import { getAllBlocked, setBlocked} from '../store/blocked';
 import { Button } from '@material-ui/core';
 import { getContractorPlacements } from '../store/placement';
 import  ContractorPlacementTable  from './ContractorPlacementTable';
-import Calendar from './CalendarComponent/NewCalendar';
+import Calendar from './CalendarComponent/Calendar';
 import { setContractorId } from '../store/contractor';
 
 const ContractorView = () => {
@@ -109,7 +109,7 @@ const ContractorView = () => {
         })();
     }, [contractorId] )
     const saveDates = async () => {
-        const blocked = createBlocked(contractorId, datesBlocked)
+        // const blocked = createBlocked(contractorId, datesBlocked)
         dispatch(setBlocked(datesBlocked));
 
     }
