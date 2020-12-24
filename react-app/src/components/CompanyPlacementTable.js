@@ -211,19 +211,21 @@ const CompanyPlacementTable = ({placements}) => {
       return { companyName, contact, phone, email, address, startDate, endDate };
     }
   const rows = [];
-  for (let i=0; i < placements.length; i++) {
-      let start = moment(placements[i].startDate).format('MM/DD/YYYY');
-      let end = moment(placements[i].endDate).format('MM/DD/YYYY');
-      // let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
-      rows.push(createData(
-        placements[i].name,
-        placements[i].staffType,
-        // placements[i].contactPhone,
-        '925-866-1111',
-        placements[i].email,
-        placements[i].city,
-        start,
-        end, ));
+  if (placements) {
+    for (let i=0; i < placements.length; i++) {
+        let start = moment(placements[i].startDate).format('MM/DD/YYYY');
+        let end = moment(placements[i].endDate).format('MM/DD/YYYY');
+        // let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
+        rows.push(createData(
+          placements[i].name,
+          placements[i].staffType,
+          // placements[i].contactPhone,
+          '925-866-1111',
+          placements[i].email,
+          placements[i].city,
+          start,
+          end, ));
+        }
       }
 
 

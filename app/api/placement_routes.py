@@ -38,6 +38,25 @@ def getContractorInfo(placement):
     }
     return contractorInfo
 
+def getCompanyInfo(placement):
+    companyInfo = {}
+    startDate = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
+    endDate = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
+    companyInfo = {
+        "companyInfo": {
+            "companyName": placement["company"]["companyName"],
+            "name": placement["companyContact"]["name"],
+            "phone": placement["companyContact"]["phone"],
+            "email": placement["companyContact"]["email"],
+            "city": placement["companyContact"]["city"],
+            "startTime": str(startDate.hour) + ":" + str(startDate.minute),
+            "endTime": str(endDate.hour) + ":" + str(endDate.minute),
+            "startDate": str(startDate),
+            "endDate": str(endDate)
+        }
+    }
+    return companyInfo
+
 def addTo(a_dict, key, ci):
     if (key in a_dict.keys()):
         a_dict[key].append(ci)
@@ -45,10 +64,17 @@ def addTo(a_dict, key, ci):
         a_dict[key] = [ ci ]
     return a_dict
 
-def createPlacements(placements):
+def createPlacements(placements, userType):
     a_dict = {}
+
     for placement in placements:
-        ci = getContractorInfo(placement)
+        if (userType == 'company'):
+            ci = getContractorInfo(placement)
+        elif (userType == 'contractor'):
+            ci = getCompanyInfo(placement)
+        elif (userType == 'agency'):
+            ci = getCompanyInfo(placement)
+
         start = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
         end = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
         if (start.year != end.year) or (start.month != end.month) or (start.day != end.day):
@@ -95,7 +121,7 @@ def addPlacement(id):
         return newPlacement.to_dict()
     return { 'errors': validation_errors_to_error_messages(form.errors)}
 
-def createPlacementTableInfo(placements):
+def createContractorPlacementTableInfo(placements):
     placementInfo = []
     for placement in placements:
         contractorInfo = {
@@ -113,6 +139,29 @@ def createPlacementTableInfo(placements):
 
     return placementInfo
 
+def createCompanyPlacementTableInfo(placements):
+    placementInfo = []
+
+    for placement in placements:
+        startDate = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
+        endDate = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
+        companyInfo = {
+            "companyInfo": {
+                "companyName": placement["company"]["companyName"],
+                "name": placement["companyContact"]["name"],
+                "phone": placement["companyContact"]["phone"],
+                "email": placement["companyContact"]["email"],
+                "address": placement["companyContact"]["addr1"] + ", " + placement["companyContact"]["addr2"],
+                "city": placement["companyContact"]["city"],
+                "startTime": str(startDate.hour) + ":" + str(startDate.minute),
+                "endTime": str(endDate.hour) + ":" + str(endDate.minute),
+                "startDate": str(startDate),
+                "endDate": str(endDate)
+            }
+        }
+        placementInfo.append(companyInfo)
+    return placementInfo
+
 ######################CONTRACTOR SPECIFIC PLACEMENTS
 #Returns ALL placements for a given contractor
 @placement_routes.route('/contractor/<int:contractorId>', methods=['GET'])
@@ -123,13 +172,13 @@ def getContrPlacements(contractorId):
 @placement_routes.route('/contractor/calendarInfo/<int:contractorId>', methods=['GET'])
 def getContrPlacementCalendarInfo(contractorId):
   placements = Placement.query.filter(Placement.contractorId_fk == contractorId).order_by(Placement.startDate).all()
-  placementStruct = createPlacements([placement.to_dict() for placement in placements])
-  return ({"placements": placementStruct})
+  placementStruct = createPlacements([placement.to_dict() for placement in placements], "contractor")
+  return (placementStruct)
 
 @placement_routes.route('/contractor/tableInfo/<int:contractorId>', methods=['GET'])
 def getContrPlacementTableInfo(contractorId):
     placements = Placement.query.filter(Placement.contractorId_fk == contractorId).order_by(Placement.startDate).all()
-    placementTableStruct = createPlacementTableInfo([placement.to_dict() for placement in placements])
+    placementTableStruct = createCompanyPlacementTableInfo([placement.to_dict() for placement in placements])
     return {"placements": placementTableStruct}
 
 
@@ -138,13 +187,13 @@ def getContrPlacementTableInfo(contractorId):
 @placement_routes.route('/company/calendarInfo/<int:companyId>', methods=['GET'])
 def getCoPlacementDateInfo(companyId):
     placements =  Placement.query.filter(Placement.companyId_fk == companyId).order_by(Placement.startDate).all()
-    placementStruct = createPlacements([placement.to_dict() for placement in placements])
+    placementStruct = createPlacements([placement.to_dict() for placement in placements], "company")
     return placementStruct
 
 @placement_routes.route('/company/tableInfo/<int:companyId>', methods=['GET'])
 def getCoPlacementTableInfo(companyId):
     placements = Placement.query.filter(Placement.companyId_fk == companyId).order_by(Placement.startDate).all()
-    placementTableStruct = createPlacementTableInfo([placement.to_dict() for placement in placements])
+    placementTableStruct = createContractorPlacementTableInfo([placement.to_dict() for placement in placements])
     return {"placements": placementTableStruct}
 
 #########################AGENCY PLACEMENTS
@@ -158,7 +207,7 @@ def getAll():
 @placement_routes.route('/agency/calendarInfo', methods=['GET'])
 def getAllPlacementDateInfo():
     placements = Placement.query.order_by(Placement.startDate).all()
-    placementStruct  = createPlacements([placement.to_dict() for placement in placements])
+    placementStruct  = createPlacements([placement.to_dict() for placement in placements], "agency")
     return placementStruct
 
 @placement_routes.route('/agency/tableInfo', methods=['GET'])

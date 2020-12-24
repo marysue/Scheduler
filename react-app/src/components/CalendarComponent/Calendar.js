@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import moment from "moment";
 import Header from "./header";
 import { v4 as uuidv4 } from 'uuid';
@@ -41,13 +42,18 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, placements, placementDates, setDatesBlocked, }) {
+export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
   console.log("*****************************Calendar: Entered calendar****************************");
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   // const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
-  console.log("DatesBlocked: ", datesBlocked);
+  const placements = useSelector ( state => state.placement.placementInfo );
+  const placementDates = useSelector(state => state.placement.placementDates);
+  // console.log("Calendar: DatesBlocked: ", datesBlocked);
+  // console.log("Calendar: placements: ", placements);
+  // console.log("Calendar: placementDates: ", placementDates);
+
   useEffect(() => {
     setCalendar(buildCalendar(selectedDate));
   }, [selectedDate]);
@@ -65,14 +71,24 @@ export default function Calendar({datesBlocked, placements, placementDates, setD
   //   }
   // }
   function dayInPlacements(day) {
-    console.log("NewCalendar: dayInPlacements(day)");
+    console.log("NewCalendar: day = ", day.format('YYYY-MM-DD'));
+    const dayStr = day.format('YYYY-MM-DD')
 
-    for (let i=0; i < placementDates.length; i++) {
-       if (moment(day).local().isSame(placementDates[i], 'day')) {
-         return true;
-       }
-      }
-    return false;
+
+    if (dayStr in placementDates) {
+      console.log("Calendar: dayInPlacements: Found ", dayStr, " in placementDates");
+      return true;
+    } else {
+      console.log("Did not find ", dayStr, " in placementDates")
+      return false;
+    }
+
+    // for (let i=0; i < placementDates.length; i++) {
+    //    if (moment(day).local().isSame(placementDates[i], 'day')) {
+    //      return true;
+    //    }
+    //   }
+    // return false;
 
   }
   // function beforeToday(day) {
@@ -259,7 +275,7 @@ export default function Calendar({datesBlocked, placements, placementDates, setD
                           <Grid item key={di}>
                             {  dayInBlocked(day) ?
                               <BlockedCard key={di+"blocked"} handleDateClicked={handleDateClicked} day={day}></BlockedCard> :
-                              <DayCard key={di+"day"} placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day}></DayCard> }
+                              <DayCard key={di+"day"} placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day} userType={userType}></DayCard> }
                           </Grid>
                   )
                 })}

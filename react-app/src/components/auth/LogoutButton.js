@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType } from '../../store/authentication';
 import { removeCompanyId, removeCompanyName, removeCompanyContactName, removeCompanyPhone, removeCompanyEmail, removeCompanyAddr1, removeCompanyAddr2, removeCompanyCity, removeCompanyState, removeCompanyZip } from '../../store/company'
 import { removeContractorId, removeStaffType, removeContractorName, removeContractorPhone, removeContractorEmail, removeContractorAddr1, removeContractorAddr2, removeContractorCity, removeContractorState, removeContractorZip } from '../../store/contractor'
+import { removePlacementInfo, removePlacementDates } from '../../store/placement'
 
 const LogoutButton = ({setAuthenticated}) => {
   console.log("Entered LogoutButton")
@@ -45,6 +46,9 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeContractorCity());
     dispatch(removeContractorState());
     dispatch(removeContractorZip());
+
+    dispatch(removePlacementDates());
+    dispatch(removePlacementInfo());
 
     window.localStorage.removeItem("currentUser")
     window.localStorage.removeItem("userId")

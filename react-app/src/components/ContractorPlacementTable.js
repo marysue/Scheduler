@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -56,7 +57,7 @@ const headCells = [
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
-  { id: 'startDate', numeric: true, disablePadding: false, label: 'Start Date' },
+  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
 
@@ -65,6 +66,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
@@ -194,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractorPlacementTable = ({placements}) => {
+const ContractorPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -202,45 +204,48 @@ const ContractorPlacementTable = ({placements}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const userType = useSelector(state => state.authentication.userType);
+  const placements = useSelector(state => state.placement.placementInfo)
+  console.log("*****************PlacementsTable View********************")
 
-  console.log("Placements: ", placements);
+  useEffect (() => {
+    if (placements) {
+      for (let i = 0; i < placements.length; i++) {
+        console.log("Placements: ", placements[i]);
+      }
+    } else {
+        console.log("Placements:  No placements yet...")
+    }
+  }, [placements] )
 
   function createData(companyName, contact, phone, email, address, startDate, endDate) {
       return { companyName, contact, phone, email, address, startDate, endDate };
     }
+
   const rows = [];
-  for (let i=0; i < placements.length; i++) {
-      let start = moment(placements[i].startDate).format('MM/DD/YYYY');
-      let end = moment(placements[i].endDate).format('MM/DD/YYYY');
-      let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
-      rows.push(createData(
-        placements[i].companyName,
-        placements[i].contactName,
-        // placements[i].contactPhone,
-        '925-866-1111',
-        placements[i].contactEmail,
-        address,
-        start,
-        end, ));
+
+if(placements) {
+    const placementArr = placements.placements;
+
+    console.log("We have placements[0]: ", placementArr[0])
+
+
+    for (let i=0; i < placementArr.length; i++) {
+        let start = moment(placementArr[i].companyInfo.startDate).format('MM/DD/YYYY');
+        let end = moment(placementArr[i].companyInfo.endDate).format('MM/DD/YYYY');
+        let address = placementArr[i].companyInfo.address + ", " + placementArr[i].companyInfo.city
+        rows.push(createData(
+          placementArr[i].companyInfo.companyName,
+          placementArr[i].companyInfo.name,
+          placementArr[i].companyInfo.phone,
+          placementArr[i].companyInfo.email,
+          address,
+          start.toString(),
+          end.toString(), ));
+        }
+
       }
-
-
-//   const rows = [
-//     createData('Foo', 305, 3.7, 67, 4.3),
-//     createData('Donut', 452, 25.0, 51, 4.9),
-//     createData('Eclair', 262, 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//     createData('Gingerbread', 356, 16.0, 49, 3.9),
-//     createData('Honeycomb', 408, 3.2, 87, 6.5),
-//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//     createData('KitKat', 518, 26.0, 65, 7.0),
-//     createData('Lollipop', 392, 0.2, 98, 0.0),
-//     createData('Marshmallow', 318, 0, 81, 2.0),
-//     createData('Nougat', 360, 19.0, 9, 37.0),
-//     createData('Oreo', 437, 18.0, 63, 4.0),
-//   ];
-
+      console.log("rows.length:  ", rows.length)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -256,26 +261,6 @@ const ContractorPlacementTable = ({placements}) => {
     setSelected([]);
   };
 
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -288,8 +273,6 @@ const ContractorPlacementTable = ({placements}) => {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-
-  // const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -318,21 +301,20 @@ const ContractorPlacementTable = ({placements}) => {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  // const isItemSelected = isSelected(row.name);
-                  // const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow key={index}>
-                      <TableCell align="left">{row.companyName}</TableCell>
-                      <TableCell align="right">{row.contact}</TableCell>
-                      <TableCell align="right">{row.phone}</TableCell>
-                      <TableCell align="right">{row.email}</TableCell>
-                      <TableCell align="right">{row.address}</TableCell>
-                      <TableCell align="right">{row.startDate}</TableCell>
-                      <TableCell align="right">{row.endDate}</TableCell>
-                    </TableRow>
-                  );
+                    return (
+                      <TableRow key={index}>
+                        <TableCell align="left">{row.companyName}</TableCell>
+                        <TableCell align="left">{row.contact}</TableCell>
+                        <TableCell align="left">{row.phone}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
+                        <TableCell align="left">{row.address}</TableCell>
+                        <TableCell align="left">{row.startDate}</TableCell>
+                        <TableCell align="left">{row.endDate}</TableCell>
+                      </TableRow>
+                    )
                 })}
+
+
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
