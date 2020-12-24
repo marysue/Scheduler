@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-// import { Redirect } from 'react-router-dom';
-import Calendar from './CalendarComponent/Calendar'
-//import DatesBlocked from './DatesBlocked'
-import { getAllBlocked, setBlocked, createBlocked } from '../store/blocked';
+import { getAllBlocked, setBlocked} from '../store/blocked';
 import { Button } from '@material-ui/core';
-import { getContractorPlacements } from '../store/placement';
+import { getContractorPlacements, getContractorPlacementCalendar, getContractorPlacementTableInfo, setPlacementInfo, setPlacementDates } from '../store/placement';
 import  ContractorPlacementTable  from './ContractorPlacementTable';
-import DayCard from './CalendarComponent/DayCard';
-import NewCalendar from './CalendarComponent/NewCalendar';
+import Calendar from './CalendarComponent/Calendar';
 import { setContractorId } from '../store/contractor';
 
 const ContractorView = () => {
@@ -17,8 +13,10 @@ const ContractorView = () => {
     const dispatch = useDispatch();
     const [datesBlocked, setDatesBlocked] = useState([]);
     const contractorId = useSelector(state => state.contractor.contractorId);
-    const [placements, setPlacements] = useState([]);
-    const [placementDates, setPlacementDates] = useState([]);
+    // const [placements, setPlacements] = useState([]);
+    // const [placementDates, setPlacementDates] = useState();
+    const placements = useSelector(state => state.placement.placementInfo);
+    const placementDates = useSelector(state => state.placement.placementDates);
 
     function getDateRange(startDate, endDate) {
         let start = moment(startDate).local();
@@ -42,11 +40,13 @@ const ContractorView = () => {
 
     useEffect (() => {
         if (!contractorId) {
+            console.log("ContractorView: No contractor Id - getting it from local storage")
             let cid = window.localStorage.getItem("contractorId");
             if (cid) {
              dispatch(setContractorId(cid));
             }
         }
+        if (!placements) {
         (async() => {
             const blockedDates = await getAllBlocked(contractorId);
             if (!blockedDates.errors) {
@@ -71,49 +71,33 @@ const ContractorView = () => {
                 console.log("ContractorView:  Error from getAllBlocked fetch call");
             }
             console.log("Getting placements for this contractor")
-            const p = await getContractorPlacements(contractorId);
+            // const p = await getContractorPlacements(contractorId);
+            const p = await getContractorPlacementTableInfo(contractorId);
             if (!p.errors) {
-                const pa = p["placements"];
-                const pd = []
-                const placementObj = [];
-                for (let j = 0; j < pa.length; j++) {
-                    console.log("Company Id:  ", pa[j].companyContact.id);
-                    console.log("CompanyName: ", pa[j].companyContact.companyName);
-                    placementObj.push({ "companyId": pa[j].companyContact.id,
-                                         "companyName": pa[j].companyContact.companyName,
-                                         "contactName": pa[j].companyContact.name,
-                                         "contactEmail": pa[j].companyContact.email,
-                                         "contactPhone": pa[j].companyContact.phone,
-                                         "addr1": pa[j].companyContact.addr1,
-                                         "addr2": pa[j].companyContact.addr2,
-                                         "city": pa[j].companyContact.city,
-                                         "state": pa[j].companyContact.state,
-                                         "zip": pa[j].companyContact.zip,
-                                         "startDate": pa[j].startDate,
-                                         "endDate": pa[j].endDate,
-                                         "staffType": pa[j].contractor.staffType })
-                    console.log("Placement[",j, "]:  start: ", pa[j].startDate, " end: ", pa[j].endDate)
-                    if (pa[j].startDate === pa[j].endDate) {
-                        let temp =  moment(pa[j].startDate).local();
-                        pd.push(temp);
-                    } else {
-                        // takes strings, returns moments of local time.
-                        let dr = getDateRange(pa[j].startDate, pa[j].endDate)
-                        for (let i = 0; i < dr.length; i++) {
-                            pd.push(dr[i]);
-                        }
-                    }
-                }
-                setPlacements(placementObj);
-                setPlacementDates(pd);
-                console.log("Placement dates set:  ", placementDates);
+                console.log("ContractorView: Placements set as:  ", p)
+                //setPlacements(p)
+                console.log("ContractorView: Setting placement info in redux store...")
+                dispatch(setPlacementInfo(p))
             } else {
-                console.log("Errors getting placements:  ", p.errors);
+                console.log("ContractorView: Error in getContractorPlacementTableInfo fetch call")
+            }
+            const pd = await getContractorPlacementCalendar(contractorId);
+            if (!pd.errors) {
+                console.log("ContractorView: Placement Dates set as: ", pd)
+                //setPlacementDates(pd)
+                console.log("ContractorView: Setting placementDates in redux store...")
+                dispatch(setPlacementDates(pd));
+            } else {
+                console.log("ContractorView: Error with getContractorPlacementCalendar fetch call");
             }
         })();
-    }, [contractorId] )
+
+    }
+
+    }, [contractorId, placements] )
+
     const saveDates = async () => {
-        const blocked = createBlocked(contractorId, datesBlocked)
+        // const blocked = createBlocked(contractorId, datesBlocked)
         dispatch(setBlocked(datesBlocked));
 
     }
@@ -124,10 +108,10 @@ const ContractorView = () => {
     } else {
         return (
             <>
-                <NewCalendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></NewCalendar>
+                <Calendar key={"contrCalendar"} datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked} userType={"contractor"}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
                 <Button onClick={saveDates} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
-                <ContractorPlacementTable placements={placements}></ContractorPlacementTable>
+                <ContractorPlacementTable></ContractorPlacementTable>
             </>
         );
     }

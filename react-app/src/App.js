@@ -14,29 +14,33 @@ import { authenticate } from "./services/auth";
 import Calendar from "./components/CalendarComponent/Calendar";
 import SignUpForm from "./components/auth/SignUpForm"
 import ContractorView from "./components/ContractorView";
+import CompanyView from "./components/CompanyView";
+import AgencyView from "./components/AgencyView";
 import "./index.css";
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [loaded, setLoaded] = useState(false);
-
+  console.log("App.js: main");
 
   useEffect(() => {
     (async() => {
+      console.log("App.js: Looking for authentication")
       const user = await authenticate();
       if (!user.errors) {
         setAuthenticated(true);
         window.localStorage.setItem("currentUser", user.id)
-        console.log("Set localStorage to currentUser and authenticated = true");
+        console.log("App.js: useEffect:  authenticate(): Set localStorage to currentUser and authenticated = true");
       } else {
-        console.log("received errors in setting authenticated...")
+        console.log("App.js:  useEffect:  received errors in setting authenticated...", user.errors)
       }
+      console.log("App.js:  useEffect: Setting loaded to true.")
       setLoaded(true);
     })();
   }, []);
 
   if (!loaded) {
-    console.log("Not loaded ... returning null");
+    console.log("App.js:  Not loaded ... returning null");
     return null;
   }
 
@@ -44,7 +48,6 @@ function App() {
     <CssBaseline>
       <Theme>
         <BrowserRouter>
-
             <NavBar setAuthenticated={setAuthenticated} />
             <Switch>
               <Route path="/" exact={true}>
@@ -70,8 +73,14 @@ function App() {
               <Route path="/contractorInfo" exact={true} authenticated={authenticated}>
                 <ContractorInfo></ContractorInfo>
               </Route>
-              <ProtectedRoute path="/contractorCalendar" exact={true} authenticated={authenticated}>
+              <ProtectedRoute path="/contractorView" exact={true} authenticated={authenticated}>
                 <ContractorView></ContractorView>
+              </ProtectedRoute>
+              <ProtectedRoute path="/companyView" exact={true} authenticated={authenticated}>
+                <CompanyView></CompanyView>
+              </ProtectedRoute>
+              <ProtectedRoute path="/agencyView" exact={true} authenticated={authenticated}>
+                <AgencyView></AgencyView>
               </ProtectedRoute>
               <ProtectedRoute path="/users" exact={true} authenticated={authenticated}>
                 <UsersList/>

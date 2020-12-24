@@ -1,10 +1,12 @@
 import React from "react";
+import { Redirect } from 'react-router-dom';
 //import { logout } from "../../services/auth";
 import { logout } from '../../store/authentication';
 import { useDispatch } from 'react-redux';
 import { removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType } from '../../store/authentication';
 import { removeCompanyId, removeCompanyName, removeCompanyContactName, removeCompanyPhone, removeCompanyEmail, removeCompanyAddr1, removeCompanyAddr2, removeCompanyCity, removeCompanyState, removeCompanyZip } from '../../store/company'
 import { removeContractorId, removeStaffType, removeContractorName, removeContractorPhone, removeContractorEmail, removeContractorAddr1, removeContractorAddr2, removeContractorCity, removeContractorState, removeContractorZip } from '../../store/contractor'
+import { removePlacementInfo, removePlacementDates } from '../../store/placement'
 
 const LogoutButton = ({setAuthenticated}) => {
   console.log("Entered LogoutButton")
@@ -12,7 +14,8 @@ const LogoutButton = ({setAuthenticated}) => {
 
   const onLogout = async (e) => {
     console.log("onLogout...")
-    await logout();
+    const retVal = await logout();
+    if (!retVal.errors) {
 
     setAuthenticated(false);
 
@@ -21,6 +24,7 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeUserEmail());
     dispatch(removeToken());
     dispatch(removeUserType());
+
     dispatch(removeCompanyId());
     dispatch(removeCompanyName());
     dispatch(removeCompanyContactName());
@@ -43,10 +47,19 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeContractorState());
     dispatch(removeContractorZip());
 
+    dispatch(removePlacementDates());
+    dispatch(removePlacementInfo());
+
     window.localStorage.removeItem("currentUser")
-    window.localStorage.removeItem("user_id")
+    window.localStorage.removeItem("userId")
     window.localStorage.removeItem("contractorId")
     window.localStorage.removeItem("companyId")
+    window.localStorage.removeItem("agencyId");
+
+    return <Redirect to='/'></Redirect>
+    } else {
+      console.log("LogoutButton:  Errors logging out: ", retVal.errors);
+    }
   };
 
   return <button onClick={onLogout}>Logout</button>;

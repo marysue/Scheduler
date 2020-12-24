@@ -9,6 +9,10 @@ export const SET_START_DATE = '/user/placement/SET_START_DATE';
 export const REMOVE_START_DATE = '/user/placement/REMOVE_START_DATE';
 export const SET_END_DATE = '/user/placement/SET_END_DATE';
 export const REMOVE_END_DATE = '/user/placement/REMOVE_END_DATE';
+export const SET_PLACEMENT_DATES = '/user/placement/SET_PLACEMENT_DATES';
+export const REMOVE_PLACEMENT_DATES = '/user/placement/REMOVE_PLACEMENT_DATES';
+export const SET_PLACEMENT_INFO = '/user/placement/SET_PLACEMENT_INFO';
+export const REMOVE_PLACEMENT_INFO = '/user/placement/REMOVE_PLACEMENT_INFO';
 
 export const setContractorId = id => ({ type: SET_CONTRACTOR_ID, id})
 export const removeContractorId = () => ({ type: REMOVE_CONTRACTOR_ID})
@@ -18,6 +22,10 @@ export const setStartDate = startDate => ({ type: SET_START_DATE, startDate})
 export const removeStartDate = () => ({ type: REMOVE_START_DATE})
 export const setEndDate = endDate => ({ type: SET_END_DATE, endDate})
 export const removeEndDate = () => ({ type: REMOVE_END_DATE})
+export const setPlacementDates = placementDatesArray => ({ type: SET_PLACEMENT_DATES, placementDatesArray})
+export const removePlacementDates = () => ({ type: REMOVE_PLACEMENT_DATES})
+export const setPlacementInfo = placementInfoArray => ({ type: SET_PLACEMENT_INFO, placementInfoArray})
+export const removePlacementInfo = () => ({ type: REMOVE_PLACEMENT_INFO})
 
 export default function reducer (state = {}, action) {
     switch (action.type) {
@@ -59,8 +67,31 @@ export default function reducer (state = {}, action) {
         }
         case SET_END_DATE: {
             const newState = { ...state};
-            newState.endDate = action.ednDate;
+            newState.endDate = action.endDate;
             console.log("Setting end date for placement: ", newState.endDate);
+            return newState;
+        }
+        case SET_PLACEMENT_DATES: {
+            const newState = { ...state}
+            newState.placementDates = action.placementDatesArray;
+            console.log("Setting placement dates array: ", newState.placementDates)
+            return newState;
+        }
+        case REMOVE_PLACEMENT_DATES: {
+            const newState = { ...state}
+            delete newState.placementDates
+            return newState;
+        }
+        case SET_PLACEMENT_INFO: {
+            const newState = { ...state}
+            newState.placementInfo = action.placementInfoArray;
+            console.log("Set placement info: ", newState.placementInfo)
+        
+            return newState
+        }
+        case REMOVE_PLACEMENT_INFO: {
+            const newState = { ...state}
+            delete newState.placementInfo
             return newState;
         }
         default:
@@ -85,25 +116,77 @@ export const createPlacement = async (companyId, contractorId, companyContactId,
     });
     return await response.json();
   }
-
-export const getAllPlacements = async () => {
-    const response = await fetch('/api/placement/all', {
+//  ****************** AGENCY ********************
+export const getAllAgencyPlacements = async () => {
+    const response = await fetch('/api/placement/agency/all', {
         headers: {
             "Content-Type": "application/json",
         }});
     return await response.json();
 }
 
-export const getCompanyPlacements = async (companyId) => {
-    const response = await fetch(`/api/placement/company/${companyId}`, {
+export const getAllAgencyCalendarInfo = async () => {
+    const response = await fetch('/api/placement/agency/calendarInfo', {
         headers: {
             "Content-Type": "application/json",
         }});
     return await response.json();
 }
 
+export const getAllAgencyTableInfo = async () => {
+    const response = await fetch('/api/placement/agency/tableInfo', {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+// **********************CONTRACTOR******************
+//Not formatted - but currently used in ContractorView
+//Need at some point to shift over to save logic in Contractor View
 export const getContractorPlacements = async (contractorId) => {
     const response = await fetch(`/api/placement/contractor/${contractorId}`, {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+export const getContractorPlacementCalendar = async (contractorId) => {
+    const response = await fetch(`/api/placement/contractor/calendarInfo/${contractorId}`, {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+export const getContractorPlacementTableInfo = async (contractorId) => {
+    const response = await fetch(`/api/placement/contractor/tableInfo/${contractorId}`, {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+export const getContractorPlacementCalendarInfo = async (contractorId) => {
+    const response = await fetch(`/api/placement/contractor/calendarInfo/${contractorId}`, {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+// *********************COMPANY PLACEMENTS**************
+export const getCompanyPlacementCalendarInfo = async (companyId) => {
+    const response = await fetch(`/api/placement/company/calendarInfo/${companyId}`, {
+        headers: {
+            "Content-Type": "application/json",
+        }});
+    return await response.json();
+}
+
+export const getCompanyPlacementTableInfo = async (companyId) => {
+    const response = await fetch(`/api/placement/company/tableInfo/${companyId}`, {
         headers: {
             "Content-Type": "application/json",
         }});

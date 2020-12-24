@@ -3,22 +3,22 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-// import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import { Table,
+         TableBody,
+        TableCell,
+        TableContainer,
+        TableHead,
+        TablePagination,
+        TableRow,
+        TableSortLabel,
+        Toolbar,
+        Typography,
+        Paper,
+        IconButton,
+        Tooltip,
+        FormControlLabel,
+        Switch } from '@material-ui/core'
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
@@ -52,11 +52,11 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'companyName', numeric: false, disablePadding: true, label: 'Company Name' },
-  { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
+  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
   { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
@@ -196,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractorPlacementTable = () => {
+const CompanyPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -204,7 +204,6 @@ const ContractorPlacementTable = () => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const userType = useSelector(state => state.authentication.userType);
   const placements = useSelector(state => state.placement.placementInfo)
   console.log("*****************PlacementsTable View********************")
 
@@ -218,8 +217,8 @@ const ContractorPlacementTable = () => {
     }
   }, [placements] )
 
-  function createData(companyName, contact, phone, email, address, startDate, endDate) {
-      return { companyName, contact, phone, email, address, startDate, endDate };
+  function createData(name, staffType, phone, email, city, startDate, endDate) {
+      return { name, staffType, phone, email, city, startDate, endDate };
     }
 
   const rows = [];
@@ -231,15 +230,15 @@ if(placements) {
 
 
     for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].companyInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].companyInfo.endDate).format('MM/DD/YYYY');
-        let address = placementArr[i].companyInfo.address + ", " + placementArr[i].companyInfo.city
+        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
+        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
+        let city = placementArr[i].contractorInfo.city
         rows.push(createData(
-          placementArr[i].companyInfo.companyName,
-          placementArr[i].companyInfo.name,
-          placementArr[i].companyInfo.phone,
-          placementArr[i].companyInfo.email,
-          address,
+          placementArr[i].contractorInfo.name,
+          placementArr[i].contractorInfo.staffType,
+          placementArr[i].contractorInfo.phone,
+          placementArr[i].contractorInfo.email,
+          city,
           start.toString(),
           end.toString(), ));
         }
@@ -303,11 +302,11 @@ if(placements) {
                 .map((row, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell align="left">{row.companyName}</TableCell>
-                        <TableCell align="left">{row.contact}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.staffType}</TableCell>
                         <TableCell align="left">{row.phone}</TableCell>
                         <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.address}</TableCell>
+                        <TableCell align="left">{row.city}</TableCell>
                         <TableCell align="left">{row.startDate}</TableCell>
                         <TableCell align="left">{row.endDate}</TableCell>
                       </TableRow>
@@ -341,4 +340,4 @@ if(placements) {
   );
 }
 
-export default ContractorPlacementTable;
+export default CompanyPlacementTable;
