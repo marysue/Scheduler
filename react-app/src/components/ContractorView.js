@@ -90,44 +90,6 @@ const ContractorView = () => {
             } else {
                 console.log("ContractorView: Error with getContractorPlacementCalendar fetch call");
             }
-            // if (!p.errors) {
-            //     const pa = p["placements"];
-            //     const pd = []
-            //     const placementObj = [];
-            //     for (let j = 0; j < pa.length; j++) {
-            //         console.log("Company Id:  ", pa[j].companyContact.id);
-            //         console.log("CompanyName: ", pa[j].companyContact.companyName);
-            //         placementObj.push({ "companyId": pa[j].companyContact.id,
-            //                              "companyName": pa[j].companyContact.companyName,
-            //                              "contactName": pa[j].companyContact.name,
-            //                              "contactEmail": pa[j].companyContact.email,
-            //                              "contactPhone": pa[j].companyContact.phone,
-            //                              "addr1": pa[j].companyContact.addr1,
-            //                              "addr2": pa[j].companyContact.addr2,
-            //                              "city": pa[j].companyContact.city,
-            //                              "state": pa[j].companyContact.state,
-            //                              "zip": pa[j].companyContact.zip,
-            //                              "startDate": pa[j].startDate,
-            //                              "endDate": pa[j].endDate,
-            //                              "staffType": pa[j].contractor.staffType })
-            //         console.log("Placement[",j, "]:  start: ", pa[j].startDate, " end: ", pa[j].endDate)
-            //         if (pa[j].startDate === pa[j].endDate) {
-            //             let temp =  moment(pa[j].startDate).local();
-            //             pd.push(temp);
-            //         } else {
-            //             // takes strings, returns moments of local time.
-            //             let dr = getDateRange(pa[j].startDate, pa[j].endDate)
-            //             for (let i = 0; i < dr.length; i++) {
-            //                 pd.push(dr[i]);
-            //             }
-            //         }
-            //     }
-                // setPlacements(placementObj);
-                // setPlacementDates(pd);
-            //     console.log("Placement dates set:  ", placementDates);
-            // } else {
-            //     console.log("Errors getting placements:  ", p.errors);
-            // }
         })();
 
     }

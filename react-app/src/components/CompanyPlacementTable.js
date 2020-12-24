@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import { Table,
+         TableBody,
+        TableCell,
+        TableContainer,
+        TableHead,
+        TablePagination,
+        TableRow,
+        TableSortLabel,
+        Toolbar,
+        Typography,
+        Paper,
+        IconButton,
+        Tooltip,
+        FormControlLabel,
+        Switch } from '@material-ui/core'
+
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
@@ -50,12 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'contractorName', numeric: false, disablePadding: true, label: 'Contractor Name' },
-  { id: 'staffType', numeric: false, disablePadding: false, label: 'Staff Type' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
-  { id: 'startDate', numeric: true, disablePadding: false, label: 'Start Date' },
+  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
 
@@ -64,6 +66,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
+  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
@@ -79,7 +82,6 @@ function EnhancedTableHead(props) {
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
-              key={headCell.id+"tsl"}
             >
               {headCell.label}
               {orderBy === headCell.id ? (
@@ -103,14 +105,12 @@ EnhancedTableHead.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
-  // marginLeft: "10px",
 };
 
 const useToolbarStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: "10px",
+    paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    marginLeft: "10px",
   },
   highlight:
     theme.palette.type === 'light'
@@ -173,15 +173,15 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     padding: '20px',
   },
+  tableCell: {
+    paddingLeft: "20px",
+  },
   paper: {
     width: '100%',
     marginBottom: theme.spacing(2),
   },
   table: {
     minWidth: 750,
-  },
-  tableCell: {
-    paddingLeft: '20px',
   },
   visuallyHidden: {
     border: 0,
@@ -196,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyPlacementTable = ({placements}) => {
+const CompanyPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -204,47 +204,47 @@ const CompanyPlacementTable = ({placements}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const placements = useSelector(state => state.placement.placementInfo)
+  console.log("*****************PlacementsTable View********************")
 
-  console.log("Placements: ", placements);
-
-  function createData(companyName, contact, phone, email, address, startDate, endDate) {
-      return { companyName, contact, phone, email, address, startDate, endDate };
-    }
-  const rows = [];
-  if (placements) {
-    for (let i=0; i < placements.length; i++) {
-        let start = moment(placements[i].startDate).format('MM/DD/YYYY');
-        let end = moment(placements[i].endDate).format('MM/DD/YYYY');
-        // let address = placements[i].addr1 + ', ' + placements[i].addr2 + ', ' +  placements[i].city + ', ' + placements[i].state + ', ' + placements[i].zip
-        rows.push(createData(
-          placements[i].name,
-          placements[i].staffType,
-          // placements[i].contactPhone,
-          '925-866-1111',
-          placements[i].email,
-          placements[i].city,
-          start,
-          end, ));
-        }
+  useEffect (() => {
+    if (placements) {
+      for (let i = 0; i < placements.length; i++) {
+        console.log("Placements: ", placements[i]);
       }
+    } else {
+        console.log("Placements:  No placements yet...")
+    }
+  }, [placements] )
+
+  function createData(name, staffType, phone, email, city, startDate, endDate) {
+      return { name, staffType, phone, email, city, startDate, endDate };
+    }
+
+  const rows = [];
+
+if(placements) {
+    const placementArr = placements.placements;
+
+    console.log("We have placements[0]: ", placementArr[0])
 
 
-//   const rows = [
-//     createData('Foo', 305, 3.7, 67, 4.3),
-//     createData('Donut', 452, 25.0, 51, 4.9),
-//     createData('Eclair', 262, 16.0, 24, 6.0),
-//     createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//     createData('Gingerbread', 356, 16.0, 49, 3.9),
-//     createData('Honeycomb', 408, 3.2, 87, 6.5),
-//     createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//     createData('Jelly Bean', 375, 0.0, 94, 0.0),
-//     createData('KitKat', 518, 26.0, 65, 7.0),
-//     createData('Lollipop', 392, 0.2, 98, 0.0),
-//     createData('Marshmallow', 318, 0, 81, 2.0),
-//     createData('Nougat', 360, 19.0, 9, 37.0),
-//     createData('Oreo', 437, 18.0, 63, 4.0),
-//   ];
+    for (let i=0; i < placementArr.length; i++) {
+        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
+        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
+        let city = placementArr[i].contractorInfo.city
+        rows.push(createData(
+          placementArr[i].contractorInfo.name,
+          placementArr[i].contractorInfo.staffType,
+          placementArr[i].contractorInfo.phone,
+          placementArr[i].contractorInfo.email,
+          city,
+          start.toString(),
+          end.toString(), ));
+        }
 
+      }
+      console.log("rows.length:  ", rows.length)
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -260,26 +260,6 @@ const CompanyPlacementTable = ({placements}) => {
     setSelected([]);
   };
 
-  // const handleClick = (event, name) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1),
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -293,15 +273,13 @@ const CompanyPlacementTable = ({placements}) => {
     setDense(event.target.checked);
   };
 
-  // const isSelected = (name) => selected.indexOf(name) !== -1;
-
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div   className={classes.root}>
+    <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} padding={"none"}/>
-        <TableContainer className={classes.tableCell} >
+        <TableContainer className={classes.tableCell}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
@@ -309,6 +287,7 @@ const CompanyPlacementTable = ({placements}) => {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
+              paddingLeft="10px"
               classes={classes}
               numSelected={selected.length}
               order={order}
@@ -316,27 +295,25 @@ const CompanyPlacementTable = ({placements}) => {
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
-
             />
             <TableBody>
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  // const isItemSelected = isSelected(row.name);
-                  // const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow  key={index}>
-                      <TableCell align="left">{row.companyName}</TableCell>
-                      <TableCell align="left">{row.contact}</TableCell>
-                      <TableCell align="left">{row.phone}</TableCell>
-                      <TableCell align="left">{row.email}</TableCell>
-                      <TableCell align="left">{row.address}</TableCell>
-                      <TableCell align="right">{row.startDate}</TableCell>
-                      <TableCell align="left">{row.endDate}</TableCell>
-                    </TableRow>
-                  );
+                    return (
+                      <TableRow key={index}>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.staffType}</TableCell>
+                        <TableCell align="left">{row.phone}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
+                        <TableCell align="left">{row.city}</TableCell>
+                        <TableCell align="left">{row.startDate}</TableCell>
+                        <TableCell align="left">{row.endDate}</TableCell>
+                      </TableRow>
+                    )
                 })}
+
+
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
