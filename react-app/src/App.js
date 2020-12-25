@@ -10,6 +10,7 @@ import User from "./components/User";
 import SplashPage from "./components/SplashPage";
 import CompanyInfo from "./components/CompanyInfo";
 import ContractorInfo from "./components/ContractorInfo";
+import CompanyAddPlacement from "./components/CompanyAddPlacement";
 import { authenticate } from "./services/auth";
 import Calendar from "./components/CalendarComponent/Calendar";
 import SignUpForm from "./components/auth/SignUpForm"
@@ -78,6 +79,9 @@ function App() {
               </ProtectedRoute>
               <ProtectedRoute path="/companyView" exact={true} authenticated={authenticated}>
                 <CompanyView></CompanyView>
+              </ProtectedRoute>
+              <ProtectedRoute path="/companyAddPlacement" exact={true} authenticated={authenticated}>
+                <CompanyAddPlacement></CompanyAddPlacement>
               </ProtectedRoute>
               <ProtectedRoute path="/agencyView" exact={true} authenticated={authenticated}>
                 <AgencyView></AgencyView>

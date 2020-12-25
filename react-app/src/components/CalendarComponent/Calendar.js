@@ -42,12 +42,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
-  console.log("*****************************Calendar: Entered calendar****************************");
+export default function Calendar({datesBlocked, setDatesBlocked}) {
+  console.log("************************Calendar View************************")
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   // const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
+  const userType = useSelector(state => state.authentication.userType)
   const placements = useSelector ( state => state.placement.placementInfo );
   const placementDates = useSelector(state => state.placement.placementDates);
   // console.log("Calendar: DatesBlocked: ", datesBlocked);

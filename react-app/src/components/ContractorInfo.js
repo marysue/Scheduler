@@ -61,6 +61,9 @@ const ContractorInfo = ({authenticated}) => {
         width: "75%",
         justifyContent: 'space-between'
     },
+    select: {
+      minWidth: "200px",
+    }
   }));
   const classes = useStyles();
 
@@ -141,6 +144,7 @@ const ContractorInfo = ({authenticated}) => {
                     value={staffType}
                     onChange={handleStaffTypeChange}
                     label="staffType"
+                    className={classes.select}
                   >
                   <MenuItem value=""><em>None</em></MenuItem>
                   <MenuItem value={"Dental Assistant"}>Dental Assistant</MenuItem>

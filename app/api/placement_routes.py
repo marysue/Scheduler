@@ -213,5 +213,5 @@ def getAllPlacementDateInfo():
 @placement_routes.route('/agency/tableInfo', methods=['GET'])
 def getAllTableInfo():
     placements = Placement.query.order_by(Placement.startDate).all()
-    placementStruct  = createPlacementTableInfo([placement.to_dict() for placement in placements])
+    placementStruct  = createCompanyPlacementTableInfo([placement.to_dict() for placement in placements])
     return {"placements": placementStruct}

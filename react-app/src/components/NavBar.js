@@ -14,6 +14,7 @@ const NavBar = ({ setAuthenticated }) => {
         <li key={"5"}><NavLink to ="/contractorInfo" exact={true} activeClassName="active">Contractor Info</NavLink></li>
         <li key={"6"}><NavLink to ="/contractorView" exact={true} activeClassName="active">Contractor Calendar</NavLink></li>
         <li key={"7"}><NavLink to ='/companyView' exact={true} activeClassName="active">Company View</NavLink></li>
+        <li key={"13"}><NavLink to = '/companyAddPlacement' exact={true} activeClassName="active">Add Contractor Placement</NavLink></li>
         <li key={"8"}><NavLink to ='/agencyView' exact={true} activeClassName="active">Agency View</NavLink></li>
         <li key={"9"}><NavLink to="/login" exact={true} activeClassName="active">Login</NavLink></li>
         <li key={"10"}><NavLink to="/sign-up" exact={true} activeClassName="active">Sign Up</NavLink></li>

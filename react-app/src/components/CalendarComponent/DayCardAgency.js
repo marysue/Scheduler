@@ -33,7 +33,7 @@ const useStyles = makeStyles({
   },
 });
 let once = true
-export default function DayCard({ day, handleDateClicked, userType}) {
+export default function DayCardAgency({ day, handleDateClicked, userType}) {
   const placements = useSelector ( state => state.placement.placementInfo );
   const placementDates = useSelector(state => state.placement.placementDates);
   // console.log("Calendar: placements: ", placements);
@@ -80,8 +80,8 @@ if (!day) {
         <div>{day.format("D").toString()}</div>
           { dayInPlacements(day) && userType==="contractor"  ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
           return(<div key={index}>{item.companyInfo.companyName}:{item.companyInfo.name}</div>)}) : null }
-          { dayInPlacements(day) && userType==="company"  ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
-          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
+          {/* { dayInPlacements(day) && userType==="company"  ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
+          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null } */}
           { dayInPlacements(day) && userType==='agency' ? placementDates[day.format('YYYY-MM-DD')].map((item,index) => {
           return(<div key={index}>{item.companyInfo.companyName}:{item.companyInfo.name}</div>)}) : null }
       </CardContent>
@@ -95,8 +95,8 @@ if (!day) {
 
       { dayInPlacements(day) && userType==="contractor"  ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
           return(<div key={index}>{item.companyInfo.companyName}:{item.companyInfo.name}</div>)}) : null }
-      { dayInPlacements(day) && userType==="company" ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
-          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
+      {/* { dayInPlacements(day) && userType==="company" ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
+          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null } */}
       { dayInPlacements(day) && userType==='agency' ? placementDates[day.format('YYYY-MM-DD')].map((item,index) => {
           return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
       </CardContent>

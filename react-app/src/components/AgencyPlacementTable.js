@@ -196,7 +196,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyPlacementTable = () => {
+const AgencyPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -205,7 +205,6 @@ const CompanyPlacementTable = () => {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const placements = useSelector(state => state.placement.placementInfo)
-
   console.log(" ********************PlacementsTable View********************")
   useEffect (() => {
     if (placements) {
@@ -340,4 +339,4 @@ if(placements) {
   );
 }
 
-export default CompanyPlacementTable;
+export default AgencyPlacementTable;

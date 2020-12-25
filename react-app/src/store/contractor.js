@@ -213,9 +213,11 @@ export const addContractor = async (userId, staffType) => {
         return await response.json();
       }
 
-    export const getContractorAvail = async (staffType, dateRange) => {
+    export const getContractorAvail = async (staffType, dateFrom, dateTo) => {
         //Have not tested decoding on server side.  First place to check if it doesn't work
-        const encoded = encodeURI(dateRange)
+        console.log("DateFrom: ", dateFrom, " DateTo: ", dateTo);
+        const encoded = encodeURI(dateFrom + "/" + dateTo)
+        //localhost:5000/api/contractor/available?staffType=Dental%20Assistant&dateRange=2021-01-19%2000:00:00/2021-01-25 00:00:00
         const response = await fetch(`/api/contractor/available?staffType=${staffType}&dateRange=${encoded}`, {
             headers: {
                 "Content-Type": "application/json",
