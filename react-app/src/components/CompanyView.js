@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
 import { Button } from '@material-ui/core';
 import  CompanyPlacementTable  from './CompanyPlacementTable';
-import NewCalendar from './CalendarComponent/Calendar';
-import { setCompanyId } from '../store/company';
+import Calendar from './CalendarComponent/Calendar';
+import { setCompanyId, setCompanyLocations, getCompanyInfo } from '../store/company';
 import { getCompanyPlacementTableInfo, getCompanyPlacementCalendarInfo, setPlacementInfo, setPlacementDates } from '../store/placement';
 
 const CompanyView = () => {
@@ -13,7 +13,7 @@ const CompanyView = () => {
     const companyId = useSelector(state => state.company.companyId);
     const placements = useSelector(state => state.placement.placementInfo);
     const placementDates = useSelector(state => state.placement.placementDates);
-
+    const companyLocations = useSelector(state => state.company.companyLocations);
     console.log(" *********Entered Company View**************")
 
     // function printRange(message, range) {
@@ -67,6 +67,16 @@ const CompanyView = () => {
              dispatch(setCompanyId(cid));
             }
         }
+        if (!companyLocations) {
+            ( async() => {
+                const locations = await getCompanyInfo(companyId)
+                if (!locations.errors) {
+                    dispatch(setCompanyLocations(locations));
+                } else {
+                    console.log("CompanyView: Error in get Company Locations")
+                }
+            })()
+        }
         if (!placements) {
             (async() => {
                 console.log("Getting placements for this company")
@@ -102,9 +112,9 @@ const CompanyView = () => {
     } else {
         return (
             <>
-                <NewCalendar key={"newCalendar"} placements={placements} placementDates={placementDates} datesBlocked={[]} userType={'company'}></NewCalendar>
+                <Calendar key={"newCalendar"} placements={placements} placementDates={placementDates} datesBlocked={[]} userType={'company'}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
-                <Button key={"buttonKey"} onClick={savePlacement} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
+                {/* <Button key={"buttonKey"} onClick={savePlacement} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button> */}
                 <CompanyPlacementTable key={"coPlacement"} ></CompanyPlacementTable>
             </>
         );

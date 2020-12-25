@@ -21,6 +21,8 @@ export const SET_STATE = '/user/contractor/SET_STATE';
 export const REMOVE_STATE = '/user/contractor/REMOVE_STATE';
 export const SET_ZIP = '/user/contractor/SET_ZIP'
 export const REMOVE_ZIP = '/user/contractor/REMOVE_ZIP';
+export const SET_AVAILABLE_CONTRACTORS = '/user/contractor/SET_AVAILABLE_CONTRACTORS';
+export const REMOVE_AVAILABLE_CONTRACTORS = '/user/contractor/REMOVE_AVAILABLE_CONTRACTORS';
 
 export const setContractorId = id => ({ type: SET_CONTRACTOR_ID, id})
 export const removeContractorId = () => ({ type: REMOVE_CONTRACTOR_ID})
@@ -42,6 +44,8 @@ export const setContractorState = state => ({ type: SET_STATE, state })
 export const removeContractorState = () => ({ type: REMOVE_STATE })
 export const setContractorZip = zip => ({ type: SET_ZIP, zip })
 export const removeContractorZip = () => ({ type: REMOVE_ZIP })
+export const setAvailableContractors = contractors => ({ type: SET_AVAILABLE_CONTRACTORS, contractors })
+export const removeAvailableContractors = () => ({ type: REMOVE_AVAILABLE_CONTRACTORS })
 
 
 export default function reducer (state = {}, action) {
@@ -166,6 +170,17 @@ export default function reducer (state = {}, action) {
             delete newState.zip;
             return newState;
           }
+        case SET_AVAILABLE_CONTRACTORS: {
+          const newState = { ...state};
+          newState.availableContractors = action.contractors;
+          console.log("Setting available contractors: ", newState.availableContractors)
+          return newState;
+        }
+        case REMOVE_AVAILABLE_CONTRACTORS: {
+          const newState = { ...state }
+          delete newState.availableContractors;
+          return newState;
+        }
           default:
             return state;
     }

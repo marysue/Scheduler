@@ -42,13 +42,13 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, setDatesBlocked}) {
+export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
   console.log("************************Calendar View************************")
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   // const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
-  const userType = useSelector(state => state.authentication.userType)
+  //const userType = useSelector(state => state.authentication.userType)
   const placements = useSelector ( state => state.placement.placementInfo );
   const placementDates = useSelector(state => state.placement.placementDates);
   // console.log("Calendar: DatesBlocked: ", datesBlocked);
@@ -72,7 +72,7 @@ export default function Calendar({datesBlocked, setDatesBlocked}) {
   //   }
   // }
   function dayInPlacements(day) {
-    console.log("NewCalendar: day = ", day.format('YYYY-MM-DD'));
+    console.log("Calendar: day = ", day.format('YYYY-MM-DD'));
     const dayStr = day.format('YYYY-MM-DD')
 
 

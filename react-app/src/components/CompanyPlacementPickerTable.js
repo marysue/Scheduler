@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -14,16 +13,14 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-// import Checkbox from '@material-ui/core/Checkbox';
+import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import moment from 'moment';
-
-
+import { useSelector } from 'react-redux';
+import { formatDateString } from '../utils/utils'
+import { createPlacement } from '../store/placement';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -52,25 +49,34 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'companyName', numeric: false, disablePadding: true, label: 'Company Name' },
-  { id: 'contact', numeric: false, disablePadding: false, label: 'Contact' },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
-  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
-  { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'staffType', numeric: true, disablePadding: false, label: 'Staff Type' },
+  { id: 'phone', numeric: true, disablePadding: false, label: 'Phone' },
+  { id: 'email', numeric: true, disablePadding: false, label: 'Email' },
+  { id: 'city', numeric: true, disablePadding: false, label: 'City' },
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, order, orderBy, onRequestSort } = props;
+  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
       <TableRow>
+        <TableCell padding="checkbox">
+          {/* <Checkbox
+            indeterminate={numSelected > 0 && numSelected < rowCount}
+            checked={rowCount > 0 && numSelected === rowCount}
+            onChange={onSelectAllClick}
+            inputProps={{ 'aria-label': 'select all desserts' }}
+            display="none"
+          /> */}
+        </TableCell>
+        {/* <TableRow>
+
+        </TableRow> */}
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -101,10 +107,11 @@ EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+//   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
+  contractorSelected: PropTypes.string,
 };
 
 const useToolbarStyles = makeStyles((theme) => ({
@@ -130,6 +137,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
+  const { contractorSelected } = props;
 
   return (
     <Toolbar
@@ -139,20 +147,22 @@ const EnhancedTableToolbar = (props) => {
     >
       {numSelected > 0 ? (
         <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-          {numSelected} selected
+          {/* {numSelected} selected */}
+          { contractorSelected } selected
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Available Contractors
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+      {numSelected > 1 ? (
+        // <Tooltip title="Delete">
+        //   <IconButton aria-label="delete">
+        //     <DeleteIcon />
+        //   </IconButton>
+        // </Tooltip>
+        null
       ) : (
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
@@ -166,15 +176,12 @@ const EnhancedTableToolbar = (props) => {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  contractorSelected: PropTypes.string.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    padding: '20px',
-  },
-  tableCell: {
-    paddingLeft: "20px",
   },
   paper: {
     width: '100%',
@@ -196,56 +203,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractorPlacementTable = () => {
+export default function CompanyPlacementPickerTable({locationId, startDate, endDate}) {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('name');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const userType = useSelector(state => state.authentication.userType);
-  const placements = useSelector(state => state.placement.placementInfo)
-  console.log("*****************PlacementsTable View********************")
-
-  useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
-      }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
-  }, [placements] )
-
-  function createData(companyName, contact, phone, email, address, startDate, endDate) {
-      return { companyName, contact, phone, email, address, startDate, endDate };
-    }
-
+  const [contractorId, setContractorId] = React.useState();
+  const [selectedContractorName, setSelectedContractorName] = React.useState();
+  const [selectedContractorId, setSelectedContractorId] = React.useState();
   const rows = [];
+  const ac = useSelector( state => state.contractor.availableContractors)
+  const companyId = useSelector ( state => state.company.companyId)
 
-if(placements) {
-    const placementArr = placements.placements;
-
-    console.log("We have placements[0]: ", placementArr[0])
-
-
-    for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].companyInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].companyInfo.endDate).format('MM/DD/YYYY');
-        let address = placementArr[i].companyInfo.address + ", " + placementArr[i].companyInfo.city
-        rows.push(createData(
-          placementArr[i].companyInfo.companyName,
-          placementArr[i].companyInfo.name,
-          placementArr[i].companyInfo.phone,
-          placementArr[i].companyInfo.email,
-          address,
-          start.toString(),
-          end.toString(), ));
+  let availableContractors;
+  if (ac) {
+    availableContractors = ac.available
+    console.log(availableContractors);
+    if (availableContractors) {
+        for (let i=0; i < availableContractors.length; i++) {
+            console.log("Available: ", availableContractors[i].staffType)
         }
+    }
+}
+  function createData(id, name, staffType, phone, email, city) {
+    return { id, name, staffType, phone, email, city };
+  }
 
-      }
-      console.log("rows.length:  ", rows.length)
+  if(availableContractors) {
+      for (let i=0; i < availableContractors.length; i++) {
+          let id = availableContractors[i].contact["id"];
+          let name = availableContractors[i].contact["name"];
+          let staffType = availableContractors[i].staffType;
+          let phone = availableContractors[i].contact["phone"];
+          let email = availableContractors[i].contact["email"];
+          let city = availableContractors[i].contact["city"];
+
+        rows.push(
+            createData(id, name, staffType, phone, email, city),
+        );
+        }
+    }
+
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -261,6 +264,28 @@ if(placements) {
     setSelected([]);
   };
 
+  const getSelectedContractorInfo = (id) => {
+
+  }
+
+  const handleClick = (event, name, id) => {
+    if (selected.length > 0) {
+        setSelected([])
+        setSelectedContractorName('');
+        setSelectedContractorId('');
+    } else {
+        //const selectedIndex = selected.indexOf(name);
+        setSelected([id]);
+        setSelectedContractorName(name);
+        setSelectedContractorId(id);
+        console.log("Selected:  ", selectedContractorId);
+        console.log("Selected contractor name: ", selectedContractorName)
+        //let newSelected = [];
+    setSelected(name);
+    console.log("Set selected is now (from newSelected): ", selected)
+}
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -274,13 +299,36 @@ if(placements) {
     setDense(event.target.checked);
   };
 
+  const isSelected = (name) => selected.indexOf(name) !== -1;
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  const confirmRequest = async() => {
+
+
+    console.log("Confirming request...")
+    console.log("companyId: ", companyId, " ContractorId: ", selectedContractorId, " LocationId: ", locationId)
+
+    const sd = formatDateString(startDate);
+    const ed = formatDateString(endDate);
+    console.log("startDate: ", sd)
+    console.log("endDate: ", ed)
+    //companyId, contractorId, companyContactId, startDate, endDate
+    const placement = await createPlacement(companyId, selectedContractorId, locationId, sd, ed)
+    if (!placement.errors) {
+        console.log("No placement errors")
+    } else {
+        console.log("Error creating placement.")
+    }
+  }
+
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} padding={"none"}/>
-        <TableContainer className={classes.tableCell}>
+        <EnhancedTableToolbar numSelected={selected.length} contractorSelected={''}/>
+        {/* <EnhancedTableToolbar numSelected={0} contractorSelected={''} /> */}
+        <TableContainer>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
@@ -288,12 +336,12 @@ if(placements) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              paddingLeft="10px"
               classes={classes}
               numSelected={selected.length}
+            //   contractorSelected={contractorSelected}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+            //   onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -301,20 +349,34 @@ if(placements) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                    return (
-                      <TableRow key={index}>
-                        <TableCell align="left">{row.companyName}</TableCell>
-                        <TableCell align="left">{row.contact}</TableCell>
-                        <TableCell align="left">{row.phone}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.address}</TableCell>
-                        <TableCell align="left">{row.startDate}</TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
-                      </TableRow>
-                    )
+                  const isItemSelected = isSelected(row.name);
+                  const labelId = `${row.id}`;
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.name, row.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.name}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={isItemSelected}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </TableCell>
+                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                        {row.name}
+                      </TableCell>
+                      <TableCell align="right">{row.staffType}</TableCell>
+                      <TableCell align="right">{row.phone}</TableCell>
+                      <TableCell align="right">{row.email}</TableCell>
+                      <TableCell align="right">{row.city}</TableCell>
+                    </TableRow>
+                  );
                 })}
-
-
               {emptyRows > 0 && (
                 <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
                   <TableCell colSpan={6} />
@@ -323,6 +385,21 @@ if(placements) {
             </TableBody>
           </Table>
         </TableContainer>
+        { selected.length > 0 ?
+        <Button
+                    color="primary"
+                    variant="contained"
+                    type="button"
+                    className="confirmRequest"
+                    value="Submit without validation"
+                    onClick={confirmRequest}
+                    style={{marginTop:"20px", justifyContent:"center", marginBottom:"20px", marginLeft:"20%", marginRight:"0px"}}
+                  >
+                    {
+                        ('Confirm Request')
+                    }
+                  </Button>
+                  : null }
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
@@ -333,12 +410,10 @@ if(placements) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
+      {/* <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
-      />
+      /> */}
     </div>
   );
 }
-
-export default ContractorPlacementTable;

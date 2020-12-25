@@ -1,26 +1,28 @@
 import 'date-fns';
-import React, { useState, useEffect} from 'react';
+import React, { useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import { ValidatorForm } from 'react-material-ui-form-validator';
 import { setCompanyId } from '../store/company'
 import { getContractorAvail } from '../store/contractor';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
          DialogContent,
          FormControl,
+         Grid,
          InputLabel,
          MenuItem,
          Select,
          Typography,
         } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import CompanyPlacementPickerTable from './CompanyPlacementPickerTable';
+import { setAvailableContractors } from '../store/contractor';
+import { formatDateString } from '../utils/utils';
 
 export default function CompanyAddPlacement() {
   // The first commit of Material-UI
@@ -31,6 +33,7 @@ export default function CompanyAddPlacement() {
   const [errors, setErrors] = useState('');
   const [state, setLocalState] = useState('');
   const [staffType, setLocalStaffType] = useState('');
+  const [location, setLocation] = useState('');
   const [values, setValues] = useState({
     staffType: '',
     startDate: '',
@@ -39,7 +42,17 @@ export default function CompanyAddPlacement() {
   const [selectedDateFrom, setSelectedDateFrom] = React.useState(new Date());
   const [selectedDateTo, setSelectedDateTo] = React.useState(new Date());
   const contractorsAvailable = [];
+  const locations = useSelector( state => state.company.companyLocations);
 
+  if (locations) {
+      console.log("Locations: ", locations)
+      console.log("Locations size: ", locations.companyContacts.length)
+      for(let i = 0; i < locations.companyContacts.length; i++) {
+        console.log(locations.companyContacts[i].name)
+        console.log(locations.companyContacts[i].addr1 + " " + locations.companyContacts[i].addr2)
+        console.log(locations.companyContacts[i].city)
+      }
+  }
   const handleDateChangeFrom = (date) => {
     setSelectedDateFrom(date);
   };
@@ -106,27 +119,29 @@ export default function CompanyAddPlacement() {
       setLocalStaffType(event.target.value);
   }
 
-  const formatValue = (val) => {
-    if (parseInt(val) < 10) {
-      val = "0" + val;
-    }
-    return val
-  }
 
-  const formatDateString = (date) => {
-    let year = date.getFullYear();
-    let month = date.getMonth();
-    month = formatValue(month)
-    let day = date.getDay();
-    day = formatValue(day)
-    // let hour = date.getHours();
-    // hour = formatValue(hour)
-    // let minute = date.getMinutes();
-    // minute = formatValue(minute)
-    let hour = "00"
-    let minute = "00"
-    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + "00"
-  }
+
+  // const formatValue = (val) => {
+  //   if (parseInt(val) < 10) {
+  //     val = "0" + val;
+  //   }
+  //   return val
+  // }
+
+  // const formatDateString = (date) => {
+  //   let year = date.getFullYear();
+  //   let month = date.getMonth();
+  //   month = formatValue(month)
+  //   let day = date.getDay();
+  //   day = formatValue(day)
+  //   // let hour = date.getHours();
+  //   // hour = formatValue(hour)
+  //   // let minute = date.getMinutes();
+  //   // minute = formatValue(minute)
+  //   let hour = "00"
+  //   let minute = "00"
+  //   return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + "00"
+  // }
 
   const search = async() => {
     setErrors('');
@@ -137,8 +152,12 @@ export default function CompanyAddPlacement() {
     if (diff > 0) {
       setErrors('Ending date must be greater than or equal to beginning date.')
     }
+    console.log("CompanyAddPlacement: selectedDateFrom orig: ", selectedDateFrom)
+    console.log("CompanyAddPlacement: selectedDateTo orig: ", selectedDateTo);
     const dateFrom = formatDateString(selectedDateFrom);
     const dateTo = formatDateString(selectedDateTo);
+    console.log("CompanyAddPlacement: after formatting selectedDateFrom: ", dateFrom)
+    console.log("CompanyAddPlacement: after formatting selectedDateTo: ", dateTo)
 
     if (staffType === '') {
       setErrors("Staff type must be selected")
@@ -150,6 +169,7 @@ export default function CompanyAddPlacement() {
         const contractors = await getContractorAvail(staffType, dateFrom, dateTo)
         if (!contractors.errors) {
           console.log("Received contractors: ", contractors)
+          dispatch(setAvailableContractors(contractors))
         } else {
           setErrors("Problem processing request.")
           console.log("Problem receiving contractors");
@@ -159,6 +179,9 @@ export default function CompanyAddPlacement() {
     }
   }
 
+  const handleLocationChange = (event) => {
+    setLocation(event.target.value);
+  }
 
   if (!companyId) {
     console.log("Setting companyId in redux store")
@@ -167,7 +190,7 @@ export default function CompanyAddPlacement() {
   return (
     <>
     <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
-      <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Now for a little more information ...</Typography>
+      <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Select your staffing needs ...</Typography>
     </DialogContent>
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Grid container direction="column" justify="space-around" alignItems="center" spacing={2}>
@@ -181,6 +204,29 @@ export default function CompanyAddPlacement() {
                   <br />
 
                   <FormControl  variant="outlined"  className={classes.formControl}>
+                    { locations && locations.companyContacts.length > 1 ?
+                    <>
+                      <InputLabel   id="staffType">Choose location </InputLabel>
+                      <Select
+                        labelId="location"
+                        id="location"
+                        value={location}
+                        onChange={handleLocationChange}
+                        label="staffType"
+                        className={classes.select}
+                      >
+                      { locations.companyContacts.map( (location, idx) => {
+                        return (
+                          <MenuItem key={location.id} value={location.id}>{location.name}<br/>{location.addr1 + " " + location.addr2}<br/>{location.city}</MenuItem>
+                        )
+                      })}
+                      </Select>
+                      </> : null }
+
+                    </FormControl>
+
+
+                    <FormControl  variant="outlined"  className={classes.formControl}>
                     <InputLabel   id="staffType">Choose staff type</InputLabel>
                     <Select
                       labelId="staffType"
@@ -240,6 +286,7 @@ export default function CompanyAddPlacement() {
             })}
         </Grid>
         </MuiPickersUtilsProvider>
+        <CompanyPlacementPickerTable locationId={location} startDate={selectedDateFrom} endDate={selectedDateTo}></CompanyPlacementPickerTable>
 
 </>
   );

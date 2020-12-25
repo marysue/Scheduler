@@ -92,34 +92,43 @@ def createPlacements(placements, userType):
 
 
 #Given a companyid, Creates a new placement
-@placement_routes.route('/<int:id>', methods=['POST'])
+@placement_routes.route('/<int:companyId>', methods=['POST'])
 # @login_required
-def addPlacement(id):
+def addPlacement(companyId):
+    # print("Received add request for placement.")
     form = PlacementForm()
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
+        # print("Form is valid ... creating placement now")
+        # print("contractorId: ", form.data['contractorId'])
+        # print("companyId: ", companyId)
+        # print("companyContactId: ", form.data['companyContactId'])
+        # print("startDate: ", datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S'))
+        # print("endDate: ", datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S'))
+
         newPlacement = Placement(
             contractorId_fk=form.data['contractorId'],
-            companyId_fk=id,
+            companyId_fk=companyId,
             companyContactId_fk=form.data['companyContactId'],
             startDate=datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S'),
             endDate=datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S')
         )
         db.session.add(newPlacement)
-        start = datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S')
-        end = datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S')
-        delta = end - start
-        next = start
-        for x in range(0, delta.days +1):
-            new = BlockedDate(
-                contractorId_fk=form.data['companyContactId'],
-                companyContactId_fk=id,
-                blocked=next)
-            db.session.add(new)
-            next = next + timedelta(days=1)
+        # start = datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S')
+        # end = datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S')
+        # delta = end - start
+        # next = start
+        # for x in range(0, delta.days +1):
+        #     new = BlockedDate(
+        #         contractorId_fk=form.data['companyContactId'],
+        #         companyContactId_fk=id,
+        #         blocked=next)
+        #     db.session.add(new)
+        #     next = next + timedelta(days=1)
         db.session.commit()
-        return newPlacement.to_dict()
-    return { 'errors': validation_errors_to_error_messages(form.errors)}
+        # return newPlacement.to_dict()
+
+    return 'ok'
 
 def createContractorPlacementTableInfo(placements):
     placementInfo = []

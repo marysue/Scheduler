@@ -168,7 +168,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     }
 
     const loginCompanyDemo = async() => {
-       const user = await login('co2@co2.com', 'password');
+       const user = await login('co1@co1.com', 'password');
        if (!user.errors) {
             console.log("LoginForm: LoginCompanyDemo: Received the following user info: ", user);
             dispatch(setUserEmail(user.email));
@@ -279,7 +279,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
             return <Redirect to='/agencyView' />
         } else {
-            
+
             console.log("localStorage is not set yet. returning null..");
             return null;
         }
