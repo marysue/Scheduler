@@ -21,6 +21,8 @@ export const SET_STATE = '/user/company/SET_STATE';
 export const REMOVE_STATE = '/user/company/REMOVE_STATE';
 export const SET_ZIP = '/user/company/SET_ZIP'
 export const REMOVE_ZIP = '/user/company/REMOVE_ZIP';
+export const SET_COMPANY_LOCATIONS = '/user/company/SET_COMPANY_LOCATIONS';
+export const REMOVE_COMPANY_LOCATIONS = '/user/company/REMOVE_COMPANY_LOCATIONS';
 
 export const setCompanyId = id => ({ type: SET_COMPANY_ID, id})
 export const removeCompanyId = () => ({ type: REMOVE_COMPANY_ID})
@@ -42,6 +44,8 @@ export const setCompanyState = state => ({ type: SET_STATE, state })
 export const removeCompanyState = () => ({ type: REMOVE_STATE })
 export const setCompanyZip = zip => ({ type: SET_ZIP, zip })
 export const removeCompanyZip = () => ({ type: REMOVE_ZIP })
+export const setCompanyLocations = locations => ({ type: SET_COMPANY_LOCATIONS, locations })
+export const removeCompanyLocations = () => ({ type: REMOVE_COMPANY_LOCATIONS })
 
 
 export default function reducer (state = {}, action) {
@@ -166,6 +170,18 @@ export default function reducer (state = {}, action) {
             delete newState.zip;
             return newState;
           }
+        case SET_COMPANY_LOCATIONS: {
+          const newState = { ...state};
+          newState.companyLocations = action.locations;
+          console.log("Setting company locations: ", newState.companyLocations)
+          return newState;
+        }
+        case REMOVE_COMPANY_LOCATIONS: {
+          const newState = { ...state};
+          delete newState.companyLocations;
+          console.log("Removing company locations");
+          return newState;
+        }
           default:
             return state;
     }
@@ -202,8 +218,8 @@ export const addCompany = async (userId, companyName) => {
       return await response.json();
     }
 
-    export const getCompanyInfo = async (userId) => {
-      const response = await fetch(`/api/company/info/${userId}`, {
+    export const getCompanyInfo = async (companyId) => {
+      const response = await fetch(`/api/company/info/${companyId}`, {
         headers: {
             "Content-Type": "application/json",
         }});

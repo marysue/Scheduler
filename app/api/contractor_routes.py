@@ -113,6 +113,7 @@ def getAvailableContractors():
     print("staff Type ", staffType, " is ", type(staffType))
     URIContractors = request.args['dateRange']
     dateRange = unquote(URIContractors)
+    print("dateRange: ", dateRange)
     contractors = Contractor.query.filter(Contractor.staffType == staffType).all()
     print("Received contractors:  ", contractors)
     dateRangeArray = datesArray(dateRange)
@@ -128,5 +129,18 @@ def getAvailableContractors():
                 available = False
         if available:
             availableContractors += [contractor.to_dict()]
-    print('Available contractors:  ', availableContractors)
-    return { "available": availableContractors }
+    contractorList = []
+    cc = []
+    if (len(availableContractors) > 0):
+        for contractor in availableContractors:
+            print("contractor: ", contractor["staffType"])
+            contractorObj = ContractorContact.query.filter(ContractorContact.contractorId_fk == contractor["id"])
+            cc.append({ "staffType": contractor["staffType"], "contact": contractorObj[0].to_dict()})
+    return { "available": cc }
+
+#Returns all company and company contact info for all companies
+@contractor_routes.route('/all', methods=['GET'])
+# @login_required
+def getAllContractorInfo():
+    contractors = Contractor.query.all()
+    return { "contractors": [contractor.less_to_dict() for contractor in contractors]}

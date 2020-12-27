@@ -42,14 +42,18 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
-  console.log("*****************************Calendar: Entered calendar****************************");
+export default function Calendar({datesBlocked, setDatesBlocked, placements, placementDates, userType}) {
+  console.log("************************Calendar View************************")
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   // const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
-  const placements = useSelector ( state => state.placement.placementInfo );
-  const placementDates = useSelector(state => state.placement.placementDates);
+  //const userType = useSelector(state => state.authentication.userType)
+
+  // *****************NOTE:  If ContractorView and Company View stop working it's
+  // *****************       because I'm now passing placements through as a prop.
+  // const placements = useSelector ( state => state.placement.placementInfo );
+  // const placementDates = useSelector(state => state.placement.placementDates);
   // console.log("Calendar: DatesBlocked: ", datesBlocked);
   // console.log("Calendar: placements: ", placements);
   // console.log("Calendar: placementDates: ", placementDates);
@@ -71,7 +75,7 @@ export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
   //   }
   // }
   function dayInPlacements(day) {
-    console.log("NewCalendar: day = ", day.format('YYYY-MM-DD'));
+    console.log("Calendar: day = ", day.format('YYYY-MM-DD'));
     const dayStr = day.format('YYYY-MM-DD')
 
 

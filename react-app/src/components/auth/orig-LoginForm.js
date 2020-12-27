@@ -54,7 +54,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     useEffect (() => {
         setSubmitted(false);
         setOpen(openDialog);
-    }, [openDialog]);
+    }, []);
     // const handleClickOpen = () => {
     //     setOpen(true);
     // };

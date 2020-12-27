@@ -4,8 +4,8 @@ import { Redirect } from 'react-router-dom';
 import { logout } from '../../store/authentication';
 import { useDispatch } from 'react-redux';
 import { removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType } from '../../store/authentication';
-import { removeCompanyId, removeCompanyName, removeCompanyContactName, removeCompanyPhone, removeCompanyEmail, removeCompanyAddr1, removeCompanyAddr2, removeCompanyCity, removeCompanyState, removeCompanyZip } from '../../store/company'
-import { removeContractorId, removeStaffType, removeContractorName, removeContractorPhone, removeContractorEmail, removeContractorAddr1, removeContractorAddr2, removeContractorCity, removeContractorState, removeContractorZip } from '../../store/contractor'
+import { removeCompanyLocations, removeCompanyId, removeCompanyName, removeCompanyContactName, removeCompanyPhone, removeCompanyEmail, removeCompanyAddr1, removeCompanyAddr2, removeCompanyCity, removeCompanyState, removeCompanyZip } from '../../store/company'
+import { removeAvailableContractors, removeContractorId, removeStaffType, removeContractorName, removeContractorPhone, removeContractorEmail, removeContractorAddr1, removeContractorAddr2, removeContractorCity, removeContractorState, removeContractorZip } from '../../store/contractor'
 import { removePlacementInfo, removePlacementDates } from '../../store/placement'
 
 const LogoutButton = ({setAuthenticated}) => {
@@ -35,6 +35,7 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeCompanyCity());
     dispatch(removeCompanyState());
     dispatch(removeCompanyZip());
+    dispatch(removeCompanyLocations());
 
     dispatch(removeContractorId());
     dispatch(removeStaffType());
@@ -46,6 +47,7 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removeContractorCity());
     dispatch(removeContractorState());
     dispatch(removeContractorZip());
+    dispatch(removeAvailableContractors());
 
     dispatch(removePlacementDates());
     dispatch(removePlacementInfo());

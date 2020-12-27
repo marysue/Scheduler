@@ -10,13 +10,18 @@ import User from "./components/User";
 import SplashPage from "./components/SplashPage";
 import CompanyInfo from "./components/CompanyInfo";
 import ContractorInfo from "./components/ContractorInfo";
+import CompanyAddPlacement from "./components/CompanyAddPlacement";
 import { authenticate } from "./services/auth";
-import Calendar from "./components/CalendarComponent/Calendar";
 import SignUpForm from "./components/auth/SignUpForm"
 import ContractorView from "./components/ContractorView";
 import CompanyView from "./components/CompanyView";
 import AgencyView from "./components/AgencyView";
 import "./index.css";
+import AgencyCompanies from "./components/AgencyCompanies";
+import AgencyContractors from "./components/AgencyContractors";
+import AgencyContractorPlacements from './components/AgencyContractorPlacements';
+import AgencyCompanyPlacements from './components/AgencyCompanyPlacements';
+
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -79,9 +84,24 @@ function App() {
               <ProtectedRoute path="/companyView" exact={true} authenticated={authenticated}>
                 <CompanyView></CompanyView>
               </ProtectedRoute>
+              <ProtectedRoute path="/companyAddPlacement" exact={true} authenticated={authenticated}>
+                <CompanyAddPlacement></CompanyAddPlacement>
+              </ProtectedRoute>
               <ProtectedRoute path="/agencyView" exact={true} authenticated={authenticated}>
                 <AgencyView></AgencyView>
               </ProtectedRoute>
+              <ProtectedRoute path="/agencyContractorPlacements" exact={true} authenticated={authenticated}>
+                <AgencyContractorPlacements></AgencyContractorPlacements>
+              </ProtectedRoute>
+              <ProtectedRoute path='/agencyCompanyPlacements' exact={true} authenticated={authenticated}>
+                  <AgencyCompanyPlacements></AgencyCompanyPlacements>
+                </ProtectedRoute>
+                <ProtectedRoute path='/agencyCompanies' exact={true} authenticated={authenticated}>
+                  <AgencyCompanies></AgencyCompanies>
+                </ProtectedRoute>
+                <ProtectedRoute path='/agencyContractors' exact={true} authenticated={authenticated}>
+                  <AgencyContractors></AgencyContractors>
+                </ProtectedRoute>
               <ProtectedRoute path="/users" exact={true} authenticated={authenticated}>
                 <UsersList/>
               </ProtectedRoute>
@@ -90,9 +110,6 @@ function App() {
               </ProtectedRoute>
               <ProtectedRoute path="/" exact={true} authenticated={authenticated}>
                 <h1>My Home Page</h1>
-              </ProtectedRoute>
-              <ProtectedRoute path="/calendar" exact={true} authenticated={authenticated}>
-                <Calendar  />
               </ProtectedRoute>
               </Switch>
         </BrowserRouter>

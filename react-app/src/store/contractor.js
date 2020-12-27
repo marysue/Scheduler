@@ -21,6 +21,8 @@ export const SET_STATE = '/user/contractor/SET_STATE';
 export const REMOVE_STATE = '/user/contractor/REMOVE_STATE';
 export const SET_ZIP = '/user/contractor/SET_ZIP'
 export const REMOVE_ZIP = '/user/contractor/REMOVE_ZIP';
+export const SET_AVAILABLE_CONTRACTORS = '/user/contractor/SET_AVAILABLE_CONTRACTORS';
+export const REMOVE_AVAILABLE_CONTRACTORS = '/user/contractor/REMOVE_AVAILABLE_CONTRACTORS';
 
 export const setContractorId = id => ({ type: SET_CONTRACTOR_ID, id})
 export const removeContractorId = () => ({ type: REMOVE_CONTRACTOR_ID})
@@ -42,6 +44,8 @@ export const setContractorState = state => ({ type: SET_STATE, state })
 export const removeContractorState = () => ({ type: REMOVE_STATE })
 export const setContractorZip = zip => ({ type: SET_ZIP, zip })
 export const removeContractorZip = () => ({ type: REMOVE_ZIP })
+export const setAvailableContractors = contractors => ({ type: SET_AVAILABLE_CONTRACTORS, contractors })
+export const removeAvailableContractors = () => ({ type: REMOVE_AVAILABLE_CONTRACTORS })
 
 
 export default function reducer (state = {}, action) {
@@ -166,6 +170,17 @@ export default function reducer (state = {}, action) {
             delete newState.zip;
             return newState;
           }
+        case SET_AVAILABLE_CONTRACTORS: {
+          const newState = { ...state};
+          newState.availableContractors = action.contractors;
+          console.log("Setting available contractors: ", newState.availableContractors)
+          return newState;
+        }
+        case REMOVE_AVAILABLE_CONTRACTORS: {
+          const newState = { ...state }
+          delete newState.availableContractors;
+          return newState;
+        }
           default:
             return state;
     }
@@ -213,9 +228,11 @@ export const addContractor = async (userId, staffType) => {
         return await response.json();
       }
 
-    export const getContractorAvail = async (staffType, dateRange) => {
+    export const getContractorAvail = async (staffType, dateFrom, dateTo) => {
         //Have not tested decoding on server side.  First place to check if it doesn't work
-        const encoded = encodeURI(dateRange)
+        console.log("DateFrom: ", dateFrom, " DateTo: ", dateTo);
+        const encoded = encodeURI(dateFrom + "/" + dateTo)
+        //localhost:5000/api/contractor/available?staffType=Dental%20Assistant&dateRange=2021-01-19%2000:00:00/2021-01-25 00:00:00
         const response = await fetch(`/api/contractor/available?staffType=${staffType}&dateRange=${encoded}`, {
             headers: {
                 "Content-Type": "application/json",

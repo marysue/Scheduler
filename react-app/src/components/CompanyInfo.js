@@ -57,6 +57,9 @@ const CompanyInfo = () => {
         width: "75%",
         justifyContent: 'space-between'
     },
+    select: {
+      minWidth: "100px",
+    }
   }));
   const classes = useStyles();
 
@@ -207,6 +210,7 @@ const CompanyInfo = () => {
                     onChange={handleStateChange}
                     // input={<BootstrapInput />}
                     label="State"
+                    className={classes.select}
                   >
                   <MenuItem value=""><em>None</em></MenuItem>
                   <MenuItem value={"AL"}>AL</MenuItem>

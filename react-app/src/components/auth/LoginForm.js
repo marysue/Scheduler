@@ -69,6 +69,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         dispatch(setUserType(userType));
     }
 
+
     const dispatchSetContractorInfo = ( contractorId, email, name, phone, addr1, addr2, city, state, zip ) => {
         dispatch(setContractorId(contractorId));
         dispatch(setContractorEmail(email));
@@ -98,16 +99,13 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         if (e) { e.preventDefault()};
         const user = await login(values.email, values.password);
         if (!user.errors) {
+            console.log("User type is:  ", user.userType)
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
-            setAuthenticated(true)
             setLoginDetails(user.id);
-            setOpen(false);
             window.localStorage.setItem("userId", user.id)
-            console.log("User type:  ", user.userType)
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
-                    console.log("Login: setting contractorInfo in Redux Store")
                     dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
                     window.localStorage.setItem("contractorId", contractor.contractorId);
                     return <Redirect to="/contractorView" />
@@ -119,12 +117,10 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             } else if (user.userType === "company") {
                 const company = await getCompany(user.id);
                 if (!company.errors) {
-                    console.log("Login: setting companyInfo in Redux Store")
                     dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
                     window.localStorage.setItem("companyId", company.id);
                     return <Redirect to="/companyView" />
                 } else { setErrors(company.errors);
-                    console.log("LoginForm: No company info yet ... need to get it")
                     return <Redirect to="/companyInfo" />
                 }
             } else if (user.userType === "agency") {
@@ -153,50 +149,37 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const loginAgencyDemo = async() => {
         const user = await login('agency@agency.com', 'password');
         if (!user.errors) {
-            setAuthenticated(true);
-            setOpen(false);
+            setLoginDetails(user.id);
+            dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("agencyId", user.id);
             window.localStorage.setItem("currentUser",user.id)
-            window.localStorage.setItem("userId", user.id)
-            console.log("Still need to implement agency store logic, etc.")
             return <Redirect to="/agencyView" />
         } else {
-            console.log("Error logging in agency... ", user.errors);
             setErrors(user.errors);
         }
 
     }
 
     const loginCompanyDemo = async() => {
-       const user = await login('co2@co2.com', 'password');
+       const user = await login('co1@co1.com', 'password');
        if (!user.errors) {
-            console.log("LoginForm: LoginCompanyDemo: Received the following user info: ", user);
-            dispatch(setUserEmail(user.email));
-            dispatch(setUserId(user.id));
-            dispatch(setUserName(user.username));
-            dispatch(setUserType(user.userType));
+            dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("currentUser",user.id)
             window.localStorage.setItem("userId", user.id)
-            setAuthenticated(true)
-            setOpen(false)
+            setLoginDetails(user.id);
             if (user.userType === "company") {
-                console.log("LoginForm: LoginCompanyDemo: User type is company:  ", user.userType)
                 const company = await getCompany(user.id);
                 if (!company.errors) {
-                    console.log("LoginForm: LoginCompanyDemo: setting companyId: ", company.id);
                     dispatch(setCompanyId(company.id));
                     dispatch(setCompanyName(company.companyName));
                     window.localStorage.setItem("companyId", company.id);
-                    console.log("LoginForm: loginCompanyDemo: redirecting to /companyView");
                     return <Redirect to="/companyView"></Redirect>
                 } else {
                     setErrors(company.errors);
-                    console.log("LoginForm: LoginCompanyDemo: Errors logging in demo company: ", company.errors)
                     return <Redirect to="/companyInfo" />
                 }
             }
         } else {
-            console.log("Error logging in demo company account:  ", user.errors)
             setErrors(user.errors);
         }
     }
@@ -211,26 +194,20 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             dispatch(setUserName(user.username));
             dispatch(setUserType(user.userType));
             window.localStorage.setItem("currentUser",user.id)
-            window.localStorage.setItem("userId", user.id)
-            setAuthenticated(true);
-            setOpen(false);
+            setLoginDetails(user.id);
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
-                    console.log("LoginForm:  loginContractorDemo: setting contractorId")
                     dispatch(setContractorId(contractor.contractorId));
                     window.localStorage.setItem("contractorId", contractor.contractorId);
                     //   window.location.href="/"
-                    console.log("LoginForm:  loginContractorDemo: finished logging in and redirecting to '/contractorView'");
                     return <Redirect to="/contractorView" />
                 } else {
                     setErrors(contractor.errors);
-                    console.log("LoginForm:  loginContractorDemo: Errors logging in demo contractor:  ", contractor.errors)
                     return <Redirect to="/contractorInfo" />
                 }
             }
         } else {
-            console.log("LoginForm:  loginContractorDemo: Errors logging into contractor demo acct: ", user.errors);
             setErrors(user.errors);
         }
     };
@@ -271,7 +248,6 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         if (contractorId) {
             console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
             return <Redirect to='/contractorView' />
-
         } else if (companyId) {
             console.log("We have a companyId, redirecting: ", companyId, " with authenticated: ", authenticated);
             return <Redirect to='/companyView'/>
@@ -279,15 +255,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
             return <Redirect to='/agencyView' />
         } else {
-            
-            console.log("localStorage is not set yet. returning null..");
             return null;
         }
 
     }
 
     if (!open) {
-        console.log("LoginForm:  open is not defined or false...")
         return null
     } else {
         return (

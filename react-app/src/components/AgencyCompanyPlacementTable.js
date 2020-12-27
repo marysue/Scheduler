@@ -20,6 +20,7 @@ import { Table,
         Switch } from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
 
 
@@ -51,11 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'company', numeric: false, disablePadding: false, label: 'Office' },
+  { id: 'contactName', numeric: false, disablePadding: false, label: 'Contact Name'},
+  { id: 'contactPhone', numeric: false, disablePadding: false, label: 'Phone' },
+  { id: 'contactEmail', numeric: false, disablePadding: false, label: 'Email' },
+  { id: 'contractorName', numeric: false, disablePadding: false, label: 'Contractor Name' },
+  { id: 'staffType', numeric: false, disablePadding: false, label: "Staff Type" },
   { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
@@ -142,7 +144,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Company Placement Schedule
         </Typography>
       )}
 
@@ -195,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyPlacementTable = () => {
+const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -203,9 +205,12 @@ const CompanyPlacementTable = () => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const placements = useSelector(state => state.placement.placementInfo)
+
+  // const agencyPlacements = useSelector(state => state.agencyPlacements.placementInfo)
 
   console.log(" ********************PlacementsTable View********************")
+
+
   useEffect (() => {
     if (placements) {
       for (let i = 0; i < placements.length; i++) {
@@ -214,36 +219,39 @@ const CompanyPlacementTable = () => {
     } else {
         console.log("Placements:  No placements yet...")
     }
-  }, [placements] )
+  }, [] )
 
-  function createData(name, staffType, phone, email, city, startDate, endDate) {
-      return { name, staffType, phone, email, city, startDate, endDate };
+  function createData(company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate) {
+      return { company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate };
     }
 
   const rows = [];
 
 if(placements) {
-    const placementArr = placements.placements;
-
-    console.log("We have placements[0]: ", placementArr[0])
-
+    const placementArr = placements;
 
     for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].contractorInfo.city
+        let companyName = placementArr[i].agencyInfo.companyName + " " + placementArr[i].agencyInfo.contactAddress + ", " + placementArr[i].agencyInfo.contactCity + ", " + placementArr[i].agencyInfo.contactState + "  " + placementArr[i].agencyInfo.contactZip
+        let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
+        let end = moment(placementArr[i].agencyInfo.endDate).format('MM/DD/YYYY');
+        let city = placementArr[i].agencyInfo.contractorCity
+        let companyContactName = placementArr[i].agencyInfo.contactName
+        console.log("Start: ", start.toString());
+        console.log("End: ", end.toString())
         rows.push(createData(
-          placementArr[i].contractorInfo.name,
-          placementArr[i].contractorInfo.staffType,
-          placementArr[i].contractorInfo.phone,
-          placementArr[i].contractorInfo.email,
-          city,
+          companyName,
+          placementArr[i].agencyInfo.contactName,
+          placementArr[i].agencyInfo.contactPhone,
+          placementArr[i].agencyInfo.contactEmail,
+          placementArr[i].agencyInfo.contractorName,
+          placementArr[i].agencyInfo.staffType,
           start.toString(),
-          end.toString(), ));
+          end.toString(),
+          ));
         }
 
       }
-      console.log("rows.length:  ", rows.length)
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -301,15 +309,17 @@ if(placements) {
                 .map((row, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.company}</TableCell>
+                        <TableCell align="left">{row.contactName}</TableCell>
+                        <TableCell align="left">{row.contactPhone}</TableCell>
+                        <TableCell align="left">{row.contactEmail}</TableCell>
+                        <TableCell align="left">{row.contractorName}</TableCell>
                         <TableCell align="left">{row.staffType}</TableCell>
-                        <TableCell align="left">{row.phone}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.city}</TableCell>
                         <TableCell align="left">{row.startDate}</TableCell>
                         <TableCell align="left">{row.endDate}</TableCell>
                       </TableRow>
                     )
+
                 })}
 
 
@@ -339,4 +349,4 @@ if(placements) {
   );
 }
 
-export default CompanyPlacementTable;
+export default AgencyCompanyPlacementTable;

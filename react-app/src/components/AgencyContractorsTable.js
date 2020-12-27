@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -20,8 +20,9 @@ import { Table,
         Switch } from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-
+import { getAllContractorInfo, setAgencyContractorInfo } from '../store/agencyInfo';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -51,13 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
+
+  { id: 'name', numeric: false, disablePadding: false, label: 'Contractor Name' },
+  { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
-  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
-  { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
+  { id: 'email', numeric: false, disablePadding: false, label: "Email" },
+  { id: 'staffType', numeric: false, disablePadding: false, label: "Staff Type" },
 ];
 
 function EnhancedTableHead(props) {
@@ -142,22 +142,8 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Contractor List
         </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            {/* <FilterListIcon /> */}
-          </IconButton>
-        </Tooltip>
       )}
     </Toolbar>
   );
@@ -195,7 +181,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyPlacementTable = () => {
+const AgencyContractorsTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -203,47 +189,70 @@ const CompanyPlacementTable = () => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const placements = useSelector(state => state.placement.placementInfo)
+  const dispatch = useDispatch()
 
-  console.log(" ********************PlacementsTable View********************")
-  useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
+
+  let contractors = useSelector( state => state.agencyInfo.contractorInfo.contractors )
+
+  console.log(" ******************* Contractor Table View********************")
+  console.log("*********Contractor contents: ")
+  if (contractors) {
+  console.log("contractors.length: ", contractors.length)
+  for (let i = 0; i < contractors.length; i++) {
+    console.log(contractors[i])
+  }
+}
+
+useEffect (() => {
+
+  (async() => {
+      const p = await getAllContractorInfo();
+      if (!p.errors) {
+          dispatch(setAgencyContractorInfo(p))
+
+      } else {
+          console.log("AgencyView: Error in getAll AgencyCompanyPlacementTableInfo fetch call")
       }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
-  }, [placements] )
+  })()
 
-  function createData(name, staffType, phone, email, city, startDate, endDate) {
-      return { name, staffType, phone, email, city, startDate, endDate };
+}, []) ;
+
+  function createData(name, address, phone, email, staffType ) {
+      return { name, address, phone, email, staffType };
     }
 
   const rows = [];
 
-if(placements) {
-    const placementArr = placements.placements;
+if(contractors) {
 
-    console.log("We have placements[0]: ", placementArr[0])
+    console.log("contractors: ")
+    console.log(contractors)
+    for (let i=0; i < contractors.length; i++) {
+      const contractorName = contractors[i].contractorName;
+      //contractorName, locationName, address, contactName, contactPhone, contactEmail
+        console.log(contractors[i]);
 
-
-    for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].contractorInfo.city
+        const name = contractors[i].contractorContact.name;
+        const address = contractors[i].contractorContact.addr1 + " " + contractors[i].contractorContact.addr2 + ", " + contractors[i].contractorContact.city + ", " + contractors[i].contractorContact.state + " " + contractors[i].contractorContact.zip
+        const phone = contractors[i].contractorContact.phone;
+        const email = contractors[i].contractorContact.email;
+        const staffType = contractors[i].staffType;
+       
         rows.push(createData(
-          placementArr[i].contractorInfo.name,
-          placementArr[i].contractorInfo.staffType,
-          placementArr[i].contractorInfo.phone,
-          placementArr[i].contractorInfo.email,
-          city,
-          start.toString(),
-          end.toString(), ));
-        }
+          name,
+          address,
+          phone,
+          email,
+          staffType,
+          ));
 
-      }
-      console.log("rows.length:  ", rows.length)
+  }
+
+
+}
+
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -302,14 +311,13 @@ if(placements) {
                     return (
                       <TableRow key={index}>
                         <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.staffType}</TableCell>
+                        <TableCell align="left">{row.address}</TableCell>
                         <TableCell align="left">{row.phone}</TableCell>
                         <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.city}</TableCell>
-                        <TableCell align="left">{row.startDate}</TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
+                        <TableCell align="left">{row.staffType}</TableCell>
                       </TableRow>
                     )
+
                 })}
 
 
@@ -339,4 +347,4 @@ if(placements) {
   );
 }
 
-export default CompanyPlacementTable;
+export default AgencyContractorsTable;

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -20,8 +20,9 @@ import { Table,
         Switch } from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-
+import { getAllCompanyInfo, setAgencyCompanyInfo } from '../store/agencyInfo';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -51,13 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
-  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
-  { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
+  { id: 'companyName', numeric: false, disablePadding: false, label: 'Main Office Name' },
+  { id: 'locationName', numeric: false, disablePadding: false, label: 'Location Name'},
+  { id: 'address', numeric: false, disablePadding: false, label: 'Location Address' },
+  { id: 'contactName', numeric: false, disablePadding: false, label: 'Contact Name' },
+  { id: 'contactPhone', numeric: false, disablePadding: false, label: 'Phone' },
+  { id: 'contactEmail', numeric: false, disablePadding: false, label: "Email" },
 ];
 
 function EnhancedTableHead(props) {
@@ -142,22 +142,8 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Company List
         </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            {/* <FilterListIcon /> */}
-          </IconButton>
-        </Tooltip>
       )}
     </Toolbar>
   );
@@ -195,7 +181,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CompanyPlacementTable = () => {
+const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -203,47 +189,75 @@ const CompanyPlacementTable = () => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const placements = useSelector(state => state.placement.placementInfo)
+  const dispatch = useDispatch()
 
-  console.log(" ********************PlacementsTable View********************")
-  useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
+
+  let companies = useSelector( state => state.agencyInfo.companyInfo.companies )
+
+  console.log(" ******************* Company Table View********************")
+  console.log("*********Companies contents: ")
+  if (companies) {
+  console.log("companies.length: ", companies.length)
+  for (let i = 0; i < companies.length; i++) {
+    console.log(companies[i])
+  }
+}
+
+useEffect (() => {
+
+  (async() => {
+      const p = await getAllCompanyInfo();
+      if (!p.errors) {
+          dispatch(setAgencyCompanyInfo(p))
+
+      } else {
+          console.log("AgencyView: Error in getAll AgencyCompanyPlacementTableInfo fetch call")
       }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
-  }, [placements] )
+  })()
 
-  function createData(name, staffType, phone, email, city, startDate, endDate) {
-      return { name, staffType, phone, email, city, startDate, endDate };
+}, []) ;
+
+  function createData(companyName, locationName, address, contactName, contactPhone, contactEmail) {
+      return { companyName, locationName, address, contactName, contactPhone, contactEmail };
     }
 
   const rows = [];
 
-if(placements) {
-    const placementArr = placements.placements;
+if(companies) {
 
-    console.log("We have placements[0]: ", placementArr[0])
-
-
-    for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].contractorInfo.city
+    console.log("companies: ")
+    for (let i=0; i < companies.length; i++) {
+      const companyName = companies[i].companyName;
+      //companyName, locationName, address, contactName, contactPhone, contactEmail
+        console.log(companies[i]);
+        for (let j=0; j < companies[i].companyContacts.length; j++) {
+        const locationName = companies[i].companyContacts[j].companyName;
+        const address = companies[i].companyContacts[j].addr1 + " " + companies[i].companyContacts[j].addr2 + ", " + companies[i].companyContacts[j].city + ", " + companies[i].companyContacts[j].state + " " + companies[i].companyContacts[j].zip
+        const contactName = companies[i].companyContacts[j].name;
+        const contactPhone = companies[i].companyContacts[j].phone;
+        const contactEmail = companies[i].companyContacts[j].email;
+        console.log("Company Name: ", companyName)
+        console.log("LocationName:  ", locationName)
+        console.log("Address: ", address)
+        console.log("contactName: ", contactName);
+        console.log("contactPhone: ", contactPhone);
+        console.log("contactEmail: ", contactEmail);
         rows.push(createData(
-          placementArr[i].contractorInfo.name,
-          placementArr[i].contractorInfo.staffType,
-          placementArr[i].contractorInfo.phone,
-          placementArr[i].contractorInfo.email,
-          city,
-          start.toString(),
-          end.toString(), ));
-        }
+          companyName,
+          locationName,
+          address,
+          contactName,
+          contactPhone,
+          contactEmail,
+          ));
+    }
+  }
 
-      }
-      console.log("rows.length:  ", rows.length)
+
+}
+
+
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -301,15 +315,15 @@ if(placements) {
                 .map((row, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.staffType}</TableCell>
-                        <TableCell align="left">{row.phone}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.city}</TableCell>
-                        <TableCell align="left">{row.startDate}</TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
+                        <TableCell align="left">{row.companyName}</TableCell>
+                        <TableCell align="left">{row.locationName}</TableCell>
+                        <TableCell align="left">{row.address}</TableCell>
+                        <TableCell align="left">{row.contactName}</TableCell>
+                        <TableCell align="left">{row.contactPhone}</TableCell>
+                        <TableCell align="left">{row.contactEmail}</TableCell>
                       </TableRow>
                     )
+
                 })}
 
 
@@ -339,4 +353,4 @@ if(placements) {
   );
 }
 
-export default CompanyPlacementTable;
+export default AgencyCompanyPlacementTable;
