@@ -42,15 +42,18 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Calendar({datesBlocked, setDatesBlocked, userType}) {
+export default function Calendar({datesBlocked, setDatesBlocked, placements, placementDates, userType}) {
   console.log("************************Calendar View************************")
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   // const [blockedDatesChanged, setBlockedDatesChanged] = useState(false);
   const classes = useStyles();
   //const userType = useSelector(state => state.authentication.userType)
-  const placements = useSelector ( state => state.placement.placementInfo );
-  const placementDates = useSelector(state => state.placement.placementDates);
+
+  // *****************NOTE:  If ContractorView and Company View stop working it's
+  // *****************       because I'm now passing placements through as a prop.
+  // const placements = useSelector ( state => state.placement.placementInfo );
+  // const placementDates = useSelector(state => state.placement.placementDates);
   // console.log("Calendar: DatesBlocked: ", datesBlocked);
   // console.log("Calendar: placements: ", placements);
   // console.log("Calendar: placementDates: ", placementDates);

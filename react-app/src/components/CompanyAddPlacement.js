@@ -27,7 +27,6 @@ import { formatDateString } from '../utils/utils';
 export default function CompanyAddPlacement() {
   // The first commit of Material-UI
   console.log(" *********************Company Add Placement View********************")
-  const userId = useSelector(state => state.authentication.userId);
   const companyId = useSelector(state => state.authentication.companyId);
   const dispatch = useDispatch();
   const [errors, setErrors] = useState('');

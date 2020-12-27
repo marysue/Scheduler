@@ -137,3 +137,10 @@ def getAvailableContractors():
             contractorObj = ContractorContact.query.filter(ContractorContact.contractorId_fk == contractor["id"])
             cc.append({ "staffType": contractor["staffType"], "contact": contractorObj[0].to_dict()})
     return { "available": cc }
+
+#Returns all company and company contact info for all companies
+@contractor_routes.route('/all', methods=['GET'])
+# @login_required
+def getAllContractorInfo():
+    contractors = Contractor.query.all()
+    return { "contractors": [contractor.less_to_dict() for contractor in contractors]}

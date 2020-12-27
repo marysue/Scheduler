@@ -76,3 +76,11 @@ def getCompany(userId):
         return { "id": ci["id"], "userId": ci["userId"], "companyName": ci["companyName"], "companyContacts": ci["companyContacts"] }
     else:
         return {'errors': ['Not Found']}, 404
+
+
+#Returns all company and company contact info for all companies
+@company_routes.route('/all', methods=['GET'])
+# @login_required
+def getAllCompanyInfo():
+    companies = Company.query.all()
+    return { "companies": [company.to_dict() for company in companies]}

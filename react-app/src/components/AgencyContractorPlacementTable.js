@@ -57,6 +57,7 @@ const headCells = [
   { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
   { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
   { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'office', numeric: false, disablePadding: false, label: 'Office' },
   { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
@@ -143,7 +144,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Contractor Placement Schedule
         </Typography>
       )}
 
@@ -156,7 +157,7 @@ const EnhancedTableToolbar = (props) => {
       ) : (
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
-            <FilterListIcon />
+            {/* <FilterListIcon /> */}
           </IconButton>
         </Tooltip>
       )}
@@ -196,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyPlacementTable = ({placements, placementDates}) => {
+const AgencyContractorPlacementTable = ({placements, placementDates}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -220,23 +221,14 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
     }
   }, [] )
 
-  function createData(name, staffType, phone, email, city, startDate, endDate) {
-      return { name, staffType, phone, email, city, startDate, endDate };
+  function createData(name, staffType, phone, email, city, office, startDate, endDate) {
+      return { name, staffType, phone, email, city, office, startDate, endDate };
     }
 
   const rows = [];
 
 if(placements) {
     const placementArr = placements;
-
-      console.log("Placements is:  ", placements.length, " ... long")
-      for (let i=0; i < placementArr.length; i++) {
-        console.log("PlacementArr[", i, "]: ", placementArr[i])
-        console.log("Agency info:  ", placementArr[i].agencyInfo)
-        console.log("CompanyName:  ", placementArr[i].agencyInfo.companyName)
-      }
-    console.log("We have placements[0]: ", placementArr[0].agencyInfo)
-
 
     for (let i=0; i < placementArr.length; i++) {
         let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
@@ -248,6 +240,7 @@ if(placements) {
           placementArr[i].agencyInfo.contractorPhone,
           placementArr[i].agencyInfo.contractorEmail,
           city,
+          placementArr[i].agencyInfo.companyName,
           start.toString(),
           end.toString(),
           ));
@@ -317,6 +310,7 @@ if(placements) {
                         <TableCell align="left">{row.phone}</TableCell>
                         <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">{row.city}</TableCell>
+                        <TableCell align="left">{row.office}</TableCell>
                         <TableCell align="left">{row.startDate}</TableCell>
                         <TableCell align="left">{row.endDate}</TableCell>
                       </TableRow>
@@ -350,4 +344,4 @@ if(placements) {
   );
 }
 
-export default AgencyPlacementTable;
+export default AgencyContractorPlacementTable;

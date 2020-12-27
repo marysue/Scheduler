@@ -33,13 +33,13 @@ const useStyles = makeStyles({
   },
 });
 let once = true
-export default function DayCard({ day, handleDateClicked, userType}) {
-  const placements = useSelector ( state => state.placement.placementInfo );
-  const placementDates = useSelector(state => state.placement.placementDates);
+export default function DayCard({ day, placements, placementDates, handleDateClicked, userType}) {
   // console.log("Calendar: placements: ", placements);
   // console.log("Calendar: placementDates: ", placementDates);
   console.log("************************Day Card View************************")
-    const classes = useStyles();
+ // console.log("PlacementDate: ", placementDates)
+ console.log("UserType: ", userType)
+  const classes = useStyles();
 
     function dayInPlacements(day) {
       const dayStr = day.format('YYYY-MM-DD')
@@ -83,7 +83,7 @@ if (!day) {
           { dayInPlacements(day) && userType==="company"  ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
           return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
           { dayInPlacements(day) && userType==='agency' ? placementDates[day.format('YYYY-MM-DD')].map((item,index) => {
-          return(<div key={index}>{item.companyInfo.companyName}:{item.companyInfo.name}</div>)}) : null }
+          return(<div fontSize="6pt" key={index}>{item.agencyInfo.companyName}:{item.agencyInfo.staffType}</div>)}) : null }
       </CardContent>
     </Card>
     )
@@ -98,7 +98,7 @@ if (!day) {
       { dayInPlacements(day) && userType==="company" ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
           return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
       { dayInPlacements(day) && userType==='agency' ? placementDates[day.format('YYYY-MM-DD')].map((item,index) => {
-          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
+          return(<div fontSize="sm" overflow="hidden" key={index}>{item.agencyInfo.companyName}:{item.agencyInfo.staffType}</div>)}) : null }
       </CardContent>
     </Card>
     // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>

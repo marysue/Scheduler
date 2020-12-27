@@ -98,7 +98,7 @@ if (!day) {
       {/* { dayInPlacements(day) && userType==="company" ? placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
           return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null } */}
       { dayInPlacements(day) && userType==='agency' ? placementDates[day.format('YYYY-MM-DD')].map((item,index) => {
-          return(<div key={index}>{item.contractorInfo.name}:{item.contractorInfo.staffType}</div>)}) : null }
+          return(<div key={index}>{item.agencyInfo.contactName}:{item.contractorInfo.staffType}</div>)}) : null }
       </CardContent>
     </Card>
     // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>

@@ -52,11 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'staffType', numeric: false, disablePadding: true, label: 'Staff Type' },
-  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'email', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'city', numeric: false, disablePadding: false, label: 'City' },
+  { id: 'company', numeric: false, disablePadding: false, label: 'Office' },
+  { id: 'contactName', numeric: false, disablePadding: false, label: 'Contact Name'},
+  { id: 'contactPhone', numeric: false, disablePadding: false, label: 'Phone' },
+  { id: 'contactEmail', numeric: false, disablePadding: false, label: 'Email' },
+  { id: 'contractorName', numeric: false, disablePadding: false, label: 'Contractor Name' },
+  { id: 'staffType', numeric: false, disablePadding: false, label: "Staff Type" },
   { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
   { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
@@ -143,7 +144,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Contractor Schedule
+          Company Placement Schedule
         </Typography>
       )}
 
@@ -156,7 +157,7 @@ const EnhancedTableToolbar = (props) => {
       ) : (
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
-            <FilterListIcon />
+            {/* <FilterListIcon /> */}
           </IconButton>
         </Tooltip>
       )}
@@ -196,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyPlacementTable = ({placements, placementDates}) => {
+const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -220,8 +221,8 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
     }
   }, [] )
 
-  function createData(name, staffType, phone, email, city, startDate, endDate) {
-      return { name, staffType, phone, email, city, startDate, endDate };
+  function createData(company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate) {
+      return { company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate };
     }
 
   const rows = [];
@@ -229,32 +230,28 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
 if(placements) {
     const placementArr = placements;
 
-      console.log("Placements is:  ", placements.length, " ... long")
-      for (let i=0; i < placementArr.length; i++) {
-        console.log("PlacementArr[", i, "]: ", placementArr[i])
-        console.log("Agency info:  ", placementArr[i].agencyInfo)
-        console.log("CompanyName:  ", placementArr[i].agencyInfo.companyName)
-      }
-    console.log("We have placements[0]: ", placementArr[0].agencyInfo)
-
-
     for (let i=0; i < placementArr.length; i++) {
+        let companyName = placementArr[i].agencyInfo.companyName + " " + placementArr[i].agencyInfo.contactAddress + ", " + placementArr[i].agencyInfo.contactCity + ", " + placementArr[i].agencyInfo.contactState + "  " + placementArr[i].agencyInfo.contactZip
         let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
         let end = moment(placementArr[i].agencyInfo.endDate).format('MM/DD/YYYY');
         let city = placementArr[i].agencyInfo.contractorCity
+        let companyContactName = placementArr[i].agencyInfo.contactName
+        console.log("Start: ", start.toString());
+        console.log("End: ", end.toString())
         rows.push(createData(
+          companyName,
+          placementArr[i].agencyInfo.contactName,
+          placementArr[i].agencyInfo.contactPhone,
+          placementArr[i].agencyInfo.contactEmail,
           placementArr[i].agencyInfo.contractorName,
           placementArr[i].agencyInfo.staffType,
-          placementArr[i].agencyInfo.contractorPhone,
-          placementArr[i].agencyInfo.contractorEmail,
-          city,
           start.toString(),
           end.toString(),
           ));
         }
 
       }
-      console.log("rows.length:  ", rows.length)
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -312,15 +309,17 @@ if(placements) {
                 .map((row, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.company}</TableCell>
+                        <TableCell align="left">{row.contactName}</TableCell>
+                        <TableCell align="left">{row.contactPhone}</TableCell>
+                        <TableCell align="left">{row.contactEmail}</TableCell>
+                        <TableCell align="left">{row.contractorName}</TableCell>
                         <TableCell align="left">{row.staffType}</TableCell>
-                        <TableCell align="left">{row.phone}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.city}</TableCell>
                         <TableCell align="left">{row.startDate}</TableCell>
                         <TableCell align="left">{row.endDate}</TableCell>
                       </TableRow>
                     )
+
                 })}
 
 
@@ -350,4 +349,4 @@ if(placements) {
   );
 }
 
-export default AgencyPlacementTable;
+export default AgencyCompanyPlacementTable;

@@ -57,6 +57,72 @@ def getCompanyInfo(placement):
     }
     return companyInfo
 
+def getAgencyInfo(placement):
+    print ("*************************************************")
+    print("placementInfo: ", placement["contractor"])
+    print ("*************************************************")
+    companyInfo = {}
+    startDate = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
+    endDate = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
+    companyInfo = {
+        "agencyInfo": {
+            "companyName": placement["company"]["companyName"],
+            "contactName": placement["companyContact"]["name"],
+            "contactPhone": placement["companyContact"]["phone"],
+            "contactEmail": placement["companyContact"]["email"],
+            "contactAddress": placement["companyContact"]["addr1"] + " " + placement["companyContact"]["addr2"],
+            "contactCity": placement["companyContact"]["city"],
+            "contactState": placement["companyContact"]["state"],
+            "contactZip": placement["companyContact"]["zip"],
+            "startTime": str(startDate.hour) + ":" + str(startDate.minute),
+            "endTime": str(endDate.hour) + ":" + str(endDate.minute),
+            "startDate": str(startDate),
+            "endDate": str(endDate),
+            "contractorName": placement["contractor"]["contractorContact"]["name"],
+            "staffType": placement["contractor"]["staffType"],
+            "contractorPhone": placement["contractor"]["contractorContact"]["phone"],
+            "contractorEmail": placement["contractor"]["contractorContact"]["email"],
+            "contractorCity": placement["contractor"]["contractorContact"]["city"],
+            "contractorAddress": placement["contractor"]["contractorContact"]["addr1"] + " " + placement["contractor"]["contractorContact"]["addr2"],
+            "contractorState": placement["contractor"]["contractorContact"]["state"],
+            "contractorZip": placement["contractor"]["contractorContact"]["zip"],
+        }
+    }
+    return companyInfo
+
+def getAllCompanyPlacementInfo(placements):
+    agencyPlacementInfo = []
+    for placement in placements:
+        startDate = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
+        endDate = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
+        agencyInfo = {
+        "agencyInfo": {
+            "companyName": placement["company"]["companyName"],
+            "contactName": placement["companyContact"]["name"],
+            "contactPhone": placement["companyContact"]["phone"],
+            "contactEmail": placement["companyContact"]["email"],
+            "contactAddress": placement["companyContact"]["addr1"] + " " + placement["companyContact"]["addr2"],
+            "contactCity": placement["companyContact"]["city"],
+            "contactState": placement["companyContact"]["state"],
+            "contactZip": placement["companyContact"]["zip"],
+            "startTime": str(startDate.hour) + ":" + str(startDate.minute),
+            "endTime": str(endDate.hour) + ":" + str(endDate.minute),
+            "startDate": str(startDate),
+            "endDate": str(endDate),
+            "contractorName": placement["contractor"]["contractorContact"]["name"],
+            "staffType": placement["contractor"]["staffType"],
+            "contractorPhone": placement["contractor"]["contractorContact"]["phone"],
+            "contractorEmail": placement["contractor"]["contractorContact"]["email"],
+            "contractorCity": placement["contractor"]["contractorContact"]["city"],
+            "contractorAddress": placement["contractor"]["contractorContact"]["addr1"] + " " + placement["contractor"]["contractorContact"]["addr2"],
+            "contractorState": placement["contractor"]["contractorContact"]["state"],
+            "contractorZip": placement["contractor"]["contractorContact"]["zip"],
+            }
+        }
+        agencyPlacementInfo.append(agencyInfo)
+    return agencyPlacementInfo
+
+
 def addTo(a_dict, key, ci):
     if (key in a_dict.keys()):
         a_dict[key].append(ci)
@@ -73,7 +139,7 @@ def createPlacements(placements, userType):
         elif (userType == 'contractor'):
             ci = getCompanyInfo(placement)
         elif (userType == 'agency'):
-            ci = getCompanyInfo(placement)
+            ci = getAgencyInfo(placement)
 
         start = datetime.strptime(placement["startDate"], "%Y-%m-%d %H:%M:%S")
         end = datetime.strptime(placement["endDate"], "%Y-%m-%d %H:%M:%S")
@@ -148,6 +214,9 @@ def createContractorPlacementTableInfo(placements):
 
     return placementInfo
 
+def createAgencyPlacementTableInfo(placements):
+    placementInfo = []
+
 def createCompanyPlacementTableInfo(placements):
     placementInfo = []
 
@@ -206,7 +275,40 @@ def getCoPlacementTableInfo(companyId):
     return {"placements": placementTableStruct}
 
 #########################AGENCY PLACEMENTS
-#Returns ALL placements for the agency
+#Returns ALL placements ALL Contractors
+@placement_routes.route('/agency/contractor/all', methods=['GET'])
+def getAllContrPlacements():
+    placements = Placement.query.order_by(Placement.startDate).all()
+    return {"placements": [placement.to_dict() for placement in placements]}
+
+@placement_routes.route('/agency/contractor/calendarInfo/all', methods=['GET'])
+def getAllContrPlacementCalendarInfo():
+  placements = Placement.query.order_by(Placement.startDate).all()
+  placementStruct = createPlacements([placement.to_dict() for placement in placements], "contractor")
+  return (placementStruct)
+
+@placement_routes.route('/agency/contractor/tableInfo/all', methods=['GET'])
+def getAllContrPlacementTableInfo(contractorId):
+    placements = Placement.query.order_by(Placement.startDate).all()
+    placementTableStruct = createCompanyPlacementTableInfo([placement.to_dict() for placement in placements])
+    return {"placements": placementTableStruct}
+
+########### Returns ALL company placement information
+@placement_routes.route('/agency/company/calendarInfo/all', methods=['GET'])
+def getAllCoPlacementDateInfo():
+    placements =  Placement.query.order_by(Placement.startDate).all()
+    placementStruct = createPlacements([placement.to_dict() for placement in placements], "agency")
+    return placementStruct
+
+@placement_routes.route('/agency/company/tableInfo/all', methods=['GET'])
+def getAllCoPlacementTableInfo():
+    placements = Placement.query.order_by(Placement.startDate).all()
+    # placementTableStruct = createContractorPlacementTableInfo([placement.to_dict() for placement in placements])
+    retVal = getAllCompanyPlacementInfo([placement.to_dict() for placement in placements])
+    print("***********************RET VAL******************************")
+    print(retVal)
+    return {"agencyInfo": retVal}
+
 @placement_routes.route('/agency/all', methods=['GET'])
 #@login_required
 def getAll():
