@@ -22,7 +22,7 @@ import { Table,
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-import { getAllCompanyInfo, setAgencyCompanyInfo } from '../store/agencyInfo';
+import { getAllCompanyInfo, setAgencyCompanyInfo } from '../../store/agencyInfo';
 
 
 function descendingComparator(a, b, orderBy) {

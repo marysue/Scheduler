@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 // import moment from "moment";
 import { Button } from '@material-ui/core';
 import  AgencyPlacementTable  from './AgencyPlacementTable';
-import Calendar from './CalendarComponent/Calendar';
-import CompanyPlacementTable from './CompanyPlacementTable';
-import { getAllAgencyContractorPlacementCalendarInfo, getAllAgencyContractorPlacementTableInfo, setAgencyContractorPlacementDates, setAgencyContractorPlacementInfo} from '../store/agencyCompanyPlacements';
-import { getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo, setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo } from "../store/agencyCompanyPlacements";
-import {  getAllContractorInfo, getAllCompanyInfo, setAgencyCompanyInfo, setAgencyContractorInfo } from "../store/agencyInfo";
+import Calendar from '../CalendarComponent/Calendar';
+import CompanyPlacementTable from '../Company/CompanyPlacementTable';
+import { getAllAgencyContractorPlacementCalendarInfo, getAllAgencyContractorPlacementTableInfo, setAgencyContractorPlacementDates, setAgencyContractorPlacementInfo} from '../../store/agencyCompanyPlacements';
+import { getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo, setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo } from "../../store/agencyCompanyPlacements";
+import {  getAllContractorInfo, getAllCompanyInfo, setAgencyCompanyInfo, setAgencyContractorInfo } from "../../store/agencyInfo";
 const AgencyView = () => {
     console.log("Entered AgencyView")
     const dispatch = useDispatch();
@@ -50,6 +50,7 @@ const AgencyView = () => {
 
     return (
         <>
+            <div><h2 style={{textAlign: "center"}}>Agency View</h2></div>
             <Calendar key={"newCalendar"} placements={companyPlacementInfo} placementDates={companyPlacementDates} datesBlocked={[]} userType={'agency'}></Calendar>
             {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
             {/* <Button key={"buttonKey"} onClick={savePlacement} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button> */}

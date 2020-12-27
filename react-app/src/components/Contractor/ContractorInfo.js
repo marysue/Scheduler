@@ -14,7 +14,7 @@ import { Button,
         } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { addContractor, addContractorContact, setContractorId, setContractorName, setContractorPhone, setContractorEmail, setContractorAddr1, setContractorAddr2, setContractorCity, setContractorState, setContractorZip, setStaffType } from '../store/contractor';
+import { addContractor, addContractorContact, setContractorId, setContractorName, setContractorPhone, setContractorEmail, setContractorAddr1, setContractorAddr2, setContractorCity, setContractorState, setContractorZip, setStaffType } from '../../store/contractor';
 
 
 const ContractorInfo = ({authenticated}) => {

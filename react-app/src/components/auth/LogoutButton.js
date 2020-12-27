@@ -57,8 +57,10 @@ const LogoutButton = ({setAuthenticated}) => {
     window.localStorage.removeItem("contractorId")
     window.localStorage.removeItem("companyId")
     window.localStorage.removeItem("agencyId");
+    window.localStorage.removeItem("userType");
 
-    return <Redirect to='/'></Redirect>
+    //return <Redirect to='/splashPage'></Redirect>
+    window.location.replace("/splashPage")
     } else {
       console.log("LogoutButton:  Errors logging out: ", retVal.errors);
     }

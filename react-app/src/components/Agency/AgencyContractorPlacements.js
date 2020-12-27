@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AgencyContractorPlacementTable from './AgencyContractorPlacementTable';
-import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../store/agencyCompanyPlacements';
+import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../../store/agencyCompanyPlacements';
 
 
 const AgencyContractorPlacements = () => {

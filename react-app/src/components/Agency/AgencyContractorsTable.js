@@ -22,7 +22,7 @@ import { Table,
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-import { getAllContractorInfo, setAgencyContractorInfo } from '../store/agencyInfo';
+import { getAllContractorInfo, setAgencyContractorInfo } from '../../store/agencyInfo';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -191,8 +191,31 @@ const AgencyContractorsTable = () => {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const dispatch = useDispatch()
 
+  let contractorInfo;
+const agencyInfo = useSelector( state => state.agencyInfo);
+if (agencyInfo) {
+  contractorInfo = agencyInfo.contractorInfo
+}
+let contractors;
+if (contractorInfo) {
+  contractors = contractorInfo.contractors
+}
+  useEffect (() => {
 
-  let contractors = useSelector( state => state.agencyInfo.contractorInfo.contractors )
+    (async() => {
+        console.log("Getting contractors")
+        const p = await getAllContractorInfo();
+        if (!p.errors) {
+            console.log("AgencyView: Contractor Table Info set as:  ", p)
+            console.log("AgencyView: Setting contractorInfo table info in redux store...")
+            dispatch(setAgencyContractorInfo(p))
+        } else {
+            console.log("AgencyView: Error in getAll AgencyContractorPlacementTableInfo fetch call")
+        }
+    })()
+
+}, [contractors]) ;
+
 
   console.log(" ******************* Contractor Table View********************")
   console.log("*********Contractor contents: ")
@@ -237,7 +260,7 @@ if(contractors) {
         const phone = contractors[i].contractorContact.phone;
         const email = contractors[i].contractorContact.email;
         const staffType = contractors[i].staffType;
-       
+
         rows.push(createData(
           name,
           address,

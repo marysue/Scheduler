@@ -8,20 +8,22 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
 import SplashPage from "./components/SplashPage";
-import CompanyInfo from "./components/CompanyInfo";
-import ContractorInfo from "./components/ContractorInfo";
-import CompanyAddPlacement from "./components/CompanyAddPlacement";
+import CompanyInfo from "./components/Company/CompanyInfo";
+import ContractorInfo from "./components/Contractor/ContractorInfo";
+import CompanyAddPlacement from "./components/Company/CompanyAddPlacement";
+import CompanyPlacementTable from "./components/Company/CompanyPlacementTable";
 import { authenticate } from "./services/auth";
 import SignUpForm from "./components/auth/SignUpForm"
-import ContractorView from "./components/ContractorView";
-import CompanyView from "./components/CompanyView";
-import AgencyView from "./components/AgencyView";
+import ContractorView from "./components/Contractor/ContractorView";
+import ContractorPlacementTable from "./components/Contractor/ContractorPlacementTable";
+import CompanyView from "./components/Company/CompanyView";
+import AgencyView from "./components/Agency/AgencyView";
 import "./index.css";
-import AgencyCompanies from "./components/AgencyCompanies";
-import AgencyContractors from "./components/AgencyContractors";
-import AgencyContractorPlacements from './components/AgencyContractorPlacements';
-import AgencyCompanyPlacements from './components/AgencyCompanyPlacements';
-
+import AgencyCompanies from "./components/Agency/AgencyCompanies";
+import AgencyContractors from "./components/Agency/AgencyContractors";
+import AgencyContractorPlacements from './components/Agency/AgencyContractorPlacements';
+import AgencyCompanyPlacements from './components/Agency/AgencyCompanyPlacements';
+import NavBar2 from './components/navigator/NavBar';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -54,8 +56,12 @@ function App() {
       <Theme>
         <BrowserRouter>
             <NavBar setAuthenticated={setAuthenticated} />
+            <NavBar2 setAuthenticated={setAuthenticated}></NavBar2>
             <Switch>
               <Route path="/" exact={true}>
+                <SplashPage></SplashPage>
+              </Route>
+              <Route path='/splashPage' exact={true}>
                 <SplashPage></SplashPage>
               </Route>
               <Route path="/login" exact={true}>
@@ -81,8 +87,14 @@ function App() {
               <ProtectedRoute path="/contractorView" exact={true} authenticated={authenticated}>
                 <ContractorView></ContractorView>
               </ProtectedRoute>
+              <ProtectedRoute path="/contractorTable" exact={true} authenticated={authenticated}>
+                <ContractorPlacementTable></ContractorPlacementTable>
+              </ProtectedRoute>
               <ProtectedRoute path="/companyView" exact={true} authenticated={authenticated}>
                 <CompanyView></CompanyView>
+              </ProtectedRoute>
+              <ProtectedRoute path="/companyTable" exact={true} authenticated={authenticated}>
+                <CompanyPlacementTable></CompanyPlacementTable>
               </ProtectedRoute>
               <ProtectedRoute path="/companyAddPlacement" exact={true} authenticated={authenticated}>
                 <CompanyAddPlacement></CompanyAddPlacement>

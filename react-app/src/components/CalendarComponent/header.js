@@ -46,7 +46,7 @@ export default function CalendarHeader({ value, onChange }) {
   return (
 
 
-      <div className="header" width="1050px">
+      <div style={{marginTop: "20px"}} className="header" width="1050px">
         <div
           className="previous"
           onClick={() => !thisMonth() && onChange(prevMonth())}

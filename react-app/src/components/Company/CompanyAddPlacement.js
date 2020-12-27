@@ -7,8 +7,8 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-import { setCompanyId } from '../store/company'
-import { getContractorAvail } from '../store/contractor';
+import { setCompanyId } from '../../store/company'
+import { getContractorAvail } from '../../store/contractor';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
          DialogContent,
@@ -21,8 +21,8 @@ import { Button,
         } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CompanyPlacementPickerTable from './CompanyPlacementPickerTable';
-import { setAvailableContractors } from '../store/contractor';
-import { formatDateString } from '../utils/utils';
+import { setAvailableContractors } from '../../store/contractor';
+import { formatDateString } from '../../utils/utils';
 
 export default function CompanyAddPlacement() {
   // The first commit of Material-UI

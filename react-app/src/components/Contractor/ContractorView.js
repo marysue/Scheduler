@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-import { getAllBlocked, setBlocked} from '../store/blocked';
+import { getAllBlocked, setBlocked} from '../../store/blocked';
 import { Button } from '@material-ui/core';
-import { getContractorPlacements, getContractorPlacementCalendar, getContractorPlacementTableInfo, setPlacementInfo, setPlacementDates } from '../store/placement';
+import { getContractorPlacements, getContractorPlacementCalendar, getContractorPlacementTableInfo, setPlacementInfo, setPlacementDates } from '../../store/placement';
 import  ContractorPlacementTable  from './ContractorPlacementTable';
-import Calendar from './CalendarComponent/Calendar';
-import { setContractorId } from '../store/contractor';
+import Calendar from '../CalendarComponent/Calendar';
+import { setContractorId } from '../../store/contractor';
 
 const ContractorView = () => {
     console.log("Entered ContractorView")

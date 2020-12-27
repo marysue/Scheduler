@@ -103,6 +103,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             setLoginDetails(user.id);
             window.localStorage.setItem("userId", user.id)
+            window.localStorage.setItem("userType", user.userType)
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
@@ -148,6 +149,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     const loginAgencyDemo = async() => {
         const user = await login('agency@agency.com', 'password');
+        window.localStorage.setItem("userType", user.userType)
         if (!user.errors) {
             setLoginDetails(user.id);
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
@@ -162,6 +164,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     const loginCompanyDemo = async() => {
        const user = await login('co1@co1.com', 'password');
+       window.localStorage.setItem("userType", user.userType)
        if (!user.errors) {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("currentUser",user.id)
@@ -187,13 +190,15 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const loginContractorDemo = async () => {
         // const user = await login('demo@aa.io', 'password');
         const user = await login('da2@da2.com', 'password');
+        window.localStorage.setItem("userType", user.userType)
+        window.localStorage.setItem("currentUser",user.id)
         if (!user.errors) {
             console.log("LoginForm:  loginContractorDemo: Received the following user info: ", user);
             dispatch(setUserEmail(user.email));
             dispatch(setUserId(user.id));
             dispatch(setUserName(user.username));
             dispatch(setUserType(user.userType));
-            window.localStorage.setItem("currentUser",user.id)
+
             setLoginDetails(user.id);
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
@@ -247,13 +252,18 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
         if (contractorId) {
             console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
-            return <Redirect to='/contractorView' />
+            window.location.replace('/contractorView')
+            //return <Redirect to='/contractorView' />
         } else if (companyId) {
             console.log("We have a companyId, redirecting: ", companyId, " with authenticated: ", authenticated);
-            return <Redirect to='/companyView'/>
+            window.location.replace('/companyView')
+            //return <Redirect to='/companyView'/>
         } else if (agencyId) {
             console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
-            return <Redirect to='/agencyView' />
+            window.location.replace('/agencyView')
+
+            
+            //return <Redirect to='/agencyView' />
         } else {
             return null;
         }

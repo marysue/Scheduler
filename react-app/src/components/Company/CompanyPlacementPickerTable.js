@@ -19,8 +19,8 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { useSelector } from 'react-redux';
-import { formatDateString } from '../utils/utils'
-import { createPlacement } from '../store/placement';
+import { formatDateString } from '../../utils/utils'
+import { createPlacement } from '../../store/placement';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {

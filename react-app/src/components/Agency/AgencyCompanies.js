@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllCompanyInfo, setAgencyCompanyInfo } from '../store/agencyInfo';
+import { getAllCompanyInfo, setAgencyCompanyInfo } from '../../store/agencyInfo';
 import AgencyCompanyTable from './AgencyCompanyTable';
 
 const AgencyCompanies = () => {
