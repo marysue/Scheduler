@@ -32,7 +32,7 @@ const AgencyContractorPlacements = () => {
         console.log("Company placements: ", placements);
 
         console.log("Company dates: ", placementDates);
-    },[] );
+    }, );
 
 return (
     // <div>Agency Placement Table</div>

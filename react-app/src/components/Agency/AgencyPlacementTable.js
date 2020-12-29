@@ -66,7 +66,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>

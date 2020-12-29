@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 //import { login } from "../../services/auth";
 import { login } from "../../store/authentication"
@@ -50,6 +50,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         },
     }));
     const classes = useStyles();
+    const history = useHistory();
 
     useEffect (() => {
         setSubmitted(false);
@@ -109,23 +110,28 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 if (!contractor.errors) {
                     dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
                     window.localStorage.setItem("contractorId", contractor.contractorId);
-                    return <Redirect to="/contractorView" />
+                    // return <Redirect to="/contractorView" />
+                    history.push('/contractorView')
                 } else {
                     setErrors(contractor.errors);
                     console.log("LoginForm: No contractor info yet ... need to get it")
-                    return <Redirect to="/contractorInfo" />
+                    // return <Redirect to="/contractorInfo" />
+                    history.push('/contractorInfo')
                 }
             } else if (user.userType === "company") {
                 const company = await getCompany(user.id);
                 if (!company.errors) {
                     dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
                     window.localStorage.setItem("companyId", company.id);
-                    return <Redirect to="/companyView" />
+                    // return <Redirect to="/companyView" />
+                    history.push('/companyView')
                 } else { setErrors(company.errors);
-                    return <Redirect to="/companyInfo" />
+                    // return <Redirect to="/companyInfo" />
+                    history.push('/companyInfo')
                 }
             } else if (user.userType === "agency") {
-                    return <Redirect to="/agencyView" />
+                    // return <Redirect to="/agencyView" />
+                    history.push('/agencyView')
             }
         } else {
           setErrors(user.errors);
@@ -155,7 +161,9 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("agencyId", user.id);
             window.localStorage.setItem("currentUser",user.id)
-            return <Redirect to="/agencyView" />
+            console.log('login demo - redirecting to agencyView')
+            // return <Redirect to="/agencyView" />
+            history.push('/agencyView')
         } else {
             setErrors(user.errors);
         }
@@ -176,10 +184,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                     dispatch(setCompanyId(company.id));
                     dispatch(setCompanyName(company.companyName));
                     window.localStorage.setItem("companyId", company.id);
-                    return <Redirect to="/companyView"></Redirect>
+                    // return <Redirect to="/companyView"></Redirect>
+                    history.push('companyView')
                 } else {
                     setErrors(company.errors);
-                    return <Redirect to="/companyInfo" />
+                    // return <Redirect to="/companyInfo" />
+                    history.push('companyInfo')
                 }
             }
         } else {
@@ -206,10 +216,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                     dispatch(setContractorId(contractor.contractorId));
                     window.localStorage.setItem("contractorId", contractor.contractorId);
                     //   window.location.href="/"
-                    return <Redirect to="/contractorView" />
+                    // return <Redirect to="/contractorView" />
+                    history.push('/contractorView')
                 } else {
                     setErrors(contractor.errors);
-                    return <Redirect to="/contractorInfo" />
+                    // return <Redirect to="/contractorInfo" />
+                    history.push('contractorInfo')
                 }
             }
         } else {
@@ -219,32 +231,10 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     if (authenticated) {
         console.log("Authenticated is true", authenticated);
-        // if (window.localStorage.getItem("contractorId")) {
-        //     console.log("LoginForm: contractorId in local storage ... redirecting to ContractorView")
-        //     return <Redirect to="/contractorView"></Redirect>
-        // } else if (window.localStorage.getItem("companyId")) {
-        //     console.log("LoginForm: companyId in local storage ... redirecting to CompanyView")
-        // } else if (window.localStorage.getItem("agencyId")) {
-        //     console.log("LoginForm: agencyId in local storage ... redirecting to AgencyView")
-        // } else if (window.localStorage.getItem("currentUser")){
-        //     console.log("LoginForm: PROBLEM - no contractorId, but only currentUser in local storage ... redirecting to '/ContractorView'");
-        //     console.log("contractorId: ", window.localStorage.getItem("contractorId"));
-        //     console.log("companyId: ", window.localStorage.getItem("companyId"));
-        //     console.log("agencyId: ", window.localStorage.getItem("agencyId"));
-        //     console.log("currentUser: ", window.localStorage.getItem("currentUser"))
-        //     return <Redirect to="/contractorView" />
-        //     // window.location.replace("/")
-        // } else {
-        //     console.log("LoginForm: PROBLEM: authenticated is false:  ", authenticated);
-        // }
-
         let contractorId = null
         let companyId = null
         let agencyId = null
         setTimeout(function() {}, 2000);
-        // while (!contractorId || !companyId || !agencyId) {
-        //     console.log("No values yet");
-        //     setTimeout(function() {}, 2000);
              contractorId = window.localStorage.getItem("contractorId");
              companyId = window.localStorage.getItem("companyId");
              agencyId = window.localStorage.getItem("agencyId");
@@ -252,18 +242,19 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
         if (contractorId) {
             console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
-            window.location.replace('/contractorView')
-            //return <Redirect to='/contractorView' />
+            // window.location.replace('/contractorView')
+            // return <Redirect to='/contractorView' />
+            history.push('/contractorView')
         } else if (companyId) {
             console.log("We have a companyId, redirecting: ", companyId, " with authenticated: ", authenticated);
-            window.location.replace('/companyView')
-            //return <Redirect to='/companyView'/>
+            // window.location.replace('/companyView')
+            // return <Redirect to='/companyView'/>
+            history.push('/companyView')
         } else if (agencyId) {
             console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
-            window.location.replace('/agencyView')
-
-            
-            //return <Redirect to='/agencyView' />
+            // window.location.replace('/agencyView')
+            // return <Redirect to='/agencyView' />
+            history.push('/agencyView')
         } else {
             return null;
         }

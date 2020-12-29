@@ -19,6 +19,7 @@
     "material-ui": "^0.20.2",
     "moment": "^2.29.1",
     "react": "^16.13.1",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-material-ui-form-validator": "^2.1.1",
     "react-redux": "^7.2.2",

@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -34,11 +33,7 @@ const useStyles = makeStyles({
 });
 let once = true
 export default function DayCard({ day, placements, placementDates, handleDateClicked, userType}) {
-  // console.log("Calendar: placements: ", placements);
-  // console.log("Calendar: placementDates: ", placementDates);
-  console.log("************************Day Card View************************")
- // console.log("PlacementDate: ", placementDates)
- console.log("UserType: ", userType)
+
   const classes = useStyles();
 
     function dayInPlacements(day) {
@@ -54,22 +49,8 @@ export default function DayCard({ day, placements, placementDates, handleDateCli
     }
 
       function beforeToday(day) {
-        //console.log("DayCard: beforeToday(day)");
         return moment(day).local().isBefore(new Date(), "day");
       }
-
-    // const bull = <span className={classes.bullet}>•</span>;
-
-const getPlacementInfo = (day) => {
-    let dayArray = placementDates[day.format('YYYY-MM-DD')].map((item, index) => {
-          return(`<div key={${index}}>{${item.companyInfo.companyName}}</div>`)
-      })
-      let retVal = ""
-      for (let i = 0 ; i < dayArray.length; i++) {
-        retVal += dayArray[i]
-      }
-      return retVal
-}
 
 if (!day) {
   return null
@@ -101,7 +82,6 @@ if (!day) {
           return(<div fontSize="sm" overflow="hidden" key={index}>{item.agencyInfo.companyName}:{item.agencyInfo.staffType}</div>)}) : null }
       </CardContent>
     </Card>
-    // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>
   );
   }
   }

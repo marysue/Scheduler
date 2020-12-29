@@ -3,7 +3,7 @@ import { CssBaseline } from "@material-ui/core";
 import Theme from "./Theme"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import LoginForm from "./components/auth/LoginForm";
-import NavBar from "./components/NavBar";
+// import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
@@ -55,9 +55,15 @@ function App() {
     <CssBaseline>
       <Theme>
         <BrowserRouter>
-            <NavBar setAuthenticated={setAuthenticated} />
+            {/* <NavBar setAuthenticated={setAuthenticated} /> */}
             <NavBar2 setAuthenticated={setAuthenticated}></NavBar2>
             <Switch>
+              {/* { userType === 'contractor' ?
+                <Redirect exact from="/" to="/contractorView" /> : null }
+              { userType === 'company' ?
+                <Redirect exact from="/" to="/companyView" /> : null }
+              { userType === 'agency' ?
+                <Redirect exact from="/" to="/agencyView" /> : null } */}
               <Route path="/" exact={true}>
                 <SplashPage></SplashPage>
               </Route>

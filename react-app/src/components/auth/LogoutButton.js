@@ -1,6 +1,5 @@
 import React from "react";
-import { Redirect } from 'react-router-dom';
-//import { logout } from "../../services/auth";
+import { useHistory } from 'react-router-dom';
 import { logout } from '../../store/authentication';
 import { useDispatch } from 'react-redux';
 import { removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType } from '../../store/authentication';
@@ -11,6 +10,7 @@ import { removePlacementInfo, removePlacementDates } from '../../store/placement
 const LogoutButton = ({setAuthenticated}) => {
   console.log("Entered LogoutButton")
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onLogout = async (e) => {
     console.log("onLogout...")
@@ -60,7 +60,8 @@ const LogoutButton = ({setAuthenticated}) => {
     window.localStorage.removeItem("userType");
 
     //return <Redirect to='/splashPage'></Redirect>
-    window.location.replace("/splashPage")
+    // window.location.replace("/splashPage")
+    history.push('/splashPage')
     } else {
       console.log("LogoutButton:  Errors logging out: ", retVal.errors);
     }

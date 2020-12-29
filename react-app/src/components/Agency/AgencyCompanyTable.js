@@ -14,14 +14,14 @@ import { Table,
         Toolbar,
         Typography,
         Paper,
-        IconButton,
-        Tooltip,
+        //IconButton,
+        //Tooltip,
         FormControlLabel,
         Switch } from '@material-ui/core'
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import moment from 'moment';
+//import DeleteIcon from '@material-ui/icons/Delete';
+//import FilterListIcon from '@material-ui/icons/FilterList';
+// import moment from 'moment';
 import { getAllCompanyInfo, setAgencyCompanyInfo } from '../../store/agencyInfo';
 
 
@@ -189,19 +189,19 @@ const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  // const [companies, setCompanies] = React.useState();
   const dispatch = useDispatch()
 
 
-  let companies = useSelector( state => state.agencyInfo.companyInfo.companies )
+  let agencyInfo = useSelector( state => state.agencyInfo )
+  // let companies = []
+  // if (companyInfo) {
+  //   companies = companyInfo.companies
+  // }
 
   console.log(" ******************* Company Table View********************")
-  console.log("*********Companies contents: ")
-  if (companies) {
-  console.log("companies.length: ", companies.length)
-  for (let i = 0; i < companies.length; i++) {
-    console.log(companies[i])
-  }
-}
+
+
 
 useEffect (() => {
 
@@ -209,6 +209,10 @@ useEffect (() => {
       const p = await getAllCompanyInfo();
       if (!p.errors) {
           dispatch(setAgencyCompanyInfo(p))
+          // setCompanies(p)
+          for (let i=0; i<p.length; i++) {
+            console.log("Companies: ", p[i]);
+          }
 
       } else {
           console.log("AgencyView: Error in getAll AgencyCompanyPlacementTableInfo fetch call")
@@ -223,9 +227,10 @@ useEffect (() => {
 
   const rows = [];
 
-if(companies) {
-
-    console.log("companies: ")
+if(!agencyInfo.companyInfo) {
+  return null
+} else {
+    let companies = agencyInfo.companyInfo.companies;
     for (let i=0; i < companies.length; i++) {
       const companyName = companies[i].companyName;
       //companyName, locationName, address, contactName, contactPhone, contactEmail
@@ -287,7 +292,7 @@ if(companies) {
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
+if (agencyInfo.companyInfo && agencyInfo.companyInfo.companies) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -351,6 +356,7 @@ if(companies) {
       />
     </div>
   );
+              }
 }
 
 export default AgencyCompanyPlacementTable;

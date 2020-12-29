@@ -20,7 +20,7 @@ import { Table,
         Switch } from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
+// import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
 
 
@@ -67,7 +67,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
+  // const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>

@@ -1,22 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// import moment from "moment";
-import { Button } from '@material-ui/core';
-import  AgencyPlacementTable  from './AgencyPlacementTable';
 import Calendar from '../CalendarComponent/Calendar';
-import CompanyPlacementTable from '../Company/CompanyPlacementTable';
-import { getAllAgencyContractorPlacementCalendarInfo, getAllAgencyContractorPlacementTableInfo, setAgencyContractorPlacementDates, setAgencyContractorPlacementInfo} from '../../store/agencyCompanyPlacements';
 import { getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo, setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo } from "../../store/agencyCompanyPlacements";
-import {  getAllContractorInfo, getAllCompanyInfo, setAgencyCompanyInfo, setAgencyContractorInfo } from "../../store/agencyInfo";
 const AgencyView = () => {
     console.log("Entered AgencyView")
     const dispatch = useDispatch();
     const companyPlacementDates = useSelector( state => state.agencyCompanyPlacements.placementDates )
     const companyPlacementInfo = useSelector ( state => state.agencyCompanyPlacements.placementInfo )
-    const contractorPlacementDates = useSelector ( state => state.agencyContractorPlacements.placementDates )
-    const contractorPlacementInfo = useSelector ( state => state.agencyContractorPlacements.placementInfo)
-    const companyInfo = useSelector (state => state.agencyInfo.companyInfo)
-    const contractorInfo = useSelector (state => state.agencyInfo.contractorInfo)
 
     console.log(" *********************Entered Agency View********************")
 

@@ -111,7 +111,7 @@ const ContractorView = () => {
                 <Calendar key={"contrCalendar"} datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked} userType={"contractor"}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
                 <Button onClick={saveDates} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
-                <ContractorPlacementTable></ContractorPlacementTable>
+                {/* <ContractorPlacementTable></ContractorPlacementTable> */}
             </>
         );
     }

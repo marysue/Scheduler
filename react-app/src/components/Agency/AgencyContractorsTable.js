@@ -14,14 +14,14 @@ import { Table,
         Toolbar,
         Typography,
         Paper,
-        IconButton,
-        Tooltip,
+        // IconButton,
+        // Tooltip,
         FormControlLabel,
         Switch } from '@material-ui/core'
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import moment from 'moment';
+// import DeleteIcon from '@material-ui/icons/Delete';
+// import FilterListIcon from '@material-ui/icons/FilterList';
+// import moment from 'moment';
 import { getAllContractorInfo, setAgencyContractorInfo } from '../../store/agencyInfo';
 
 
@@ -214,7 +214,7 @@ if (contractorInfo) {
         }
     })()
 
-}, [contractors]) ;
+}, []) ;
 
 
   console.log(" ******************* Contractor Table View********************")
