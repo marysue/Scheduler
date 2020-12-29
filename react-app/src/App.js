@@ -22,8 +22,9 @@ import "./index.css";
 import AgencyCompanies from "./components/Agency/AgencyCompanies";
 import AgencyContractors from "./components/Agency/AgencyContractors";
 import AgencyContractorPlacements from './components/Agency/AgencyContractorPlacements';
-import AgencyCompanyPlacements from './components/Agency/AgencyCompanyPlacements';
+import AgencyCompanyPlacementTable from './components/Agency/AgencyCompanyPlacementTable';
 import NavBar2 from './components/navigator/NavBar';
+import AgencyContractorPlacementTable from './components/Agency/AgencyContractorPlacementTable';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -77,7 +78,7 @@ function App() {
                   openDialog={true}
                 />
               </Route>
-              <Route path="/sign-up">
+              <Route path="/signup">
                 <SignUpForm
                   openDialog={true}
                   authenticated={authenticated}
@@ -108,14 +109,26 @@ function App() {
               <ProtectedRoute path="/agencyView" exact={true} authenticated={authenticated}>
                 <AgencyView></AgencyView>
               </ProtectedRoute>
+              <ProtectedRoute path="/agencyCalendar" exact={true} authenticated={authenticated}>
+                <AgencyView></AgencyView>
+              </ProtectedRoute>
               <ProtectedRoute path="/agencyContractorPlacements" exact={true} authenticated={authenticated}>
                 <AgencyContractorPlacements></AgencyContractorPlacements>
               </ProtectedRoute>
-              <ProtectedRoute path='/agencyCompanyPlacements' exact={true} authenticated={authenticated}>
-                  <AgencyCompanyPlacements></AgencyCompanyPlacements>
-                </ProtectedRoute>
                 <ProtectedRoute path='/agencyCompanies' exact={true} authenticated={authenticated}>
                   <AgencyCompanies></AgencyCompanies>
+                </ProtectedRoute>
+                <ProtectedRoute path='/contractorPlacementsTable' exact={true} authenticated={authenticated}>
+                <AgencyContractorPlacementTable></AgencyContractorPlacementTable>
+                </ProtectedRoute>
+                <ProtectedRoute path='/companyPlacementsTable' exact={true} authenticated={authenticated}>
+                <AgencyCompanyPlacementTable></AgencyCompanyPlacementTable>
+                </ProtectedRoute>
+                <ProtectedRoute path='/contractorList' exact={true} authenticated={authenticated}>
+                  <AgencyContractorPlacementTable></AgencyContractorPlacementTable>
+                </ProtectedRoute>
+                <ProtectedRoute path='/companyList' exact={true} authenticated={authenticated}>
+                  <AgencyCompanyPlacementTable></AgencyCompanyPlacementTable>
                 </ProtectedRoute>
                 <ProtectedRoute path='/agencyContractors' exact={true} authenticated={authenticated}>
                   <AgencyContractors></AgencyContractors>

@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavTabs(props) {
+export default function NavTabs({setAuthenticated}, props) {
   const dispatch = useDispatch();
   const classes = useStyles();
   let params = undefined;
@@ -69,6 +69,20 @@ export default function NavTabs(props) {
   // let page = '';
 
   const userType = window.localStorage.getItem("userType");
+
+  if (userType === undefined) {
+    if (page === undefined) {
+      page = "splashPage"
+    }
+    tabNameToIndex = {
+      0: "login",
+      1: "signUp",
+    }
+    indexToTabName = {
+      login: 0,
+      signUp: 1
+    }
+  }
 
   if (userType === 'contractor') {
     if (page === undefined) {
@@ -138,7 +152,7 @@ export default function NavTabs(props) {
 
     const retVal = await logout();
     if (!retVal.errors) {
-        //setAuthenticated(false);
+        setAuthenticated(false);
 
         dispatch(removeUserId());
         dispatch(removeUserName());
@@ -190,14 +204,14 @@ export default function NavTabs(props) {
 };
   return (
     <div className={classes.root}>
-      <Tabs value={selectedTab} onChange={handleChange} aria-label="simple tabs example">
+      <Tabs value={selectedTab} onChange={handleChange} indicatorColor="primary" textColor="primary" centered aria-label="simple tabs example">
       {userType === 'contractor' ? <Tab label="Calendar" /> : null}
       {userType === 'contractor' ? <Tab label='Assignments' /> : null}
       {userType === 'contractor' ? <Tab label='Logout' onClick={onLogout}/> : null}
 
       { userType === 'company' ? <Tab label='Calendar' /> :null}
       { userType === 'company' ? <Tab label='Placements Detail' /> :null}
-      { userType === 'company' ? <Tab label='Add Contractor' /> :null}
+      { userType === 'company' ? <Tab label='Hire Contractor' /> :null}
       { userType === 'company' ? <Tab label='Logout' onClick={onLogout}/> :null}
 
       { userType === 'agency' ? <Tab label='Calendar' /> :null}
@@ -206,6 +220,9 @@ export default function NavTabs(props) {
       { userType === 'agency' ? <Tab label='Contractor List' /> :null}
       { userType === 'agency' ? <Tab label='Company List' /> :null}
       { userType === 'agency' ? <Tab label='Logout' onClick={onLogout}/> :null}
+
+      { userType === undefined ? <Tab label='Login' /> : null }
+      { userType === undefined ? <Tab label='Sign Up' /> : null }
 
       </Tabs>
     </div>

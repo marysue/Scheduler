@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAgencyContractorPlacementDates, setAgencyContractorPlacementInfo, getAllAgencyContractorPlacementCalendarInfo, getAllAgencyContractorPlacementTableInfo } from '../../store/agencyContractorPlacements';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -197,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyContractorPlacementTable = ({placements, placementDates}) => {
+const AgencyContractorPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -205,20 +206,47 @@ const AgencyContractorPlacementTable = ({placements, placementDates}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const dispatch = useDispatch();
+  const agencyContractorPlacements = useSelector( state => state.agencyContractorPlacements )
+  let placementInfo;
+  let placements = [];
+
+if ( agencyContractorPlacements ) {
+  placementInfo = agencyContractorPlacements.placementInfo;
+}
+if (placementInfo) {
+ placements = placementInfo.placements
+}
+
 
   // const agencyPlacements = useSelector(state => state.agencyPlacements.placementInfo)
 
-  console.log(" ********************PlacementsTable View********************")
+  console.log(" ********************Contractor PlacementsTable View********************")
 
 
   useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
+    console.log("Contractor Placements Table:  Entered useEffect.");
+    (async() => {
+      console.log("Inside async()")
+      const p = await getAllAgencyContractorPlacementTableInfo();
+      console.log("Value of p: ", p)
+      if (!p.errors) {
+          console.log("AgencyPlacementsTable: Placement table info set as:  ", p.placements)
+          console.log("AgencyPlacementsTable: Setting placement info in redux store...")
+          dispatch(setAgencyContractorPlacementInfo(p))
+      } else {
+          console.log("AgencyPlacementsTable: Error in getCompanyPlacementTableInfo fetch call")
       }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
+      const pd = await getAllAgencyContractorPlacementCalendarInfo();
+      if (!pd.errors) {
+          console.log("AgencyPlacementsTable: Placement Dates set as: ", pd)
+          console.log("AgencyPlacementsTable: Setting placementDates in redux store...")
+          dispatch(setAgencyContractorPlacementDates(pd));
+      } else {
+          console.log("PlaceAgencyPlacementsTablementsTable: Error with getCompanyPlacementCalendar fetch call");
+      }
+  })()
+
   }, [] )
 
   function createData(name, staffType, phone, email, city, office, startDate, endDate) {

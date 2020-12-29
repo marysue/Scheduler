@@ -161,17 +161,9 @@ def createPlacements(placements, userType):
 @placement_routes.route('/<int:companyId>', methods=['POST'])
 # @login_required
 def addPlacement(companyId):
-    # print("Received add request for placement.")
     form = PlacementForm()
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
-        # print("Form is valid ... creating placement now")
-        # print("contractorId: ", form.data['contractorId'])
-        # print("companyId: ", companyId)
-        # print("companyContactId: ", form.data['companyContactId'])
-        # print("startDate: ", datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S'))
-        # print("endDate: ", datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S'))
-
         newPlacement = Placement(
             contractorId_fk=form.data['contractorId'],
             companyId_fk=companyId,
@@ -180,21 +172,12 @@ def addPlacement(companyId):
             endDate=datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S')
         )
         db.session.add(newPlacement)
-        # start = datetime.strptime(form.data['startDate'], '%Y-%m-%d %H:%M:%S')
-        # end = datetime.strptime(form.data['endDate'], '%Y-%m-%d %H:%M:%S')
-        # delta = end - start
-        # next = start
-        # for x in range(0, delta.days +1):
-        #     new = BlockedDate(
-        #         contractorId_fk=form.data['companyContactId'],
-        #         companyContactId_fk=id,
-        #         blocked=next)
-        #     db.session.add(new)
-        #     next = next + timedelta(days=1)
         db.session.commit()
-        # return newPlacement.to_dict()
 
-    return 'ok'
+    placements = Placement.query.order_by(Placement.startDate).all()
+    placementTableStruct = createContractorPlacementTableInfo([placement.to_dict() for placement in placements])
+    return {"placements": placementTableStruct}
+
 
 def createContractorPlacementTableInfo(placements):
     placementInfo = []
@@ -288,9 +271,9 @@ def getAllContrPlacementCalendarInfo():
   return (placementStruct)
 
 @placement_routes.route('/agency/contractor/tableInfo/all', methods=['GET'])
-def getAllContrPlacementTableInfo(contractorId):
+def getAllContrPlacementTableInfo():
     placements = Placement.query.order_by(Placement.startDate).all()
-    placementTableStruct = createCompanyPlacementTableInfo([placement.to_dict() for placement in placements])
+    placementTableStruct = getAllCompanyPlacementInfo([placement.to_dict() for placement in placements])
     return {"placements": placementTableStruct}
 
 ########### Returns ALL company placement information

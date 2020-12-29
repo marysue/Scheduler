@@ -98,8 +98,6 @@ const CompanyView = () => {
                 }
             })()
         }
-        console.log("Company placements: ", placements);
-        console.log("Company dates: ", placementDates);
     },[companyId] );
 
     const savePlacement= async () => {

@@ -102,12 +102,7 @@ export default function reducer (state = {}, action) {
 export const createPlacement = async (companyId, contractorId, companyContactId, startDate, endDate) => {
     //Not sure if I need to URI encode startDate, endDate - see contractor as I uri encoded a fetch call there
     // for an example.  If I do uri encode it, it needs to be uncoded on the backend as well
-    console.log("Placement request:  ")
-    console.log("     companyId: ", companyId)
-    console.log("     contractorId: ", contractorId)
-    console.log("     companyContactId: ", companyContactId)
-    console.log("     startDate: ", startDate);
-    console.log("     endDate: ", endDate);
+    
     const response = await fetch(`/api/placement/${companyId}`, {
       method: "POST",
       headers: {

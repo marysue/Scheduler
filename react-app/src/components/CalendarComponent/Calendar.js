@@ -246,7 +246,7 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
   return (
       <>
         <div >
-        <Grid  style={{textAlign: "center", color: "white", maxWidth: "1050px"}}  >
+        <Grid  style={{textAlign: "center", color: "white", maxWidth: "1044px"}}  >
             <Grid item xs={12}>
                 <div className="calendar">
                   <Header value={selectedDate} onChange={setSelectedDate}/>

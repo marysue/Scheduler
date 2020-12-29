@@ -144,7 +144,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     // }
     // const goToSignUp = (e) => {
     //     e.preventDefault()
-    //     return <Redirect to="/sign-up" />
+    //     return <Redirect to="/signUp" />
     //   }
 
     const loginAgencyDemo = async() => {
@@ -282,7 +282,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                             <Grid container direction="column" justify="center" alignItems="center" spacing={2}>
                                 <Grid container item xs={10} justify="center">
                                     <Typography  style={{marginTop:"40px", marginBottom:"40px"}} align="center" color="primary" >
-                                    <Link href="/sign-up" >Create your Placement Scheduler account</Link>
+                                    <Link href="/signUp" >Create your Placement Scheduler account</Link>
                                     </Typography>
                                     <Button variant="contained" style={{marginBottom:"20px", alignItems:"flex-start"}} onClick={loginContractorDemo} color="primary">Demo Contractor Login</Button>
                                     <Button variant="contained" style={{marginBottom:"20px", alignItems:"flex-center"}} onClick={loginCompanyDemo} color="primary">Demo Company Login</Button>

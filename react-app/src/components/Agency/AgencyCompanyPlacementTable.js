@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../../store/agencyCompanyPlacements';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -197,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
+const AgencyCompanyPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -205,20 +206,27 @@ const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const dispatch = useDispatch();
+ const agencyPlacements = useSelector(state => state.agencyCompanyPlacements)
+  let placements = {};
+  if (agencyPlacements) {
+    placements = agencyPlacements.placementInfo
+  }
 
-  // const agencyPlacements = useSelector(state => state.agencyPlacements.placementInfo)
-
-  console.log(" ********************PlacementsTable View********************")
+  console.log(" ********************Company PlacementsTable View********************")
 
 
   useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
+    (async() => {
+      const p = await getAllAgencyCompanyPlacementTableInfo();
+      if (!p.errors) {
+          dispatch(setAgencyCompanyPlacementInfo(p.agencyInfo))
+      } else {
+        console.log("AgencyCompanyPlacementTable:  Error in useEfect");
       }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
+
+    })()
+
   }, [] )
 
   function createData(company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate) {

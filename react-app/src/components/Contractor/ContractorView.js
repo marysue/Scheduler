@@ -7,6 +7,7 @@ import { getContractorPlacements, getContractorPlacementCalendar, getContractorP
 import  ContractorPlacementTable  from './ContractorPlacementTable';
 import Calendar from '../CalendarComponent/Calendar';
 import { setContractorId } from '../../store/contractor';
+import { createBlocked } from '../../store/blocked';
 
 const ContractorView = () => {
     console.log("Entered ContractorView")
@@ -97,7 +98,7 @@ const ContractorView = () => {
     }, [contractorId, placements] )
 
     const saveDates = async () => {
-        // const blocked = createBlocked(contractorId, datesBlocked)
+        const blocked = createBlocked(contractorId, datesBlocked)
         dispatch(setBlocked(datesBlocked));
 
     }

@@ -45,7 +45,6 @@ if (day) {
         <img src="blocked.png" alt="Blocked Day"></img>
       </CardContent>
     </Card>
-    // <div onClick={ (e) => handleDateClicked(e, day)}>{day.format("D").toString()}</div>
   );
 } else { return null }
 }
