@@ -2,33 +2,24 @@
 .calendar {
     box-sizing: border-box;
     font-size: 1rem;
-    max-width: 1146px;
   }
 
   .calendar .header {
-    background-color: rgb(97,97,97);
+    background-color: #648dae;
     border-radius: 4px;
-    margin-bottom: 2px;
-    text-align: center;
-    min-height: 2rem;
-    /* line-height: 8rem; */
     color: white;
-    font-family: var(--font-book);
-    font-weight: 700;
     display: flex;
+    width: 1046px;
+    margin-top: 10px;
   }
 
   .calendar .day-names {
     display: flex;
     flex-wrap: wrap;
-    max-width: 1146px;
+    max-width: 1145px;
     margin: 0 auto;
     align-items: center;
     color: white;
-
-  }
-
-  .calendar .body {
 
   }
 
@@ -42,7 +33,6 @@
     flex: 1;
     text-align: right;
     margin-right: 10rem;
-    width: 1050px;
   }
 
   .calendar .week {
@@ -75,12 +65,10 @@
   }
 
   .calendar .day div {
-    width: 54px;
-    height: 44px;
+    width: calc(100% / 7);
     position: relative;
     color: blue;
     z-index: 100;
-    /* line-height: 44px; */
   }
 
   .calendar .day div.before {
@@ -114,12 +102,6 @@
   grid-template-columns: 1;
   text-align: center;
 }
-.days-of-week-container,
-.calendar-container {
-  display: grid;
-  grid-template-columns: repeat(7, 150px);
-  text-align: right;
-}
 
 /* Because this example was hard-coded, we KNOW that the first */
 /* date goes in Sunday - grid-column: 7.  Taking that away places */
@@ -129,7 +111,6 @@
 }
 
 .calendar-container div:hover {
-  background-color: red;
   color: white;
   cursor: pointer;
 }

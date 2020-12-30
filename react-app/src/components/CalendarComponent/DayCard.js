@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   root: {
     width: "145px",
     height: "100px",
-    backgroundColor: "#616161",
+    backgroundColor: "#648dae",
     color: "white",
     borderRadius: "4px",
   },
@@ -28,11 +28,11 @@ const useStyles = makeStyles({
     fontSize: 14,
   },
   pos: {
-    // marginBottom: 12,
+
   },
 });
 let once = true
-export default function DayCard({ day, placements, placementDates, handleDateClicked, userType}) {
+export default function DayCard({ day, placementDates, handleDateClicked, userType}) {
 
   const classes = useStyles();
 

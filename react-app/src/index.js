@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import configureStore from "./store/configureStore"
 import { Provider } from 'react-redux';
+import { Box } from '@material-ui/core';
 
 const initialState = {}
 
@@ -13,7 +14,9 @@ const store = configureStore(initialState);
 //</Provider>
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Box marginLeft="10%" marginRight="20%" backgroundColor="black">
+      <App />
+    </Box>
   </Provider>
   ,
   document.getElementById('root')

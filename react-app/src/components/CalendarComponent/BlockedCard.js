@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     // width: "150px",
     // height: "150px",
     //display: "grid",
-    backgroundColor: "#616161",
+    backgroundColor: "#648dae",
     color: "white",
     // padding: "2px",
     borderRadius: "4px",
@@ -42,7 +42,7 @@ if (day) {
     <Card className={classes.root}>
       <CardContent onClick={ (e) => handleDateClicked(e, day)}>
         <div>{day.format("D").toString()}</div>
-        <img src="blocked.png" alt="Blocked Day"></img>
+        <img src='blocked.png' alt="Blocked Day"></img>
       </CardContent>
     </Card>
   );

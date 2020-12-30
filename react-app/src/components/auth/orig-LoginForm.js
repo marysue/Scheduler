@@ -17,6 +17,7 @@ import { setUserEmail, setUserName, setUserId, setUserType } from '../../store/a
 import { getContractorInfo,setContractorId, setContractorName, setContractorPhone, setContractorEmail, setContractorAddr1, setContractorAddr2, setContractorCity, setContractorState, setContractorZip } from '../../store/contractor';
 import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip } from '../../store/company';
 
+
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     console.log("Entered LoginForm")
     const dispatch = useDispatch();
@@ -229,7 +230,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
                 <Dialog open={open} style={{width:"100%"}} onClose={handleSignIn} aria-labelledby="form-dialog-title">
                     <div style={{marginTop:"40px"}}>
-                         <img src="fullLogo.png" alt="Placement Scheduler Logo" style={{width:"75%"}} className={classes.img}></img>
+                         <img src='fullLogo.png' alt="Placement Scheduler Logo" style={{width:"75%"}} className={classes.img}></img>
                         <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Sign In
                         </Typography>
                     </div>

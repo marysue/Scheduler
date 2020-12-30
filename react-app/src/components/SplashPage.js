@@ -51,12 +51,15 @@ const SplashPage = () => {
 
 
     return (
-        <Box>
+        <Box >
             <div><center><img src="fullLogo.png" alt="Placement Scheduler Logo"/></center>
+                <Box m={4} >
+                </Box>
                 <Typography variant="h5" align="center" color="primary">
                     EMPLOYERS
                 </Typography>
-                <Box m={2}>
+
+                <Box >
                 <Typography variant="body1" color="primary" align="center" gutterBottom="true">
                     We know employees cannot always predict when they will have to miss days at work.
                     We also know you already have a burgeoning schedule that waits for no-one.
@@ -78,6 +81,7 @@ const SplashPage = () => {
                     Adjust your schedule on a whim - no worries! Easy as just two clicks!!
                 </Typography>
                 </Box>
+                <Box m={10}>
                 <div className={classes.root}>
                     <Button
                         color="primary"
@@ -106,6 +110,7 @@ const SplashPage = () => {
                         }
                     </Button>
             </div>
+            </Box>
         </div>
         </Box>
 
