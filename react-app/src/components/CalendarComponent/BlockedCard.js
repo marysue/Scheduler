@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import BlockedImg from '../../images/blocked.png';
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +43,7 @@ if (day) {
     <Card className={classes.root}>
       <CardContent onClick={ (e) => handleDateClicked(e, day)}>
         <div>{day.format("D").toString()}</div>
-        <img src='blocked.png' alt="Blocked Day"></img>
+        <img src={BlockedImg} alt="Blocked Day"></img>
       </CardContent>
     </Card>
   );

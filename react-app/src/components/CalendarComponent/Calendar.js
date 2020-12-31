@@ -8,11 +8,11 @@ import DayCard from './DayCard';
 import BlockedCard from './BlockedCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import CalendarHeaderGrid from './CalendarHeaderGrid';
+
 
 const useStyles = makeStyles((theme) => ({
     container: {
-      maxWidth: "100%",
+
       // flexBasis: "100%",
       display: 'grid',
       backgroundColor: 'primary',
@@ -46,9 +46,12 @@ const useStyles = makeStyles((theme) => ({
     },
     item: {
       padding: "0px",
+    },
+    h2: {
+      width:"inherit",
+      margin:"0px",
     }
   }));
-
 
 
 export default function Calendar({datesBlocked, setDatesBlocked, placements, placementDates, userType}) {
@@ -56,6 +59,7 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
   const classes = useStyles();
+
 
   useEffect(() => {
     setCalendar(buildCalendar(selectedDate));
@@ -86,7 +90,8 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
     if (!dayInBlocked(start)) {
       let blocked = [ ...datesBlocked];
       blocked.push(start);
-      setDatesBlocked(blocked);
+      setDatesBlocked([...blocked]);
+      printDatesArray(datesBlocked);
     }
 
   }
@@ -111,12 +116,14 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
   }
   function dayInBlocked(day) {
     let thisDay = moment(day).local()
-
-    for (let i=0; i < datesBlocked.length; i++) {
-       if (thisDay.isSame(datesBlocked[i].local(), 'day')) {
-         return true;
-       }
+    if (datesBlocked) {
+      for (let i=0; i < datesBlocked.length; i++) {
+        if (thisDay.isSame(datesBlocked[i].local(), 'day')) {
+          return true;
+        }
       }
+      return false;
+    }
     return false;
   }
 
@@ -150,13 +157,13 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
                 </div>
             </Grid>
           </Grid>
-          <Grid container alignItems="center"  style={{color: "white", maxWidth: "100%", marginBottom:"5px"}} className={classes.container}  spacing={1}>
+          <Grid container alignItems="center"  style={{width:"1046px", marginLeft:"inherit", color: "white",  backgroundColor:"#648dae", marginBottom:"5px"}} className={classes.container}  spacing={1}>
               {["S", "M", "T", "W", "T", "F", "S"].map((d) => {
                 const uuid = uuidv4();
                 return (
-                  <Grid item className={classes.week}  key={uuid} >
+                  <Grid item style={{padding:"0px"}} key={uuid} >
                     <div>
-                      <center ><h2 >{d}</h2></center>
+                      <center><h2>{d}</h2></center>
                       </div>
                   </Grid>
                 )

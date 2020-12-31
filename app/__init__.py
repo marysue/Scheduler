@@ -69,4 +69,8 @@ def react_root(path):
     print("path", path)
     if path == 'favicon.ico':
         return app.send_static_file('favicon.ico')
+    elif path == 'fullLogo.png':
+        return app.send_static_file('fullLogo.png')
+    elif path == 'blocked.png':
+        return app.send_static_file('blocked.png')
     return app.send_static_file('index.html')

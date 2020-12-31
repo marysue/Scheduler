@@ -1,12 +1,8 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
 import { Button, makeStyles } from '@material-ui/core';
 import { Typography } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
-import Login from './auth/LoginForm'
-import SignUp from './auth/SignUpForm'
-import { AutoComplete } from 'material-ui';
+import FullLogo from '../images/fullLogo.png';
 
 const SplashPage = () => {
     console.log("Entered Splash Page")
@@ -52,7 +48,7 @@ const SplashPage = () => {
 
     return (
         <Box >
-            <div><center><img src="fullLogo.png" alt="Placement Scheduler Logo"/></center>
+            <div><center><img src={FullLogo} alt="Placement Scheduler Logo"/></center>
                 <Box m={4} >
                 </Box>
                 <Typography variant="h5" align="center" color="primary">
