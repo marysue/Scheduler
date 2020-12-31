@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
-import { getAllBlocked, setBlocked} from '../store/blocked';
+import { getAllBlocked, setBlocked} from '../../store/blocked';
 import { Button } from '@material-ui/core';
-import { getContractorPlacements, getContractorPlacementCalendar, getContractorPlacementTableInfo, setPlacementInfo, setPlacementDates } from '../store/placement';
+import { getContractorPlacements, getContractorPlacementCalendar, getContractorPlacementTableInfo, setPlacementInfo, setPlacementDates } from '../../store/placement';
 import  ContractorPlacementTable  from './ContractorPlacementTable';
-import Calendar from './CalendarComponent/Calendar';
-import { setContractorId } from '../store/contractor';
+import Calendar from '../CalendarComponent/Calendar';
+import { setContractorId } from '../../store/contractor';
+import { createBlocked } from '../../store/blocked';
 
 const ContractorView = () => {
     console.log("Entered ContractorView")
@@ -17,53 +18,40 @@ const ContractorView = () => {
     // const [placementDates, setPlacementDates] = useState();
     const placements = useSelector(state => state.placement.placementInfo);
     const placementDates = useSelector(state => state.placement.placementDates);
+    const dbSlice = useSelector(state => state.blocked);
+    let db = [];
 
-    function getDateRange(startDate, endDate) {
-        let start = moment(startDate).local();
-        let end = moment(endDate).local();
-        // console.log("Local start date:  ", start.format('MM/DD/YY hh:mm:ss'))
-
-        let diff = end.diff(start, 'days') + 1;
-        let thisDay = start.local().format('MM/DD/YYYY');
-        let range = [];
-        range.push(start)
-        for (let i = 1; i !== diff + 1; i++) {
-            let tmpDay = moment(thisDay).local();
-            range.push(tmpDay);
-            thisDay = tmpDay.add(1, 'day').format('MM/DD/YYYY hh:mm:ss')
-        }
-        // for (let i = 0; i < range.length; i++) {
-        //     console.log("range[", i, "]: ", range[i].format('MM/DD/YYYY hh:mm:ss'));
-        // }
-        return range;
+    if (dbSlice) {
+        db = dbSlice.blocked;
     }
 
+
+
+
     useEffect (() => {
+        if (datesBlocked.length === 0) {
+            setDatesBlocked(db)
+        };
+
         if (!contractorId) {
+            console.log("We have a contractor id, but it is not set in the redux store... handling now.")
             console.log("ContractorView: No contractor Id - getting it from local storage")
             let cid = window.localStorage.getItem("contractorId");
             if (cid) {
              dispatch(setContractorId(cid));
             }
         }
+
         if (!placements) {
+            console.log("We have no placements.");
         (async() => {
             const blockedDates = await getAllBlocked(contractorId);
             if (!blockedDates.errors) {
                 let bd = blockedDates["blockedDates"]
                 const blockedArr = []
                 for (let i = 0; i < bd.length; i++) {
-                    // console.log("Received date blocked: ", bd[i].blocked)
                     const date = bd[i].blocked.replace(" GMT", "")
-                    // console.log("date: ", date);
-                    // console.log("Tranforming into moment: ", moment(date).format('MM/DD/YYYY HH:mm:ss'));
-                    // console.log("Transforming into local : ", moment(bd[i].blocked).local());
                     blockedArr.push(moment(date).local());
-                }
-                console.log("Blocked array in ContractorView: ")
-                for (let i = 0; i < blockedArr.length; i++) {
-                    console.log("     ", blockedArr[i].format('MM/DD/YYYY HH:mm:ss'));
-
                 }
                 setDatesBlocked(blockedArr);
                 dispatch(setBlocked(blockedArr));
@@ -71,7 +59,7 @@ const ContractorView = () => {
                 console.log("ContractorView:  Error from getAllBlocked fetch call");
             }
             console.log("Getting placements for this contractor")
-            // const p = await getContractorPlacements(contractorId);
+
             const p = await getContractorPlacementTableInfo(contractorId);
             if (!p.errors) {
                 console.log("ContractorView: Placements set as:  ", p)
@@ -97,8 +85,15 @@ const ContractorView = () => {
     }, [contractorId, placements] )
 
     const saveDates = async () => {
-        // const blocked = createBlocked(contractorId, datesBlocked)
-        dispatch(setBlocked(datesBlocked));
+        console.log("Saving dates blocked to backend database")
+        const blocked = createBlocked(contractorId, datesBlocked)
+        if (!blocked.errors) {
+            console.log("saving blocked dates to redux store")
+            dispatch(setBlocked(datesBlocked));
+        } else {
+            console.log("Error setting dates blocked to backend.")
+        }
+
 
     }
 
@@ -110,8 +105,8 @@ const ContractorView = () => {
             <>
                 <Calendar key={"contrCalendar"} datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked} userType={"contractor"}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
-                <Button onClick={saveDates} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
-                <ContractorPlacementTable></ContractorPlacementTable>
+                <Button onClick={saveDates} style={{backgroundColor: "#648dae", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button>
+                {/* <ContractorPlacementTable></ContractorPlacementTable> */}
             </>
         );
     }

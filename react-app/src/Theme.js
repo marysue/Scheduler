@@ -6,7 +6,7 @@ const theme = createMuiTheme({
   fontFamily: "Helvetica",
   palette: {
     primary: {
-      main: '#2100DC',
+      main: '#648dae',
     },
     secondary: {
       main: '#0f0'

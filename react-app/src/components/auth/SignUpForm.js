@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory} from 'react-router-dom';
 import { signUp } from '../../services/auth';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert'
@@ -30,6 +30,7 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
     repeatPassword: '',
     userType: ''
   });
+  const history = useHistory()
 
   const useStyles = makeStyles((theme) => ({
     MuiGrid: {
@@ -61,39 +62,35 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
       const user = await signUp(values.username, values.email, values.password, values.userType);
       if (!user.errors) {
         setOpen(false);
+        setAuthenticated(true);
         dispatch(setUserEmail(user.email));
         dispatch(setUserId(user.id));
         dispatch(setUserName(user.username));
         dispatch(setUserType(user.userType));
+        console.log("Redirecting to companyInfo ...")
         window.localStorage.setItem("currentUser",user.id)
+        window.localStorage.setItem("userType", user.userType)
+        window.localStorage.setItem("userId", user.id)
+        console.log("User Type is:  ", user.userType);
         if (user.userType === "company") {
-          console.log("Redirecting to companyInfo ...")
-          return <Redirect to="/companyInfo" />
+          history.push('/companyInfo')
         } else if (user.userType === "contractor") {
-          console.log("Redirecting to contractorInfo")
-          return <Redirect to="/contractorInfo" />
+          console.log("Redirecting to contractorView")
+          history.push('/contractorInfo')
+        } else if (user.userType === "admin") {
+          console.log("Redirecting to agencyView")
+          history.push('/agencyView');
       } else {
         setErrors(user.errors);
       }
     } else {
-      console.log("Passwords did not match ... ");
+      console.log("Passwords did not match ... ", user.errors);
     }
   }
 }
 
   const handleChange = (prop) => (event) => {
     setValues({...values, [prop]: event.target.value});
-  }
-
-  if (authenticated) {
-    alert("SignUpForm:  User is authenticated ... redirecting to '/'");
-    return <Redirect to="/" />;
-  }
-
-  if (window.localStorage.getItem("currentUser")) {
-    console.log("SignUpForm: Current user found, redirecting to '/'")
-    return <Redirect to="/" />;
-    //window.location.replace("/");
   }
 
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {

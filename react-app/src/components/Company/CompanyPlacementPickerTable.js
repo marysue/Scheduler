@@ -1,4 +1,6 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -19,8 +21,8 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import { useSelector } from 'react-redux';
-import { formatDateString } from '../utils/utils'
-import { createPlacement } from '../store/placement';
+import { formatDateString } from '../../utils/utils'
+import { createPlacement, setPlacementInfo } from '../../store/placement';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -217,7 +219,9 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
   const rows = [];
   const ac = useSelector( state => state.contractor.availableContractors)
   const companyId = useSelector ( state => state.company.companyId)
-
+  const dispatch = useDispatch();
+  const history = useHistory();
+  
   let availableContractors;
   if (ac) {
     availableContractors = ac.available
@@ -311,12 +315,11 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
 
     const sd = formatDateString(startDate);
     const ed = formatDateString(endDate);
-    console.log("startDate: ", sd)
-    console.log("endDate: ", ed)
     //companyId, contractorId, companyContactId, startDate, endDate
     const placement = await createPlacement(companyId, selectedContractorId, locationId, sd, ed)
     if (!placement.errors) {
-        console.log("No placement errors")
+      dispatch(setPlacementInfo(placement))
+      history.push('/companyView')
     } else {
         console.log("Error creating placement.")
     }

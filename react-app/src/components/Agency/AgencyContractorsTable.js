@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -14,15 +14,15 @@ import { Table,
         Toolbar,
         Typography,
         Paper,
-        IconButton,
-        Tooltip,
+        // IconButton,
+        // Tooltip,
         FormControlLabel,
         Switch } from '@material-ui/core'
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
-import moment from 'moment';
-
+// import DeleteIcon from '@material-ui/icons/Delete';
+// import FilterListIcon from '@material-ui/icons/FilterList';
+// import moment from 'moment';
+import { getAllContractorInfo, setAgencyContractorInfo } from '../../store/agencyInfo';
 
 
 function descendingComparator(a, b, orderBy) {
@@ -52,14 +52,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'company', numeric: false, disablePadding: false, label: 'Office' },
-  { id: 'contactName', numeric: false, disablePadding: false, label: 'Contact Name'},
-  { id: 'contactPhone', numeric: false, disablePadding: false, label: 'Phone' },
-  { id: 'contactEmail', numeric: false, disablePadding: false, label: 'Email' },
-  { id: 'contractorName', numeric: false, disablePadding: false, label: 'Contractor Name' },
+
+  { id: 'name', numeric: false, disablePadding: false, label: 'Contractor Name' },
+  { id: 'address', numeric: false, disablePadding: false, label: 'Address' },
+  { id: 'phone', numeric: false, disablePadding: false, label: 'Phone' },
+  { id: 'email', numeric: false, disablePadding: false, label: "Email" },
   { id: 'staffType', numeric: false, disablePadding: false, label: "Staff Type" },
-  { id: 'startDate', numeric: false, disablePadding: false, label: 'Start Date' },
-  { id: 'endDate', numeric: false, disablePadding: false, label: 'End Date' }
 ];
 
 function EnhancedTableHead(props) {
@@ -144,22 +142,8 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Company Placement Schedule
+          Contractor List
         </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            {/* <FilterListIcon /> */}
-          </IconButton>
-        </Tooltip>
       )}
     </Toolbar>
   );
@@ -197,7 +181,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
+const AgencyContractorsTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -205,52 +189,92 @@ const AgencyCompanyPlacementTable = ({placements, placementDates}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const dispatch = useDispatch()
 
-  // const agencyPlacements = useSelector(state => state.agencyPlacements.placementInfo)
-
-  console.log(" ********************PlacementsTable View********************")
-
-
+  let contractorInfo;
+const agencyInfo = useSelector( state => state.agencyInfo);
+if (agencyInfo) {
+  contractorInfo = agencyInfo.contractorInfo
+}
+let contractors;
+if (contractorInfo) {
+  contractors = contractorInfo.contractors
+}
   useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
-      }
-    } else {
-        console.log("Placements:  No placements yet...")
-    }
-  }, [] )
 
-  function createData(company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate) {
-      return { company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate };
+    (async() => {
+        console.log("Getting contractors")
+        const p = await getAllContractorInfo();
+        if (!p.errors) {
+            console.log("AgencyView: Contractor Table Info set as:  ", p)
+            console.log("AgencyView: Setting contractorInfo table info in redux store...")
+            dispatch(setAgencyContractorInfo(p))
+        } else {
+            console.log("AgencyView: Error in getAll AgencyContractorPlacementTableInfo fetch call")
+        }
+    })()
+
+}, []) ;
+
+
+  console.log(" ******************* Contractor Table View********************")
+  console.log("*********Contractor contents: ")
+  if (contractors) {
+  console.log("contractors.length: ", contractors.length)
+  for (let i = 0; i < contractors.length; i++) {
+    console.log(contractors[i])
+  }
+}
+
+useEffect (() => {
+
+  (async() => {
+      const p = await getAllContractorInfo();
+      if (!p.errors) {
+          dispatch(setAgencyContractorInfo(p))
+
+      } else {
+          console.log("AgencyView: Error in getAll AgencyCompanyPlacementTableInfo fetch call")
+      }
+  })()
+
+}, []) ;
+
+  function createData(name, address, phone, email, staffType ) {
+      return { name, address, phone, email, staffType };
     }
 
   const rows = [];
 
-if(placements) {
-    const placementArr = placements;
+if(contractors) {
 
-    for (let i=0; i < placementArr.length; i++) {
-        let companyName = placementArr[i].agencyInfo.companyName + " " + placementArr[i].agencyInfo.contactAddress + ", " + placementArr[i].agencyInfo.contactCity + ", " + placementArr[i].agencyInfo.contactState + "  " + placementArr[i].agencyInfo.contactZip
-        let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].agencyInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].agencyInfo.contractorCity
-        let companyContactName = placementArr[i].agencyInfo.contactName
-        console.log("Start: ", start.toString());
-        console.log("End: ", end.toString())
+    console.log("contractors: ")
+    console.log(contractors)
+    for (let i=0; i < contractors.length; i++) {
+      const contractorName = contractors[i].contractorName;
+      //contractorName, locationName, address, contactName, contactPhone, contactEmail
+        console.log(contractors[i]);
+
+        const name = contractors[i].contractorContact.name;
+        const address = contractors[i].contractorContact.addr1 + " " + contractors[i].contractorContact.addr2 + ", " + contractors[i].contractorContact.city + ", " + contractors[i].contractorContact.state + " " + contractors[i].contractorContact.zip
+        const phone = contractors[i].contractorContact.phone;
+        const email = contractors[i].contractorContact.email;
+        const staffType = contractors[i].staffType;
+
         rows.push(createData(
-          companyName,
-          placementArr[i].agencyInfo.contactName,
-          placementArr[i].agencyInfo.contactPhone,
-          placementArr[i].agencyInfo.contactEmail,
-          placementArr[i].agencyInfo.contractorName,
-          placementArr[i].agencyInfo.staffType,
-          start.toString(),
-          end.toString(),
+          name,
+          address,
+          phone,
+          email,
+          staffType,
           ));
-        }
 
-      }
+  }
+
+
+}
+
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -309,14 +333,11 @@ if(placements) {
                 .map((row, index) => {
                     return (
                       <TableRow key={index}>
-                        <TableCell align="left">{row.company}</TableCell>
-                        <TableCell align="left">{row.contactName}</TableCell>
-                        <TableCell align="left">{row.contactPhone}</TableCell>
-                        <TableCell align="left">{row.contactEmail}</TableCell>
-                        <TableCell align="left">{row.contractorName}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.address}</TableCell>
+                        <TableCell align="left">{row.phone}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">{row.staffType}</TableCell>
-                        <TableCell align="left">{row.startDate}</TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
                       </TableRow>
                     )
 
@@ -349,4 +370,4 @@ if(placements) {
   );
 }
 
-export default AgencyCompanyPlacementTable;
+export default AgencyContractorsTable;

@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
 import { Button } from '@material-ui/core';
 import  CompanyPlacementTable  from './CompanyPlacementTable';
-import Calendar from './CalendarComponent/Calendar';
-import { setCompanyId, setCompanyLocations, getCompanyInfo } from '../store/company';
-import { getCompanyPlacementTableInfo, getCompanyPlacementCalendarInfo, setPlacementInfo, setPlacementDates } from '../store/placement';
+import Calendar from '../CalendarComponent/Calendar';
+import { setCompanyId, setCompanyLocations, getCompanyInfo } from '../../store/company';
+import { getCompanyPlacementTableInfo, getCompanyPlacementCalendarInfo, setPlacementInfo, setPlacementDates } from '../../store/placement';
 
 const CompanyView = () => {
     console.log("Entered CompanyView")
@@ -98,8 +98,6 @@ const CompanyView = () => {
                 }
             })()
         }
-        console.log("Company placements: ", placements);
-        console.log("Company dates: ", placementDates);
     },[companyId] );
 
     const savePlacement= async () => {
@@ -117,7 +115,7 @@ const CompanyView = () => {
                 <Calendar key={"newCalendar"} placements={placements} placementDates={placementDates} datesBlocked={[]} userType={'company'}></Calendar>
                 {/* <Calendar datesBlocked={datesBlocked} placements={placements} placementDates={placementDates} setDatesBlocked={setDatesBlocked}></Calendar> */}
                 {/* <Button key={"buttonKey"} onClick={savePlacement} style={{backgroundColor: "#616161", color: "white", marginTop:"5px", marginLeft:"80%"}}>SAVE</Button> */}
-                <CompanyPlacementTable key={"coPlacement"} ></CompanyPlacementTable>
+                {/* <CompanyPlacementTable key={"coPlacement"} ></CompanyPlacementTable> */}
             </>
         );
     }

@@ -7,8 +7,8 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import { ValidatorForm } from 'react-material-ui-form-validator';
-import { setCompanyId } from '../store/company'
-import { getContractorAvail } from '../store/contractor';
+import { setCompanyId } from '../../store/company'
+import { getContractorAvail } from '../../store/contractor';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
          DialogContent,
@@ -21,8 +21,8 @@ import { Button,
         } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CompanyPlacementPickerTable from './CompanyPlacementPickerTable';
-import { setAvailableContractors } from '../store/contractor';
-import { formatDateString } from '../utils/utils';
+import { setAvailableContractors } from '../../store/contractor';
+import { formatDateString } from '../../utils/utils';
 
 export default function CompanyAddPlacement() {
   // The first commit of Material-UI
@@ -87,18 +87,6 @@ export default function CompanyAddPlacement() {
 
   const submit = async (e) => {
     e.preventDefault();
-
-    //   const contractor = await addContractor(userId, staffType);
-    //   if (!contractor.errors) {
-
-        // if (!contractorContact.errors) {
-
-        // } else {
-
-        // }
-    // } else {
-        // setErrors(contractor.errors);
-    // }
 }
   const cancel = () => {
       console.log("CompanyAddPlacement: Cancel button pressed, should be redirecting to '/' ...");
@@ -118,45 +106,17 @@ export default function CompanyAddPlacement() {
       setLocalStaffType(event.target.value);
   }
 
-
-
-  // const formatValue = (val) => {
-  //   if (parseInt(val) < 10) {
-  //     val = "0" + val;
-  //   }
-  //   return val
-  // }
-
-  // const formatDateString = (date) => {
-  //   let year = date.getFullYear();
-  //   let month = date.getMonth();
-  //   month = formatValue(month)
-  //   let day = date.getDay();
-  //   day = formatValue(day)
-  //   // let hour = date.getHours();
-  //   // hour = formatValue(hour)
-  //   // let minute = date.getMinutes();
-  //   // minute = formatValue(minute)
-  //   let hour = "00"
-  //   let minute = "00"
-  //   return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + "00"
-  // }
-
   const search = async() => {
     setErrors('');
-    //localhost:5000/api/contractor/available?staffType=Dental%20Assistant&
-    //dateRange=2021-01-19%2000:00:00/2021-01-25 00:00:00
+
     let diff = selectedDateFrom - selectedDateTo;
 
     if (diff > 0) {
       setErrors('Ending date must be greater than or equal to beginning date.')
     }
-    console.log("CompanyAddPlacement: selectedDateFrom orig: ", selectedDateFrom)
-    console.log("CompanyAddPlacement: selectedDateTo orig: ", selectedDateTo);
+
     const dateFrom = formatDateString(selectedDateFrom);
     const dateTo = formatDateString(selectedDateTo);
-    console.log("CompanyAddPlacement: after formatting selectedDateFrom: ", dateFrom)
-    console.log("CompanyAddPlacement: after formatting selectedDateTo: ", dateTo)
 
     if (staffType === '') {
       setErrors("Staff type must be selected")

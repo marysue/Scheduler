@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 //import { login } from "../../services/auth";
 import { login } from "../../store/authentication"
@@ -16,6 +16,7 @@ import { Button,
 import { setUserEmail, setUserName, setUserId, setUserType } from '../../store/authentication';
 import { getContractorInfo,setContractorId, setContractorName, setContractorPhone, setContractorEmail, setContractorAddr1, setContractorAddr2, setContractorCity, setContractorState, setContractorZip } from '../../store/contractor';
 import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip } from '../../store/company';
+import FullLogo from '../../images/fullLogo.png';
 
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     console.log("Entered LoginForm")
@@ -50,6 +51,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         },
     }));
     const classes = useStyles();
+    const history = useHistory();
 
     useEffect (() => {
         setSubmitted(false);
@@ -103,28 +105,34 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             setLoginDetails(user.id);
             window.localStorage.setItem("userId", user.id)
+            window.localStorage.setItem("userType", user.userType)
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
                     dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
                     window.localStorage.setItem("contractorId", contractor.contractorId);
-                    return <Redirect to="/contractorView" />
+                    // return <Redirect to="/contractorView" />
+                    history.push('/contractorView')
                 } else {
                     setErrors(contractor.errors);
                     console.log("LoginForm: No contractor info yet ... need to get it")
-                    return <Redirect to="/contractorInfo" />
+                    // return <Redirect to="/contractorInfo" />
+                    history.push('/contractorInfo')
                 }
             } else if (user.userType === "company") {
                 const company = await getCompany(user.id);
                 if (!company.errors) {
                     dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
                     window.localStorage.setItem("companyId", company.id);
-                    return <Redirect to="/companyView" />
+                    // return <Redirect to="/companyView" />
+                    history.push('/companyView')
                 } else { setErrors(company.errors);
-                    return <Redirect to="/companyInfo" />
+                    // return <Redirect to="/companyInfo" />
+                    history.push('/companyInfo')
                 }
             } else if (user.userType === "agency") {
-                    return <Redirect to="/agencyView" />
+                    // return <Redirect to="/agencyView" />
+                    history.push('/agencyView')
             }
         } else {
           setErrors(user.errors);
@@ -142,18 +150,21 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     // }
     // const goToSignUp = (e) => {
     //     e.preventDefault()
-    //     return <Redirect to="/sign-up" />
+    //     return <Redirect to="/signUp" />
     //   }
 
 
     const loginAgencyDemo = async() => {
         const user = await login('agency@agency.com', 'password');
+        window.localStorage.setItem("userType", user.userType)
         if (!user.errors) {
             setLoginDetails(user.id);
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("agencyId", user.id);
             window.localStorage.setItem("currentUser",user.id)
-            return <Redirect to="/agencyView" />
+            console.log('login demo - redirecting to agencyView')
+            // return <Redirect to="/agencyView" />
+            history.push('/agencyView')
         } else {
             setErrors(user.errors);
         }
@@ -162,6 +173,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     const loginCompanyDemo = async() => {
        const user = await login('co1@co1.com', 'password');
+       window.localStorage.setItem("userType", user.userType)
        if (!user.errors) {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("currentUser",user.id)
@@ -173,10 +185,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                     dispatch(setCompanyId(company.id));
                     dispatch(setCompanyName(company.companyName));
                     window.localStorage.setItem("companyId", company.id);
-                    return <Redirect to="/companyView"></Redirect>
+                    // return <Redirect to="/companyView"></Redirect>
+                    history.push('companyView')
                 } else {
                     setErrors(company.errors);
-                    return <Redirect to="/companyInfo" />
+                    // return <Redirect to="/companyInfo" />
+                    history.push('companyInfo')
                 }
             }
         } else {
@@ -187,13 +201,15 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const loginContractorDemo = async () => {
         // const user = await login('demo@aa.io', 'password');
         const user = await login('da2@da2.com', 'password');
+        window.localStorage.setItem("userType", user.userType)
+        window.localStorage.setItem("currentUser",user.id)
         if (!user.errors) {
             console.log("LoginForm:  loginContractorDemo: Received the following user info: ", user);
             dispatch(setUserEmail(user.email));
             dispatch(setUserId(user.id));
             dispatch(setUserName(user.username));
             dispatch(setUserType(user.userType));
-            window.localStorage.setItem("currentUser",user.id)
+
             setLoginDetails(user.id);
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
@@ -201,10 +217,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                     dispatch(setContractorId(contractor.contractorId));
                     window.localStorage.setItem("contractorId", contractor.contractorId);
                     //   window.location.href="/"
-                    return <Redirect to="/contractorView" />
+                    // return <Redirect to="/contractorView" />
+                    history.push('/contractorView')
                 } else {
                     setErrors(contractor.errors);
-                    return <Redirect to="/contractorInfo" />
+                    // return <Redirect to="/contractorInfo" />
+                    history.push('contractorInfo')
                 }
             }
         } else {
@@ -214,32 +232,10 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     if (authenticated) {
         console.log("Authenticated is true", authenticated);
-        // if (window.localStorage.getItem("contractorId")) {
-        //     console.log("LoginForm: contractorId in local storage ... redirecting to ContractorView")
-        //     return <Redirect to="/contractorView"></Redirect>
-        // } else if (window.localStorage.getItem("companyId")) {
-        //     console.log("LoginForm: companyId in local storage ... redirecting to CompanyView")
-        // } else if (window.localStorage.getItem("agencyId")) {
-        //     console.log("LoginForm: agencyId in local storage ... redirecting to AgencyView")
-        // } else if (window.localStorage.getItem("currentUser")){
-        //     console.log("LoginForm: PROBLEM - no contractorId, but only currentUser in local storage ... redirecting to '/ContractorView'");
-        //     console.log("contractorId: ", window.localStorage.getItem("contractorId"));
-        //     console.log("companyId: ", window.localStorage.getItem("companyId"));
-        //     console.log("agencyId: ", window.localStorage.getItem("agencyId"));
-        //     console.log("currentUser: ", window.localStorage.getItem("currentUser"))
-        //     return <Redirect to="/contractorView" />
-        //     // window.location.replace("/")
-        // } else {
-        //     console.log("LoginForm: PROBLEM: authenticated is false:  ", authenticated);
-        // }
-
         let contractorId = null
         let companyId = null
         let agencyId = null
         setTimeout(function() {}, 2000);
-        // while (!contractorId || !companyId || !agencyId) {
-        //     console.log("No values yet");
-        //     setTimeout(function() {}, 2000);
              contractorId = window.localStorage.getItem("contractorId");
              companyId = window.localStorage.getItem("companyId");
              agencyId = window.localStorage.getItem("agencyId");
@@ -247,13 +243,19 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
         if (contractorId) {
             console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
-            return <Redirect to='/contractorView' />
+            // window.location.replace('/contractorView')
+            // return <Redirect to='/contractorView' />
+            history.push('/contractorView')
         } else if (companyId) {
             console.log("We have a companyId, redirecting: ", companyId, " with authenticated: ", authenticated);
-            return <Redirect to='/companyView'/>
+            // window.location.replace('/companyView')
+            // return <Redirect to='/companyView'/>
+            history.push('/companyView')
         } else if (agencyId) {
             console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
-            return <Redirect to='/agencyView' />
+            // window.location.replace('/agencyView')
+            // return <Redirect to='/agencyView' />
+            history.push('/agencyView')
         } else {
             return null;
         }
@@ -267,7 +269,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             <div>
                 <Dialog open={open} style={{width:"100%"}} onClose={handleSignIn} aria-labelledby="form-dialog-title">
                     <div style={{marginTop:"40px"}}>
-                         <img src="fullLogo.png" alt="Placement Scheduler Logo" style={{width:"75%"}} className={classes.img}></img>
+                         <img src={FullLogo} alt="Placement Scheduler Logo" style={{width:"75%"}} className={classes.img}></img>
                         <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Sign In
                         </Typography>
                     </div>
@@ -320,7 +322,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                             <Grid container direction="column" justify="center" alignItems="center" spacing={2}>
                                 <Grid container item xs={10} justify="center">
                                     <Typography  style={{marginTop:"40px", marginBottom:"40px"}} align="center" color="primary" >
-                                    <Link href="/sign-up" >Create your Placement Scheduler account</Link>
+                                    <Link href="/signUp" >Create your Placement Scheduler account</Link>
                                     </Typography>
                                     <Button variant="contained" style={{marginBottom:"20px", alignItems:"flex-start"}} onClick={loginContractorDemo} color="primary">Demo Contractor Login</Button>
                                     <Button variant="contained" style={{marginBottom:"20px", alignItems:"flex-center"}} onClick={loginCompanyDemo} color="primary">Demo Company Login</Button>

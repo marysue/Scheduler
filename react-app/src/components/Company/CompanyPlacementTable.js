@@ -20,7 +20,6 @@ import { Table,
         Switch } from '@material-ui/core'
 
 import DeleteIcon from '@material-ui/icons/Delete';
-import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
 
 
@@ -115,7 +114,7 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === 'light'
       ? {
-          color: theme.palette.secondary.main,
+          color: "theme.palette.secondary.main",
           backgroundColor: lighten(theme.palette.secondary.light, 0.85),
         }
       : {
@@ -156,7 +155,7 @@ const EnhancedTableToolbar = (props) => {
       ) : (
         <Tooltip title="Filter list">
           <IconButton aria-label="filter list">
-            <FilterListIcon />
+            {/* <FilterListIcon /> */}
           </IconButton>
         </Tooltip>
       )}
@@ -196,7 +195,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AgencyPlacementTable = ({placements, placementDates}) => {
+const CompanyPlacementTable = () => {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
@@ -204,12 +203,9 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  // const agencyPlacements = useSelector(state => state.agencyPlacements.placementInfo)
+  const placements = useSelector(state => state.placement.placementInfo)
 
   console.log(" ********************PlacementsTable View********************")
-
-
   useEffect (() => {
     if (placements) {
       for (let i = 0; i < placements.length; i++) {
@@ -218,7 +214,7 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
     } else {
         console.log("Placements:  No placements yet...")
     }
-  }, [] )
+  }, [placements] )
 
   function createData(name, staffType, phone, email, city, startDate, endDate) {
       return { name, staffType, phone, email, city, startDate, endDate };
@@ -227,30 +223,23 @@ const AgencyPlacementTable = ({placements, placementDates}) => {
   const rows = [];
 
 if(placements) {
-    const placementArr = placements;
+    const placementArr = placements.placements;
 
-      console.log("Placements is:  ", placements.length, " ... long")
-      for (let i=0; i < placementArr.length; i++) {
-        console.log("PlacementArr[", i, "]: ", placementArr[i])
-        console.log("Agency info:  ", placementArr[i].agencyInfo)
-        console.log("CompanyName:  ", placementArr[i].agencyInfo.companyName)
-      }
-    console.log("We have placements[0]: ", placementArr[0].agencyInfo)
+    console.log("We have placements[0]: ", placementArr[0])
 
 
     for (let i=0; i < placementArr.length; i++) {
-        let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
-        let end = moment(placementArr[i].agencyInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].agencyInfo.contractorCity
+        let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
+        let end = moment(placementArr[i].contractorInfo.endDate).format('MM/DD/YYYY');
+        let city = placementArr[i].contractorInfo.city
         rows.push(createData(
-          placementArr[i].agencyInfo.contractorName,
-          placementArr[i].agencyInfo.staffType,
-          placementArr[i].agencyInfo.contractorPhone,
-          placementArr[i].agencyInfo.contractorEmail,
+          placementArr[i].contractorInfo.name,
+          placementArr[i].contractorInfo.staffType,
+          placementArr[i].contractorInfo.phone,
+          placementArr[i].contractorInfo.email,
           city,
           start.toString(),
-          end.toString(),
-          ));
+          end.toString(), ));
         }
 
       }
@@ -350,4 +339,4 @@ if(placements) {
   );
 }
 
-export default AgencyPlacementTable;
+export default CompanyPlacementTable;

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getAllCompanyInfo, setAgencyCompanyInfo } from '../store/agencyInfo';
+import { useDispatch } from 'react-redux';
+import { getAllCompanyInfo, setAgencyCompanyInfo } from '../../store/agencyInfo';
 import AgencyCompanyTable from './AgencyCompanyTable';
 
 const AgencyCompanies = () => {
     const dispatch = useDispatch();
 
-    const companies = useSelector( state => state.agencyInfo.companyInfo.companies )
+    // const companies = useSelector( state => state.agencyInfo.companyInfo.companies )
 
     useEffect (() => {
 

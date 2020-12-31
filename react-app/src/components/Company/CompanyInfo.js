@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
@@ -14,7 +14,7 @@ import { Button,
         } from '@material-ui/core';
 
 import { makeStyles  } from '@material-ui/core/styles';
-import { addCompany, addCompanyContact, setCompanyId, setCompanyName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip} from '../store/company'
+import { addCompany, addCompanyContact, setCompanyId, setCompanyName, setCompanyPhone, setCompanyEmail, setCompanyAddr1, setCompanyAddr2, setCompanyCity, setCompanyState, setCompanyZip} from '../../store/company'
 
 
 const CompanyInfo = () => {
@@ -24,6 +24,7 @@ const CompanyInfo = () => {
   const dispatch = useDispatch();
   const [errors, setErrors] = useState('');
   const [state, setLocalState] = useState('');
+  const history = useHistory();
   const [values, setValues] = useState({
     companyName: '',
     name: '',
@@ -82,6 +83,7 @@ const CompanyInfo = () => {
           dispatch(setCompanyCity(companyContact.city));
           dispatch(setCompanyState(companyContact.state));
           dispatch(setCompanyZip(companyContact.zip));
+          history.push('/companyView')
       } else {
           setErrors(company.errors);
       }

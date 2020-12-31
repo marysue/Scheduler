@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AgencyContractorPlacementTable from './AgencyContractorPlacementTable';
-import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../store/agencyCompanyPlacements';
+import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../../store/agencyCompanyPlacements';
 
 
 const AgencyContractorPlacements = () => {
@@ -32,7 +32,7 @@ const AgencyContractorPlacements = () => {
         console.log("Company placements: ", placements);
 
         console.log("Company dates: ", placementDates);
-    },[] );
+    }, );
 
 return (
     // <div>Agency Placement Table</div>
