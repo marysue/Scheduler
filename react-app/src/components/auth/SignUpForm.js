@@ -71,37 +71,26 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
         window.localStorage.setItem("currentUser",user.id)
         window.localStorage.setItem("userType", user.userType)
         window.localStorage.setItem("userId", user.id)
-
+        console.log("User Type is:  ", user.userType);
         if (user.userType === "company") {
           history.push('/companyInfo')
         } else if (user.userType === "contractor") {
-          console.log("Redirecting to contractorInfo")
+          console.log("Redirecting to contractorView")
           history.push('/contractorInfo')
+        } else if (user.userType === "admin") {
+          console.log("Redirecting to agencyView")
+          history.push('/agencyView');
       } else {
         setErrors(user.errors);
       }
     } else {
-      console.log("Passwords did not match ... ");
+      console.log("Passwords did not match ... ", user.errors);
     }
   }
 }
 
   const handleChange = (prop) => (event) => {
     setValues({...values, [prop]: event.target.value});
-  }
-
-  if (authenticated) {
-    alert("SignUpForm:  User is authenticated ... redirecting to '/'");
-    // return <Redirect to="/" />;
-    history.push('/')
-
-  }
-
-  if (window.localStorage.getItem("currentUser")) {
-    console.log("SignUpForm: Current user found, redirecting to '/'")
-    // return <Redirect to="/" />;
-    //window.location.replace("/");
-    history.push('/')
   }
 
   ValidatorForm.addValidationRule('isPasswordMatch', (value) => {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
@@ -26,6 +26,7 @@ const ContractorInfo = ({authenticated}) => {
   const [errors, setErrors] = useState('');
   const [state, setLocalState] = useState('');
   const [staffType, setLocalStaffType] = useState('');
+  const history = useHistory();
   const [values, setValues] = useState({
     name: '',
     phone: '',
@@ -86,6 +87,7 @@ const ContractorInfo = ({authenticated}) => {
           dispatch(setContractorCity(contractorContact.city));
           dispatch(setContractorState(contractorContact.state));
           dispatch(setContractorZip(contractorContact.zip));
+          history.push('/contractorView')
         } else {
           setErrors(contractorContact.errors);
         }
@@ -95,7 +97,7 @@ const ContractorInfo = ({authenticated}) => {
 }
   const cancel = () => {
       console.log("ContractorInfo: Cancel button pressed, should be redirecting to '/' ...");
-    return <Redirect to="/" />
+      history.push('/splashPage')
   }
 
   const handleChange = (prop) => (event) => {
