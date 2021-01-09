@@ -3,7 +3,6 @@ import { CssBaseline } from "@material-ui/core";
 import Theme from "./Theme"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import LoginForm from "./components/auth/LoginForm";
-// import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
@@ -18,7 +17,6 @@ import ContractorView from "./components/Contractor/ContractorView";
 import ContractorPlacementTable from "./components/Contractor/ContractorPlacementTable";
 import CompanyView from "./components/Company/CompanyView";
 import AgencyView from "./components/Agency/AgencyView";
-import "./index.css";
 import AgencyCompanies from "./components/Agency/AgencyCompanies";
 import AgencyContractors from "./components/Agency/AgencyContractors";
 import AgencyContractorPlacements from './components/Agency/AgencyContractorPlacements';

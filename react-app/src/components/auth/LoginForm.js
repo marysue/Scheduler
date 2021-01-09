@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-//import { login } from "../../services/auth";
 import { login } from "../../store/authentication"
 import Alert from '@material-ui/lab/Alert';
 import { Button,
@@ -19,7 +18,7 @@ import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCom
 import FullLogo from '../../images/fullLogo.png';
 
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
-    console.log("Entered LoginForm")
+
     const dispatch = useDispatch();
     const [values, setValues] = useState({
         email: '',
@@ -28,6 +27,10 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const [open, setOpen] = useState(false);
     const [submitted, setSubmitted] = useState();
     const [errors, setErrors] = useState();
+
+    console.log("Entered LoginForm - open is:  ", open)
+
+
     const useStyles = makeStyles((theme) => ({
         MuiGrid: {
             width: "80%"
@@ -236,11 +239,14 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         let companyId = null
         let agencyId = null
         setTimeout(function() {}, 2000);
-             contractorId = window.localStorage.getItem("contractorId");
-             companyId = window.localStorage.getItem("companyId");
-             agencyId = window.localStorage.getItem("agencyId");
+        contractorId = window.localStorage.getItem("contractorId");
+        companyId = window.localStorage.getItem("companyId");
+        agencyId = window.localStorage.getItem("agencyId");
         // }
 
+        console.log("ContractorId:  ", contractorId);
+        console.log("companyId: ", companyId);
+        console.log("agencyId: ", agencyId);
         if (contractorId) {
             console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
             // window.location.replace('/contractorView')
@@ -256,10 +262,9 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             // window.location.replace('/agencyView')
             // return <Redirect to='/agencyView' />
             history.push('/agencyView')
-        } else {
+        } else  if (!open) {
             return null;
-        }
-
+        } 
     }
 
     if (!open) {
