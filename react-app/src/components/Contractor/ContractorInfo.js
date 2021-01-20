@@ -117,7 +117,7 @@ const ContractorInfo = ({authenticated}) => {
   //   return <Redirect to="/" />;
   // }
 
-//   if (window.localStorage.getItem("currentUser")) {
+//   if (window.localStorage.getItem("userId")) {
 //     window.location.replace("/");
 //   }
   if (!userId) {

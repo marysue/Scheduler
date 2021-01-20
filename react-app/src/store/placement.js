@@ -32,49 +32,49 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_ID: {
             const newState = { ...state};
             newState.contractorId = action.id;
-            console.log("Setting contractor id: ", newState.contractorId);
+            console.log("Redux Placement Store : Setting contractor id: ", newState.contractorId);
             return newState;
           }
         case REMOVE_CONTRACTOR_ID: {
             const newState = { ...state};
-            console.log("Removing contractor id: ", newState.contractorId);
+            console.log("Redux Placement Store : Removing contractor id: ", newState.contractorId);
             delete newState.contractorId;
             return newState;
         }
         case SET_COMPANY_CONTACT_ID: {
             const newState = { ...state};
             newState.companyContactId = action.id;
-            console.log("Setting contactId for placement: ", newState.companyContactId);
+            console.log("Redux Placement Store : Setting contactId for placement: ", newState.companyContactId);
             return newState;
         }
         case REMOVE_COMPANY_CONTACT_ID: {
             const newState = { ...state};
-            console.log("Removing company contact id: ", newState.companyContactId);
+            console.log("Redux Placement Store : Removing company contact id: ", newState.companyContactId);
             delete newState.companyContactId;
             return newState;
         }
         case SET_START_DATE: {
             const newState = { ...state};
             newState.startDate = action.startDate;
-            console.log("Setting start date for placement: ", newState.startDate);
+            console.log("Redux Placement Store : Setting start date for placement: ", newState.startDate);
             return newState;
         }
         case REMOVE_START_DATE: {
             const newState = { ...state};
-            console.log("Removing start date for placement: ", newState.startDate);
+            console.log("Redux Placement Store : Removing start date for placement: ", newState.startDate);
             delete newState.startDate;
             return newState;
         }
         case SET_END_DATE: {
             const newState = { ...state};
             newState.endDate = action.endDate;
-            console.log("Setting end date for placement: ", newState.endDate);
+            console.log("Redux Placement Store : Setting end date for placement: ", newState.endDate);
             return newState;
         }
         case SET_PLACEMENT_DATES: {
             const newState = { ...state}
             newState.placementDates = action.placementDatesArray;
-            console.log("Setting placement dates array: ", newState.placementDates)
+            console.log("Redux Placement Store : Setting placement dates array: ", newState.placementDates)
             return newState;
         }
         case REMOVE_PLACEMENT_DATES: {
@@ -85,12 +85,13 @@ export default function reducer (state = {}, action) {
         case SET_PLACEMENT_INFO: {
             const newState = { ...state}
             newState.placementInfo = action.placementInfoArray;
-            console.log("Set placement info: ", newState.placementInfo)
+            console.log("Redux Placement Store : Set placement info: ", newState.placementInfo)
 
             return newState
         }
         case REMOVE_PLACEMENT_INFO: {
             const newState = { ...state}
+            console.log("Redux Placement Store : Removing placement info: ")
             delete newState.placementInfo
             return newState;
         }
@@ -102,7 +103,7 @@ export default function reducer (state = {}, action) {
 export const createPlacement = async (companyId, contractorId, companyContactId, startDate, endDate) => {
     //Not sure if I need to URI encode startDate, endDate - see contractor as I uri encoded a fetch call there
     // for an example.  If I do uri encode it, it needs to be uncoded on the backend as well
-    
+
     const response = await fetch(`/api/placement/${companyId}`, {
       method: "POST",
       headers: {

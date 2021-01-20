@@ -37,8 +37,8 @@ function App() {
       const user = await authenticate();
       if (!user.errors) {
         setAuthenticated(true);
-        window.localStorage.setItem("currentUser", user.id)
-        console.log("App.js: useEffect:  authenticate(): Set localStorage to currentUser and authenticated = true");
+        window.localStorage.setItem("userId", user.id)
+        console.log("App.js: useEffect:  authenticate(): Set localStorage to userId and authenticated = true");
       } else {
         console.log("App.js:  useEffect:  received errors in setting authenticated...", user.errors)
       }
@@ -54,17 +54,10 @@ function App() {
 
   return (
     <CssBaseline>
-      <Theme>
+      <Theme >
         <BrowserRouter>
-            {/* <NavBar setAuthenticated={setAuthenticated} /> */}
             <NavBar2 setAuthenticated={setAuthenticated}></NavBar2>
             <Switch>
-              {/* { userType === 'contractor' ?
-                <Redirect exact from="/" to="/contractorView" /> : null }
-              { userType === 'company' ?
-                <Redirect exact from="/" to="/companyView" /> : null }
-              { userType === 'agency' ?
-                <Redirect exact from="/" to="/agencyView" /> : null } */}
               <Route path="/" exact={true}>
                 <SplashPage></SplashPage>
               </Route>

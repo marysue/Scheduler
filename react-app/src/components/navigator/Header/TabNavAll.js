@@ -187,7 +187,6 @@ export default function NavTabs({setAuthenticated}, props) {
         dispatch(removePlacementDates());
         dispatch(removePlacementInfo());
 
-        window.localStorage.removeItem("currentUser")
         window.localStorage.removeItem("userId")
         window.localStorage.removeItem("contractorId")
         window.localStorage.removeItem("companyId")

@@ -68,7 +68,7 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
         dispatch(setUserName(user.username));
         dispatch(setUserType(user.userType));
         console.log("Redirecting to companyInfo ...")
-        window.localStorage.setItem("currentUser",user.id)
+        window.localStorage.setItem("userId",user.id)
         window.localStorage.setItem("userType", user.userType)
         window.localStorage.setItem("userId", user.id)
         console.log("User Type is:  ", user.userType);

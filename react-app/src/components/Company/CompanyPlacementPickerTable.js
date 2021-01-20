@@ -18,8 +18,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import Tooltip from '@material-ui/core/Tooltip';
-import FilterListIcon from '@material-ui/icons/FilterList';
+import Tooltip from '@material-ui/core/Tooltip'
 import { useSelector } from 'react-redux';
 import { formatDateString } from '../../utils/utils'
 import { createPlacement, setPlacementInfo } from '../../store/placement';
@@ -221,7 +220,7 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
   const companyId = useSelector ( state => state.company.companyId)
   const dispatch = useDispatch();
   const history = useHistory();
-  
+
   let availableContractors;
   if (ac) {
     availableContractors = ac.available

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
 import Header from "./header";
 import { v4 as uuidv4 } from 'uuid';
@@ -8,25 +8,23 @@ import DayCard from './DayCard';
 import BlockedCard from './BlockedCard';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-
+import { setBlocked, getAllBlocked } from '../../store/blocked';
+import { setContractorId } from '../../store/contractor';
+import {setCompanyId} from '../../store/company';
+import { setUserType } from '../../store/authentication';
+import {  getAllAgencyCalendarInfo, getContractorPlacementCalendar, getCompanyPlacementCalendarInfo, setPlacementDates } from "../../store/placement";
+import { baseUrl } from '../../config';
+import { createBlocked } from '../../store/blocked';
+import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     container: {
-
-      // flexBasis: "100%",
       display: 'grid',
       backgroundColor: 'primary',
-      // gridAutoFlow: 'row',
-      // gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr 1fr",
-      // margin: "0px",
-      // padding: "0px",
-    //   gridColumnGap: "0px",
-
-    gridColumnStart: '1',
-    gridColumnEnd: '7',
-    gridTemplateColumns: "repeat(7, 150px)",
-    borderRadius: "4px",
-    // gridTemplateRows: "150px",
+      gridColumnStart: '1',
+      gridColumnEnd: '7',
+      gridTemplateColumns: "repeat(7, 150px)",
+      borderRadius: "4px",
     },
     paper: {
       padding: theme.spacing(1),
@@ -34,11 +32,8 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.text.secondary,
       whiteSpace: 'nowrap',
       marginBottom: theme.spacing(1),
-    //   width: '100%',
-    //   height: '100%',
     },
     divider: {
-    //   margin: theme.spacing(2, 0),
     },
     week: {
       backgroundColor: "#648dae",
@@ -50,31 +45,97 @@ const useStyles = makeStyles((theme) => ({
     h2: {
       width:"inherit",
       margin:"0px",
-    }
+    },
   }));
 
 
-export default function Calendar({datesBlocked, setDatesBlocked, placements, placementDates, userType}) {
-  console.log("************************Calendar View************************")
+export default function Calendar () {
+  console.log("**********Calendar: Loading component ...***********")
+  const dispatch = useDispatch();
+  const classes = useStyles();
   const [calendar, setCalendar] = useState([]);
   const [selectedDate, setSelectedDate] = useState(moment());
-  const classes = useStyles();
 
+  const userType = useSelector( state => state.authentication.userType);
+  const contractorId = useSelector(state => state.contractor.contractorId);
+  const blockedDates = useSelector(state=>state.blocked.blocked);
+  const companyId = useSelector(state=>state.company.companyId);
+  //let blockedDates = [];
+  const placementDates = useSelector(state=>state.placement.placementDates);
 
   useEffect(() => {
+    let cid;
+    if (!userType) {
+      const user = window.localStorage.getItem("userType");
+      dispatch(setUserType(user));
+      if (user === 'contractor' && !contractorId) {
+         cid = window.localStorage.getItem("contractorId");
+         dispatch(setContractorId(cid));
+      } else if (user === 'company') {
+        cid = window.localStorage.getItem("companyId");
+        dispatch(setCompanyId(cid));
+      }
+    }
+    if (userType === 'contractor') { getBlockedDates(contractorId); }
     setCalendar(buildCalendar(selectedDate));
-  }, [selectedDate]);
+    setPlacementCalendarInfo();
+  }, [userType, contractorId, selectedDate]);
+
+  async function getBlockedDates(cid) {
+    //We only get blocked dates for contractor
+    const bd = await getAllBlocked(cid);
+
+    //Now change this into an array of dates only
+    if (!bd.errors) {
+          let bda = bd["blockedDates"]
+          console.log("Calendar getBlockedDates:  Received bd from backend:  ", bda.length);
+          const blockedArr = []
+          for (let i = 0; i < bda.length; i++) {
+              const date = bda[i].blocked.replace(" GMT", "")
+              blockedArr.push(moment(date).local());
+          }
+          console.log("Calendar:  getBlockedDates: contractorId: ", contractorId, " blockedArr length: ", blockedArr.length);
+          dispatch(setBlocked(blockedArr));
+          console.log("Calendar:  getBlockedDates: Blocked array:  ", blockedArr);
+    }
+  }
+
+  //Backend calls to retrieve the calendar information
+  //Sets the Redux store
+  async function setPlacementCalendarInfo() {
+    if (userType === 'contractor') {
+      const pd = await getContractorPlacementCalendar(contractorId);
+      if (!pd.errors) {
+          // console.log("I'm a contractor.  Placements length = ", pd.length);
+          // console.log("placement dates:  ", pd);
+          dispatch(setPlacementDates(pd));
+      } else {
+          console.log("Calendar: Error with getContractorPlacementCalendar fetch call");
+      }
+
+  } else if (userType === 'agency') {
+    const pd = await getAllAgencyCalendarInfo();
+    if (!pd.errors) {
+      dispatch(setPlacementDates(pd));
+    } else {
+      console.log("Error setting placement calendar info for agency");
+    }
+  } else if (userType === 'company') {
+    const pd = await getCompanyPlacementCalendarInfo(companyId);
+    if (!pd.errors) {
+      dispatch(setPlacementDates(pd));
+    } else {
+      console.log("Calendar: Error setting placement calendar info for company");
+    }
+  }
+}
 
   function dayInPlacements(day) {
-    console.log("Calendar: day = ", day.format('YYYY-MM-DD'));
     const dayStr = day.format('YYYY-MM-DD')
 
-
-    if (dayStr in placementDates) {
-      console.log("Calendar: dayInPlacements: Found ", dayStr, " in placementDates");
+    if (placementDates && dayStr in placementDates) {
       return true;
     } else {
-      console.log("Did not find ", dayStr, " in placementDates")
       return false;
     }
 
@@ -82,43 +143,42 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
 
   const printDatesArray = (da) => {
     for (let i = 0; i < da.length; i++) {
-      console.log(da[i])
+      console.log("Calendar:", da[i])
     }
   }
   const addDateToBlocked = (start) => {
-    printDatesArray(datesBlocked);
+    //printDatesArray(blockedDates);
     if (!dayInBlocked(start)) {
-      let blocked = [ ...datesBlocked];
-      blocked.push(start);
-      setDatesBlocked([...blocked]);
-      printDatesArray(datesBlocked);
+      blockedDates.push(start);
+      dispatch(setBlocked([...blockedDates]));
+      // printDatesArray(blockedDates);
     }
-
   }
   const removeDateBlocked = (day) => {
       let found = false;
 
-      for (let i=0; i < datesBlocked.length; i++) {
-        if (moment(day).isSame(datesBlocked[i], 'day')) {
-          let newBlocked = [ ...datesBlocked]
+      for (let i=0; i < blockedDates.length; i++) {
+        if (moment(day).isSame(blockedDates[i], 'day')) {
+          let newBlocked = [ ...blockedDates]
           newBlocked.splice(i, 1);
           found = true;
-
-          setDatesBlocked([...newBlocked]);
-          printDatesArray(datesBlocked);
+          setBlocked(newBlocked);
+         // dispatch(setPlacementDates([...newBlocked]));
+          // printDatesArray(blockedDates);
           break;
         }
       }
 
       if (!found) {
-        console.log("Failed to remove ", day.format('MM/DD/YY HH:mm:ss'), " from ", datesBlocked)
+        console.log("Calendar: Failed to remove ", day.format('MM/DD/YY HH:mm:ss'), " from ", blockedDates)
       }
   }
   function dayInBlocked(day) {
+    //console.log("Calendar: dayInBlocked: blockedDates:  ", blockedDates);
     let thisDay = moment(day).local()
-    if (datesBlocked) {
-      for (let i=0; i < datesBlocked.length; i++) {
-        if (thisDay.isSame(datesBlocked[i].local(), 'day')) {
+    if (blockedDates) {
+      for (let i=0; i < blockedDates.length; i++) {
+        if (thisDay.isSame(blockedDates[i].local(), 'day')) {
           return true;
         }
       }
@@ -128,7 +188,7 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
   }
 
   function handleDateClicked(e, day) {
-    printDatesArray(datesBlocked)
+    // printDatesArray(blockedDates)
     const today = moment().local();
     if (day.local() >= today.startOf('day')) {
       if (!dayInPlacements(day.local())) {
@@ -138,22 +198,29 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
           removeDateBlocked(day.local());
         }
       } else {
-        console.log("Placement found for that date. Cannot block.")
+        console.log("Calendar: Placement found for that date. Cannot block.")
       }
     } else {
-      console.log("Today endOf day compared with day is:  ", (day >= today.startOf('day')));
+      console.log("Calendar: Today endOf day compared with day is:  ", (day >= today.startOf('day')));
     }
   }
-
+  const saveDates = async () => {
+    const blocked = await createBlocked(contractorId, blockedDates)
+    if (!blocked.errors) {
+        console.log("Calendar: saved blocked dates to redux store")
+    } else {
+        console.log("Calendar: Error setting dates blocked to backend.")
+    }
+}
   return (
       <>
-        <div >
-
+        <div style={{alignItems:"center"}}>
+          {userType === 'contractor' ? <p>View your assignments, or double click a date to block it from receiving assignments.</p> : null }
         <Grid container width="1040px">
 
             <Grid item xs={12} >
                 <div className="calendar">
-                  <Header value={selectedDate} onChange={setSelectedDate}/>
+                  <Header value={selectedDate} onChange={setSelectedDate} />
                 </div>
             </Grid>
           </Grid>
@@ -183,15 +250,16 @@ export default function Calendar({datesBlocked, setDatesBlocked, placements, pla
                           <Grid item key={di}>
                             {  dayInBlocked(day) ?
                               <BlockedCard key={di+"blocked"} handleDateClicked={handleDateClicked} day={day}></BlockedCard> :
-                              <DayCard key={di+"day"} placements={placements} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day} userType={userType}></DayCard> }
+                              <DayCard key={di+"day"} placementDates={placementDates} handleDateClicked={handleDateClicked} day={day} userType={userType}></DayCard> }
                           </Grid>
                   )
                 })}
               </>
             )})}
           </Grid>
+          { userType === 'contractor' ?
+                    <Button onClick={saveDates} style={{backgroundColor: "#648dae", color: "white", marginTop:"5px"}}>SAVE</Button> : null }
       </div>
     </>
-
   );
 }

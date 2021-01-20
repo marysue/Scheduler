@@ -48,7 +48,7 @@ export const removeUserId = () => ({ type: REMOVE_USER_ID})
 export default function reducer (state = {}, action) {
     switch (action.type) {
         case SET_USER_TYPE: {
-            console.log("Setting user type:  ", action.userType)
+            console.log("Redux Authentication Store: Setting user type:  ", action.userType)
             const newState = {...state};
             newState.userType = action.userType;
             console.log("     Updated state after setting: ", newState);
@@ -56,13 +56,13 @@ export default function reducer (state = {}, action) {
         }
         case REMOVE_USER_TYPE: {
             const newState = {...state};
-            console.log("Removing user type: ", newState.userType)
+            console.log("Redux Authentication Store: Removing user type: ", newState.userType)
             delete newState.userType;
             console.log("     Updated state after setting: ", newState);
             return newState;
         }
         case SET_USER_ID: {
-            console.log("Setting user id: ", action.id)
+            console.log("Redux Authentication Store: Setting user id: ", action.id)
             const newState = {...state};
             newState.userId = action.id;
             console.log("     Updated state after setting: ", newState);
@@ -70,13 +70,13 @@ export default function reducer (state = {}, action) {
         }
         case REMOVE_USER_ID: {
             const newState = { ...state};
-            console.log("Removing user id: ", newState.userId);
+            console.log("Redux Authentication Store: Removing user id: ", newState.userId);
             delete newState.userId;
             console.log("     Updated state after setting: ", newState);
             return newState;
         }
         case SET_TOKEN: {
-            console.log("Setting user token: ", action.token);
+            console.log("Redux Authentication Store: Setting user token: ", action.token);
             const newState = { ...state}
             newState.token = action.token
             console.log("     Updated state after setting: ", newState);
@@ -84,13 +84,13 @@ export default function reducer (state = {}, action) {
           }
           case REMOVE_TOKEN: {
             const newState = { ...state };
-            console.log("Removing token: ", newState.token);
+            console.log("Redux Authentication Store: Removing token: ", newState.token);
             delete newState.token;
             console.log("     Updated state after setting: ", newState);
             return newState;
           }
           case SET_AVATAR_URL: {
-              console.log("Setting avatar url: ", action.avatarURL);
+              console.log("Redux Authentication Store: Setting avatar url: ", action.avatarURL);
               const newState = { ...state };
               newState.avatarURL = action.avatarURL;
               console.log("     Updated state after setting: ", newState);
@@ -98,35 +98,35 @@ export default function reducer (state = {}, action) {
           }
           case REMOVE_AVATAR_URL: {
             const newState = { ...state};
-            console.log("Removing avatar url: ", newState.avatarURL);
+            console.log("Redux Authentication Store: Removing avatar url: ", newState.avatarURL);
             delete newState.avatarURL;
             console.log("     Updated state after setting: ", newState);
             return newState;
           }
           case SET_USER_NAME: {
               const newState = { ...state };
-              console.log("Setting userName:  ", action.name);
+              console.log("Redux Authentication Store: Setting userName:  ", action.name);
               newState.userName = action.name;
               console.log("     Updated state after setting: ", newState);
               return newState;
           }
           case REMOVE_USER_NAME: {
             const newState = { ...state };
-            console.log("Removing user name: ", newState.userName);
+            console.log("Redux Authentication Store: Removing user name: ", newState.userName);
             delete newState.userName;
             console.log("     Updated state after setting: ", newState);
             return newState;
           }
           case SET_USER_EMAIL: {
             const newState = { ...state };
-            console.log("Setting user email: ", action.emailAddress);
+            console.log("Redux Authentication Store: Setting user email: ", action.emailAddress);
             newState.emailAddress = action.emailAddress;
             console.log("     Updated state after setting: ", newState);
             return newState;
           }
           case REMOVE_USER_EMAIL: {
             const newState = { ...state};
-            console.log("Removing user email: ", newState.emailAddress);
+            console.log("Redux Authentication Store: Removing user email: ", newState.emailAddress);
             delete newState.emailAddress;
             console.log("     Updated state after setting: ", newState);
             return newState;

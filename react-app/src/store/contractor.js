@@ -53,79 +53,79 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_ID: {
             const newState = { ...state};
             newState.contractorId = action.id;
-            console.log("Setting contractor id: ", newState.contractorId);
+            console.log("Redux Contractor Store : Setting contractor id: ", newState.contractorId);
             return newState;
           }
           case REMOVE_CONTRACTOR_ID: {
             const newState = { ...state};
-            console.log("Removing contractor id: ", newState.contractorId);
+            console.log("Redux Contractor Store : Removing contractor id: ", newState.contractorId);
             delete newState.contractorId;
             return newState;
           }
         case SET_STAFF_TYPE: {
             const newState = { ...state};
             newState.staffType = action.staffType;
-            console.log("Setting staff type to:  ", newState.staffType);
+            console.log("Redux Contractor Store : Setting staff type to:  ", newState.staffType);
             return newState;
         }
         case REMOVE_STAFF_TYPE: {
             const newState = { ...state};
-            console.log("Removing staff type : ", newState.staffType);
+            console.log("Redux Contractor Store : Removing staff type : ", newState.staffType);
             delete newState.staffType;
             return newState;
         }
         case SET_NAME: {
             const newState = { ...state};
             newState.name  = action.name
-            console.log("Setting name: ", newState.name);
+            console.log("Redux Contractor Store : Setting name: ", newState.name);
             return newState;
         }
         case REMOVE_NAME: {
             const newState = { ...state};
-            console.log("Removing name: ", newState.name);
+            console.log("Redux Contractor Store : Removing name: ", newState.name);
             delete newState.name;
             return newState;
           }
         case SET_PHONE: {
             const newState = { ...state};
             newState.phone  = action.phone
-            console.log("Setting phone: ", newState.phone);
+            console.log("Redux Contractor Store : Setting phone: ", newState.phone);
             return newState;
         }
         case REMOVE_PHONE: {
             const newState = { ...state};
-            console.log("Removing phone: ", newState.phone);
+            console.log("Redux Contractor Store : Removing phone: ", newState.phone);
             delete newState.phone;
             return newState;
           }
         case SET_EMAIL: {
             const newState = { ...state};
             newState.email  = action.email
-            console.log("Setting email: ", newState.email);
+            console.log("Redux Contractor Store : Setting email: ", newState.email);
             return newState;
         }
         case REMOVE_EMAIL: {
             const newState = { ...state};
-            console.log("Removing email: ", newState.email);
+            console.log("Redux Contractor Store : Removing email: ", newState.email);
             delete newState.email;
             return newState;
           }
         case SET_ADDR1: {
             const newState = { ...state};
             newState.addr1  = action.addr1
-            console.log("Setting addr1:", newState.addr1);
+            console.log("Redux Contractor Store : Setting addr1:", newState.addr1);
             return newState;
         }
         case REMOVE_ADDR1: {
             const newState = { ...state};
-            console.log("Removing addr1: ", newState.addr1);
+            console.log("Redux Contractor Store : Removing addr1: ", newState.addr1);
             delete newState.addr1;
             return newState;
           }
         case SET_ADDR2: {
             const newState = { ...state};
             newState.addr2  = action.addr2
-            console.log("Setting addr2:", newState.addr2);
+            console.log("Redux Contractor Store : Setting addr2:", newState.addr2);
             return newState;
         }
         case REMOVE_ADDR2: {
@@ -137,24 +137,24 @@ export default function reducer (state = {}, action) {
         case SET_CITY: {
             const newState = { ...state};
             newState.city  = action.city
-            console.log("Setting city", newState.city);
+            console.log("Redux Contractor Store : Setting city", newState.city);
             return newState;
         }
         case REMOVE_CITY: {
             const newState = { ...state};
-            console.log("Removing city: ", newState.city);
+            console.log("Redux Contractor Store : Removing city: ", newState.city);
             delete newState.city;
             return newState;
           }
         case SET_STATE: {
             const newState = { ...state};
             newState.state  = action.state
-            console.log("Setting state", newState.state);
+            console.log("Redux Contractor Store : Setting state", newState.state);
             return newState;
         }
         case REMOVE_STATE: {
             const newState = { ...state};
-            console.log("Removing state: ", newState.state);
+            console.log("Redux Contractor Store : Removing state: ", newState.state);
             delete newState.state;
             return newState;
           }
@@ -166,14 +166,14 @@ export default function reducer (state = {}, action) {
         }
         case REMOVE_ZIP: {
             const newState = { ...state};
-            console.log("Removing zip: ", newState.zip);
+            console.log("Redux Contractor Store : Removing zip: ", newState.zip);
             delete newState.zip;
             return newState;
           }
         case SET_AVAILABLE_CONTRACTORS: {
           const newState = { ...state};
           newState.availableContractors = action.contractors;
-          console.log("Setting available contractors: ", newState.availableContractors)
+          console.log("Redux Contractor Store : Setting available contractors: ", newState.availableContractors)
           return newState;
         }
         case REMOVE_AVAILABLE_CONTRACTORS: {

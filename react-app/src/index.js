@@ -14,7 +14,7 @@ const store = configureStore(initialState);
 //</Provider>
 ReactDOM.render(
   <Provider store={store}>
-    <Box marginLeft="10%" marginRight="20%" backgroundColor="black">
+    <Box style={{display:"block", justifyContent:"space-around", marginLeft:"auto", marginRight:"auto"}}>
       <App />
     </Box>
   </Provider>

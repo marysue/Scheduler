@@ -6,10 +6,16 @@ export const REMOVE_COMPANY_INFO = '/user/placement/REMOVE_COMPANY_INFO';
 export const SET_CONTRACTOR_INFO = '/user/placement/SET_CONTRACTOR_INFO';
 export const REMOVE_CONTRACTOR_INFO = '/user/placement/REMOVE_CONTRACTOR_INFO';
 
+export const SET_AGENCY_ID = '/user/agency/SET_AGENCY_ID';
+export const REMOVE_AGENCY_ID = '/user/agency/REMOVE_AGENCY_ID';
+
 export const setAgencyCompanyInfo = companyInfo => ({ type: SET_COMPANY_INFO, companyInfo})
 export const removeAgencyCompanyInfo = () => ({ type: REMOVE_COMPANY_INFO})
 export const setAgencyContractorInfo = contractorInfo => ({ type: SET_CONTRACTOR_INFO, contractorInfo})
 export const removeAgencyContractorInfo = () => ({ type: REMOVE_CONTRACTOR_INFO})
+
+export const setAgencyId = agencyId => ({ type: SET_AGENCY_ID, agencyId })
+export const removeAgencyId = agencyId => ({ type: REMOVE_AGENCY_ID, agencyId })
 
 export default function reducer (state = {}, action) {
     switch (action.type) {
@@ -37,6 +43,19 @@ export default function reducer (state = {}, action) {
             delete newState.companyInfo
             return newState;
         }
+        case SET_AGENCY_ID: {
+            const newState = { ...state}
+            newState.agencyId = action.agencyId;
+            console.log("Redux store: agency: setAgencyId", action.agencyId);
+            return newState;
+        }
+        case REMOVE_AGENCY_ID: {
+            const newState = { ...state }
+            console.log("Redux store: agency: removeAgencyId", newState.agencyId);
+            delete newState.agencyId;
+            return newState;
+        }
+
         default:
             return state;
     }

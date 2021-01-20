@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { lighten, makeStyles } from '@material-ui/core/styles';
+import { lighten, makeStyles  } from '@material-ui/core/styles';
 import { Table,
          TableBody,
         TableCell,
@@ -21,8 +21,13 @@ import { Table,
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from 'moment';
-
-
+import { setCompanyId, setCompanyLocations, getCompanyInfo } from '../../store/company';
+import { setUserType } from '../../store/authentication'
+import { setContractorId } from '../../store/contractor';
+import { setAgencyId } from '../../store/agencyInfo';
+import { getContractorPlacementTableInfo } from '../../store/placement';
+import { getCompanyPlacementTableInfo } from '../../store/placement';
+import { getAllAgencyTableInfo, setPlacementInfo } from '../../store/placement';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -121,9 +126,17 @@ const useToolbarStyles = makeStyles((theme) => ({
           color: theme.palette.text.primary,
           backgroundColor: theme.palette.secondary.dark,
         },
-  title: {
-    flex: '1 1 100%',
-  },
+    sliderSuccess: {
+      color: theme.palette.success.main,
+      '& .MuiSlider-thumb': {
+        '&:hover, &.Mui-focusVisible': {
+           boxShadow: "blue" // `0px 0px 0px 8px theme.palette.success.main`,
+        },
+        '&.Mui-active': {
+          boxShadow: "blue" //`0px 0px 0px 14px theme.palette.success.main`,
+        },
+      },
+    },
 }));
 
 const EnhancedTableToolbar = (props) => {
@@ -204,29 +217,84 @@ const CompanyPlacementTable = () => {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const placements = useSelector(state => state.placement.placementInfo)
+  let userType = useSelector(store => store.authentication.userType);
+  let contractorId = useSelector(store => store.contractor.contractorId);
+  let agencyId = useSelector(store => store.agencyInfo.agencyId);
+  let companyId = useSelector(state => state.company.companyId);
+  const dispatch = useDispatch();
+
 
   console.log(" ********************PlacementsTable View********************")
+
+  const setInitialAuth = () => {
+    if (!userType) {
+      userType = window.localStorage.getItem("userType")
+      dispatch(setUserType(userType));
+     }
+    if (!companyId && userType === 'company') {
+      companyId = window.localStorage.getItem("companyId");
+      dispatch(setCompanyId(companyId));
+     }
+    if (!contractorId && userType === 'contractor') {
+      contractorId = window.localStorage.getItem("contractorId");
+      dispatch(setContractorId(contractorId));
+     }
+     if (!agencyId && userType === 'agency') {
+       agencyId = window.localStorage.getItem("agencyId");
+       dispatch(setAgencyId(agencyId));
+     }
+  }
+
   useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
+    if (!userType) { setInitialAuth() };
+    setPlacementTableInfo();
+  }, [] )
+
+  async function setPlacementTableInfo() {
+    console.log("CompanyPlacementTable: setPlacementTableInfo, userType:  ", userType);
+    if (userType === 'contractor') {
+      const pd = await getContractorPlacementTableInfo(contractorId);
+      if (!pd.errors) {
+          console.log("I'm a contractor.  Placements length = ", pd.placements.length);
+          console.log("placement dates:  ", pd.placements);
+          dispatch(setPlacementInfo(pd.placements));
+      } else {
+          console.log("CompanyPlacementTable: Error with getContractorPlacementTable fetch call");
       }
-    } else {
-        console.log("Placements:  No placements yet...")
+    } else if (userType === 'agency') {
+      console.log("CompanyPlacementTable: calling getAllAgencyTableInfo() fetch");
+      const pd = await getAllAgencyTableInfo();
+      if (!pd.errors) {
+        console.log("CompanyPlacementTable: Agency:  placement length:  ", pd.placements.length);
+        console.log("placement dates:  ", pd.placements);
+        dispatch(setPlacementInfo(pd.placements));
+      } else {
+        console.log("Error setting placement Table info for agency");
+      }
+    } else if (userType === 'company') {
+      console.log("CompanyPlacementTable:  calling getCompanyPlacementTableInfo() fetch ...");
+      const pd = await getCompanyPlacementTableInfo(companyId);
+      if (!pd.errors) {
+        console.log("Company:  placements length is: ", pd.placements.length);
+        console.log("placement dates:  ", pd.placements);
+        dispatch(setPlacementInfo(pd.placements));
+      } else {
+        console.log("Error setting placement calendar info for company");
+      }
     }
-  }, [placements] )
+  }
 
   function createData(name, staffType, phone, email, city, startDate, endDate) {
       return { name, staffType, phone, email, city, startDate, endDate };
-    }
+  }
 
   const rows = [];
+  console.log("Placements is: ", placements);
+  if(placements) {
+    console.log("placements:  ", placements);
+    const placementArr = placements;
 
-if(placements) {
-    const placementArr = placements.placements;
-
-    console.log("We have placements[0]: ", placementArr[0])
-
+    //console.log("We have placements[0]: ", placementArr[0])
 
     for (let i=0; i < placementArr.length; i++) {
         let start = moment(placementArr[i].contractorInfo.startDate).format('MM/DD/YYYY');
@@ -242,9 +310,9 @@ if(placements) {
           end.toString(), ));
         }
 
-      }
-      console.log("rows.length:  ", rows.length)
-  const handleRequestSort = (event, property) => {
+    }
+    console.log("rows.length:  ", rows.length)
+    const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -274,69 +342,79 @@ if(placements) {
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
-  return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} padding={"none"}/>
-        <TableContainer className={classes.tableCell}>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              paddingLeft="10px"
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                    return (
-                      <TableRow key={index}>
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.staffType}</TableCell>
-                        <TableCell align="left">{row.phone}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">{row.city}</TableCell>
-                        <TableCell align="left">{row.startDate}</TableCell>
-                        <TableCell align="left">{row.endDate}</TableCell>
-                      </TableRow>
-                    )
-                })}
+  const tableCells = (row) => {
+    return (
+      <>
+        <TableCell align="left">{row.name}</TableCell>
+        <TableCell align="left">{row.staffType}</TableCell>
+        <TableCell align="left">{row.phone}</TableCell>
+        <TableCell align="left">{row.email}</TableCell>
+        <TableCell align="left">{row.city}</TableCell>
+        <TableCell align="left">{row.startDate}</TableCell>
+        <TableCell align="left">{row.endDate}</TableCell>
+      </>
+    )
+  }
+
+  if (placements) {
+        return (
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} padding={"none"}/>
+          <TableContainer className={classes.tableCell}>
+            <Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? 'small' : 'medium'}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                paddingLeft="10px"
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                      return (
+                        <TableRow key={index}>
+                          {tableCells(row)}
+                        </TableRow>
+                      )
+                  })}
 
 
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+        <FormControlLabel
+          control={<Switch checked={dense} onChange={handleChangeDense} />}
+          label="Dense padding"
         />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
-    </div>
-  );
+      </div>
+    );
+  } else { return null; }
 }
 
 export default CompanyPlacementTable;

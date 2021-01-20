@@ -74,7 +74,7 @@ def addBlockedDate(contractorId):
 def getBlockedDates(id):
     today = datetime.now()
     blockedDates =  BlockedDate.query.filter(
-        BlockedDate.contractorId_fk == id, BlockedDate.blocked >= today).order_by(BlockedDate.blocked).all()
+        BlockedDate.contractorId_fk == id).order_by(BlockedDate.blocked).all()
 
     # return ({"blocked": retVal})
     print("****************************************************")

@@ -12,10 +12,12 @@ export default function CalendarHeader({ value, onChange }) {
   }
 
   function prevMonth() {
+    console.log("Selected prevMonth()");
     return value.clone().subtract(1, "month");
   }
 
   function nextMonth() {
+    console.log("Selected nextMonth");
     return value.clone().add(1, "month");
   }
 

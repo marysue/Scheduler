@@ -1,5 +1,5 @@
 import 'date-fns';
-import React, { useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -23,11 +23,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import CompanyPlacementPickerTable from './CompanyPlacementPickerTable';
 import { setAvailableContractors } from '../../store/contractor';
 import { formatDateString } from '../../utils/utils';
+import { setCompanyLocations, getCompanyInfo } from '../../store/company';
+import { setUserType } from '../../store/authentication'
+import { setContractorId } from '../../store/contractor';
+import { setAgencyId } from '../../store/agencyInfo';
 
 export default function CompanyAddPlacement() {
   // The first commit of Material-UI
-  console.log(" *********************Company Add Placement View********************")
-  const companyId = useSelector(state => state.authentication.companyId);
+  console.log(" *********************Company Add Placement********************")
+  const companyId = useSelector(state => state.company.companyId);
   const dispatch = useDispatch();
   const [errors, setErrors] = useState('');
   const [state, setLocalState] = useState('');
@@ -42,16 +46,69 @@ export default function CompanyAddPlacement() {
   const [selectedDateTo, setSelectedDateTo] = React.useState(new Date());
   const contractorsAvailable = [];
   const locations = useSelector( state => state.company.companyLocations);
+  const userType = useSelector(store => store.authentication.userType);
+  const contractorId = useSelector(store => store.contractor.contractorId);
+  const agencyId = useSelector(store => store.agencyInfo.agencyId);
 
+
+  const setInitialAuth = () => {
+    console.log("CompanyAddPlacement: setInitialAuth(): userType: ", userType);
+    if (!userType) {
+      const ut = window.localStorage.getItem("userType")
+      dispatch(setUserType(ut));
+     }
+    if (!companyId && userType === 'company') {
+      const cid = window.localStorage.getItem("companyId");
+      console.log("company ID:  ", cid);
+      dispatch(setCompanyId(cid));
+      console.log("company ID from store: ", companyId);
+     }
+    if (!contractorId && userType === 'contractor') {
+      const cid = window.localStorage.getItem("contractorId");
+      dispatch(setContractorId(cid));
+     }
+     if (!agencyId && userType === 'agency') {
+       const aid = window.localStorage.getItem("agencyId");
+       dispatch(setAgencyId(aid));
+     }
+
+  }
+
+  console.log("CompanyAddPlacement: setInitialAuth(): Locations: ", locations);
   if (locations) {
-      console.log("Locations: ", locations)
-      console.log("Locations size: ", locations.companyContacts.length)
-      for(let i = 0; i < locations.companyContacts.length; i++) {
-        console.log(locations.companyContacts[i].name)
-        console.log(locations.companyContacts[i].addr1 + " " + locations.companyContacts[i].addr2)
-        console.log(locations.companyContacts[i].city)
+      for(let i = 0; i < locations.length; i++) {
+        console.log(locations[i].name)
+        console.log(locations[i].addr1 + " " + locations[i].addr2)
+        console.log(locations[i].city)
       }
   }
+
+  async function loadCompanyLocations() {
+    console.log("CompanyAddPlacement: loadCompanyLocations: companyId: ", companyId);
+    const locs = await getCompanyInfo(companyId);
+    console.log("locs:  ", locs.companyContacts);
+    if (!locs.errors) {
+
+      console.log("Received locations:  ", locs.companyContacts);
+      dispatch(setCompanyLocations(locs.companyContacts));
+
+    } else {
+      console.log("Errors received from fetch call to get company locations");
+    }
+  }
+
+  useEffect (() => {
+    if (!userType || !companyId) {
+      setInitialAuth()
+    };
+    console.log("CompanyAddPlacement: useEffect(): locations: ", locations)
+    if (!locations) {
+      console.log("companyId: ", companyId)
+       loadCompanyLocations(companyId)
+      console.log("CompanyAddPlacement:  locations:  ", locations);
+      };
+
+  }, [companyId, locations] )
   const handleDateChangeFrom = (date) => {
     setSelectedDateFrom(date);
   };
@@ -146,7 +203,8 @@ export default function CompanyAddPlacement() {
     console.log("Setting companyId in redux store")
     const cid = window.localStorage.getItem("companyId");
     dispatch(setCompanyId(cid));
-  return (
+  }
+return locations ?
     <>
     <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
       <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Select your staffing needs ...</Typography>
@@ -163,9 +221,10 @@ export default function CompanyAddPlacement() {
                   <br />
 
                   <FormControl  variant="outlined"  className={classes.formControl}>
-                    { locations && locations.companyContacts.length > 1 ?
+
+                    { locations && locations.length > 1 ?
                     <>
-                      <InputLabel   id="staffType">Choose location </InputLabel>
+                      <InputLabel id="staffType">Choose location </InputLabel>
                       <Select
                         labelId="location"
                         id="location"
@@ -174,7 +233,7 @@ export default function CompanyAddPlacement() {
                         label="staffType"
                         className={classes.select}
                       >
-                      { locations.companyContacts.map( (location, idx) => {
+                      { locations.map( (location) => {
                         return (
                           <MenuItem key={location.id} value={location.id}>{location.name}<br/>{location.addr1 + " " + location.addr2}<br/>{location.city}</MenuItem>
                         )
@@ -248,6 +307,7 @@ export default function CompanyAddPlacement() {
         <CompanyPlacementPickerTable locationId={location} startDate={selectedDateFrom} endDate={selectedDateTo}></CompanyPlacementPickerTable>
 
 </>
-  );
-}
+  : <div> Loading locations...</div>
+
+
 }

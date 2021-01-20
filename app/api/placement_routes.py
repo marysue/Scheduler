@@ -146,13 +146,13 @@ def createPlacements(placements, userType):
         if (start.year != end.year) or (start.month != end.month) or (start.day != end.day):
             tmpDay = start
             while tmpDay.day != end.day:
-                key = str(tmpDay.year) + "-" + str(tmpDay.month) + "-" + str(tmpDay.day)
+                key = "{:04d}-{:02d}-{:02d}".format(tmpDay.year, tmpDay.month, tmpDay.day)
                 a_dict = addTo(a_dict, key, ci)
                 tmpDay = tmpDay + timedelta(days=1)
-            key = str(tmpDay.year) + "-" + str(tmpDay.month) + "-" + str(tmpDay.day)
+            key = "{:04d}-{:02d}-{:02d}".format(tmpDay.year, tmpDay.month, tmpDay.day)
             a_dict = addTo(a_dict, key, ci)
         else:
-            key = str(start.year) + "-" + str(start.month) + "-" + str(start.day)
+            key = "{:04d}-{:02d}-{:02d}".format(start.year, start.month, start.day)
             a_dict = addTo(a_dict, key, ci)
     return a_dict
 

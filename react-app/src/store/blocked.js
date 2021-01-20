@@ -17,12 +17,12 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_ID: {
             const newState = { ...state};
             newState.contractorId = action.id;
-            console.log("Setting contractor id: ", newState.contractorId);
+            console.log("Redux Blocked Store: Setting contractor id: ", newState.contractorId);
             return newState;
           }
         case REMOVE_CONTRACTOR_ID: {
             const newState = { ...state};
-            console.log("Removing contractor id: ", newState.contractorId);
+            console.log("Redux Blocked Store: Removing contractor id: ", newState.contractorId);
             delete newState.contractorId;
             return newState;
         }
@@ -30,12 +30,12 @@ export default function reducer (state = {}, action) {
             //Setting an array of moment objects here
             const newState = { ...state};
             newState.blocked = action.blocked;
-            console.log("Setting blocked: ", newState.blocked);
+            console.log("Redux Blocked Store: setting Blocked array:  ", newState.blocked);
             return newState;
         }
         case REMOVE_BLOCKED: {
             const newState = { ...state};
-            console.log("Removing blocked: ", newState.blocked);
+            console.log("Redux Blocked Store: Removing blocked array: ", newState.blocked);
             delete newState.blocked;
             return newState;
         }

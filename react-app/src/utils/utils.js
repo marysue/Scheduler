@@ -1,3 +1,5 @@
+
+
 const formatValue = (val) => {
     if (parseInt(val) < 10) {
       val = "0" + val;
@@ -24,3 +26,5 @@ export const formatDateString = (date) => {
     let minute = "00"
     return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + "00"
   }
+
+
