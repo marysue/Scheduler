@@ -1,7 +1,21 @@
 /* TODO Add site wide styles */
-body {
-  margin-left: auto;
-  margin-right: auto;
+html, body {
+  height: 120vh;
+  display: flex;
+  width: 1048px;
+  flex-direction: column;
+  margin-top: 40px;
+  margin-left: 15%;
+  margin-right:15%;
+  background: #648dae;
+  border-radius: 20px;
+}
+
+#root {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  color: #648dae;
 }
 
 .calendar {

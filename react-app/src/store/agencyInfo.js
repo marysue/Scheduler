@@ -22,8 +22,6 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_INFO: {
             const newState = { ...state}
             newState.contractorInfo = action.contractorInfo;
-            console.log("Set placement info: ", newState.contractorInfo)
-
             return newState
         }
         case REMOVE_CONTRACTOR_INFO: {
@@ -34,8 +32,6 @@ export default function reducer (state = {}, action) {
         case SET_COMPANY_INFO: {
             const newState = { ...state}
             newState.companyInfo = action.companyInfo;
-            console.log("Set placement info: ", newState.companyInfo)
-
             return newState
         }
         case REMOVE_COMPANY_INFO: {
@@ -46,12 +42,10 @@ export default function reducer (state = {}, action) {
         case SET_AGENCY_ID: {
             const newState = { ...state}
             newState.agencyId = action.agencyId;
-            console.log("Redux store: agency: setAgencyId", action.agencyId);
             return newState;
         }
         case REMOVE_AGENCY_ID: {
             const newState = { ...state }
-            console.log("Redux store: agency: removeAgencyId", newState.agencyId);
             delete newState.agencyId;
             return newState;
         }

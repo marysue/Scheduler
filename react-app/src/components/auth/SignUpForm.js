@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Redirect, useHistory} from 'react-router-dom';
+import { useHistory} from 'react-router-dom';
 import { signUp } from '../../services/auth';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert'
@@ -75,11 +75,11 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
         if (user.userType === "company") {
           history.push('/companyInfo')
         } else if (user.userType === "contractor") {
-          console.log("Redirecting to contractorView")
+          console.log("Redirecting to contractorInfo")
           history.push('/contractorInfo')
         } else if (user.userType === "admin") {
-          console.log("Redirecting to agencyView")
-          history.push('/agencyView');
+          console.log("Redirecting to calendar")
+          history.push('/calendar');
       } else {
         setErrors(user.errors);
       }
@@ -107,7 +107,7 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
     <>
       <Dialog open={open} style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}} aria-labelledby="form-dialog-title">
         <div>
-          <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Create Your Placement Scheduler Account</Typography>
+          <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", marginLeft:"30px", marginRight: "30px", fontWeight:"bold"}}>Create Your Placement Scheduler Account</Typography>
         </div>
         { errors ? <div className={classes.root}><Alert severity="error">{errors}</Alert></div> : null}
         <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
@@ -153,24 +153,11 @@ const SignUpForm = ({openDialog, authenticated, setAuthenticated}) => {
                   input={<OutlinedInput name='userType' id='userType-helper' />}
                 >
                   <MenuItem value=""><em>None</em></MenuItem>
-                  <MenuItem value={"admin"}>Admin</MenuItem>
+                  <MenuItem value={"agency"}>Agency</MenuItem>
                   <MenuItem value={"contractor"}>Contractor</MenuItem>
                   <MenuItem value={"company"}>Company</MenuItem>
                 </Select>
               </FormControl>
-
-
-              {/* <TextValidator
-                variant="outlined"
-                label="User Type ['admin', 'contractor', 'company']"
-                onChange={handleChange('userType')}
-                name='userType'
-                value={values.userType}
-                type={"text"}
-                style={{width:"100%", justifyContent:"center"}}
-                validators={['required']}
-                errorMessages={['User type is required']}
-              /> */}
 
               <br />
               <TextValidator

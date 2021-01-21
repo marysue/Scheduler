@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import Alert from '@material-ui/lab/Alert'
 import { Button,
@@ -87,7 +87,7 @@ const ContractorInfo = ({authenticated}) => {
           dispatch(setContractorCity(contractorContact.city));
           dispatch(setContractorState(contractorContact.state));
           dispatch(setContractorZip(contractorContact.zip));
-          history.push('/contractorView')
+          history.push('/calendar')
         } else {
           setErrors(contractorContact.errors);
         }
@@ -225,7 +225,7 @@ const ContractorInfo = ({authenticated}) => {
                   <Select
                     labelId="state"
                     id="state"
-                    value={state}
+                    value={"CA"}
                     onChange={handleStateChange}
                     // input={<BootstrapInput />}
                     label="State"

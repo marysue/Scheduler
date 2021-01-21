@@ -65,8 +65,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
-
+  
   return (
     <TableHead>
       <TableRow>
@@ -209,17 +208,12 @@ useEffect (() => {
       const p = await getAllCompanyInfo();
       if (!p.errors) {
           dispatch(setAgencyCompanyInfo(p))
-          // setCompanies(p)
-          for (let i=0; i<p.length; i++) {
-            console.log("Companies: ", p[i]);
-          }
-
       } else {
           console.log("AgencyView: Error in getAll AgencyCompanyPlacementTableInfo fetch call")
       }
   })()
 
-}, []) ;
+}, [dispatch]) ;
 
   function createData(companyName, locationName, address, contactName, contactPhone, contactEmail) {
       return { companyName, locationName, address, contactName, contactPhone, contactEmail };

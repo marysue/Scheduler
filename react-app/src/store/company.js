@@ -53,133 +53,111 @@ export default function reducer (state = {}, action) {
         case SET_COMPANY_ID: {
             const newState = { ...state};
             newState.companyId = action.id;
-            console.log("Redux Company Store: Setting company id: ", newState.companyId);
             return newState;
           }
           case REMOVE_COMPANY_ID: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing company id: ", newState.companyId);
             delete newState.companyId;
             return newState;
           }
         case SET_COMPANY_NAME: {
             const newState = { ...state};
             newState.companyName = action.name;
-            console.log("Redux Company Store: Setting company name: ", newState.companyName);
             return newState;
           }
           case REMOVE_COMPANY_NAME: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing company name: ", newState.companyName);
             delete newState.companyName;
             return newState;
           }
         case SET_NAME: {
             const newState = { ...state};
             newState.name  = action.name
-            console.log("Redux Company Store: Setting name: ", newState.name);
             return newState;
         }
         case REMOVE_NAME: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing name: ", newState.name);
             delete newState.name;
             return newState;
           }
         case SET_PHONE: {
             const newState = { ...state};
             newState.phone  = action.phone
-            console.log("Redux Company Store: Setting phone: ", newState.phone);
             return newState;
         }
         case REMOVE_PHONE: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing phone: ", newState.phone);
             delete newState.phone;
             return newState;
           }
         case SET_EMAIL: {
             const newState = { ...state};
             newState.email  = action.email
-            console.log("Redux Company Store: Setting email: ", newState.email);
             return newState;
         }
         case REMOVE_EMAIL: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing email: ", newState.email);
             delete newState.email;
             return newState;
           }
         case SET_ADDR1: {
             const newState = { ...state};
             newState.addr1  = action.addr1
-            console.log("Redux Company Store: Setting addr1:", newState.addr1);
             return newState;
         }
         case REMOVE_ADDR1: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing addr1: ", newState.addr1);
             delete newState.addr1;
             return newState;
           }
         case SET_ADDR2: {
             const newState = { ...state};
             newState.addr2  = action.addr2
-            console.log("Redux Company Store: Setting addr2:", newState.addr2);
             return newState;
         }
         case REMOVE_ADDR2: {
             const newState = { ...state};
-            console.log("Redux Company Store: Redux Company Store: Removing addr2: ", newState.addr2);
             delete newState.addr2;
             return newState;
           }
         case SET_CITY: {
             const newState = { ...state};
             newState.city  = action.city
-            console.log("Redux Company Store: Setting city", newState.city);
             return newState;
         }
         case REMOVE_CITY: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing city: ", newState.city);
             delete newState.city;
             return newState;
           }
         case SET_STATE: {
             const newState = { ...state};
             newState.state  = action.state
-            console.log("Redux Company Store: Setting state", newState.state);
             return newState;
         }
         case REMOVE_STATE: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing state: ", newState.state);
             delete newState.state;
             return newState;
           }
         case SET_ZIP: {
             const newState = { ...state};
             newState.zip  = action.zip
-            console.log("Redux Company Store: Setting zip: ", newState.zip);
             return newState;
         }
         case REMOVE_ZIP: {
             const newState = { ...state};
-            console.log("Redux Company Store: Removing zip: ", newState.zip);
             delete newState.zip;
             return newState;
           }
         case SET_COMPANY_LOCATIONS: {
           const newState = { ...state};
           newState.companyLocations = action.locations;
-          console.log("Redux Company Store: Setting company locations: ", newState.companyLocations)
           return newState;
         }
         case REMOVE_COMPANY_LOCATIONS: {
           const newState = { ...state};
           delete newState.companyLocations;
-          console.log("Redux Company Store: Removing company locations");
           return newState;
         }
           default:

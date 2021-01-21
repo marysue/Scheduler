@@ -83,7 +83,7 @@ const CompanyInfo = () => {
           dispatch(setCompanyCity(companyContact.city));
           dispatch(setCompanyState(companyContact.state));
           dispatch(setCompanyZip(companyContact.zip));
-          history.push('/companyView')
+          history.push('/calendar')
       } else {
           setErrors(company.errors);
       }

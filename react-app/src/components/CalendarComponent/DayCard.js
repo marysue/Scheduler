@@ -31,7 +31,6 @@ const useStyles = makeStyles({
 
   },
 });
-let once = true
 export default function DayCard({ day, placementDates, handleDateClicked, userType}) {
 
   const classes = useStyles();

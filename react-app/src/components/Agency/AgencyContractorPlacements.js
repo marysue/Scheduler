@@ -14,19 +14,19 @@ const AgencyContractorPlacements = () => {
             (async() => {
                 const p = await getAllAgencyCompanyPlacementTableInfo();
                 if (!p.errors) {
-                    console.log("CompanyView: Placement table info set as:  ", p.placements)
-                    console.log("CompanyView: Setting placement info in redux store...")
+                    console.log("AgencyContractorPlacements: Placement table info set as:  ", p.placements)
+                    console.log("AgencyContractorPlacements: Setting placement info in redux store...")
                     dispatch(setAgencyCompanyPlacementInfo(p.agencyInfo))
                 } else {
-                    console.log("CompanyView: Error in getCompanyPlacementTableInfo fetch call")
+                    console.log("AgencyContractorPlacements: Error in getCompanyPlacementTableInfo fetch call")
                 }
                 const pd = await getAllAgencyCompanyPlacementCalendarInfo();
                 if (!pd.errors) {
-                    console.log("CompanyView: Placement Dates set as: ", pd)
-                    console.log("CompanyView: Setting placementDates in redux store...")
+                    console.log("AgencyContractorPlacements: Placement Dates set as: ", pd)
+                    console.log("AgencyContractorPlacements: Setting placementDates in redux store...")
                     dispatch(setAgencyCompanyPlacementDates(pd));
                 } else {
-                    console.log("CompanyView: Error with getCompanyPlacementCalendar fetch call");
+                    console.log("AgencyContractorPlacements: Error with getCompanyPlacementCalendar fetch call");
                 }
             })()
         console.log("Company placements: ", placements);

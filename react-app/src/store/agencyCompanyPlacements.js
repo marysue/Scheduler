@@ -16,7 +16,6 @@ export default function reducer (state = {}, action) {
         case SET_COMPANY_PLACEMENT_DATES: {
             const newState = { ...state}
             newState.placementDates = action.placementDatesArray;
-            console.log("Setting placement dates array: ", newState.placementDates)
             return newState;
         }
         case REMOVE_COMPANY_PLACEMENT_DATES: {
@@ -27,8 +26,6 @@ export default function reducer (state = {}, action) {
         case SET_COMPANY_PLACEMENT_INFO: {
             const newState = { ...state}
             newState.placementInfo = action.placementInfoArray;
-            console.log("Set placement info: ", newState.placementInfo)
-
             return newState
         }
         case REMOVE_COMPANY_PLACEMENT_INFO: {
@@ -41,8 +38,7 @@ export default function reducer (state = {}, action) {
     }
 }
 
-//  ****************** AGENCY ********************
-// *********************COMPANY PLACEMENTS**************
+//  ****************** AGENCY COMPANY ********************
 export const getAllAgencyCompanyPlacementCalendarInfo = async () => {
     const response = await fetch(`/api/placement/agency/company/calendarInfo/all`, {
         headers: {

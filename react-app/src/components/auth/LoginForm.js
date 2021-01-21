@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-//import { login } from "../../services/auth";
 import { login } from "../../store/authentication"
 import Alert from '@material-ui/lab/Alert';
 import { Button,
@@ -19,7 +18,6 @@ import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCom
 import FullLogo from '../../images/fullLogo.png';
 
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
-    console.log("Entered LoginForm")
     const dispatch = useDispatch();
     const [values, setValues] = useState({
         email: '',
@@ -101,7 +99,6 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         if (e) { e.preventDefault()};
         const user = await login(values.email, values.password);
         if (!user.errors) {
-            console.log("User type is:  ", user.userType)
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             setLoginDetails(user.id);
             window.localStorage.setItem("userId", user.id)
@@ -111,12 +108,9 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 if (!contractor.errors) {
                     dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
                     window.localStorage.setItem("contractorId", contractor.contractorId);
-                    // return <Redirect to="/contractorView" />
-                    history.push('/contractorView')
+                    history.push('/calendar');
                 } else {
                     setErrors(contractor.errors);
-                    console.log("LoginForm: No contractor info yet ... need to get it")
-                    // return <Redirect to="/contractorInfo" />
                     history.push('/contractorInfo')
                 }
             } else if (user.userType === "company") {
@@ -124,15 +118,12 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 if (!company.errors) {
                     dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
                     window.localStorage.setItem("companyId", company.id);
-                    // return <Redirect to="/companyView" />
-                    history.push('/companyView')
+                    history.push('/calendar');
                 } else { setErrors(company.errors);
-                    // return <Redirect to="/companyInfo" />
                     history.push('/companyInfo')
                 }
             } else if (user.userType === "agency") {
-                    // return <Redirect to="/agencyView" />
-                    history.push('/agencyView')
+                    history.push('/calendar')
             }
         } else {
           setErrors(user.errors);
@@ -143,17 +134,6 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         setValues({ ...values, [prop]: event.target.value });
     };
 
-    // const handleSubmit = () => {
-    //     setSubmitted(true , () => {
-    //         setTimeout(() => setSubmitted(false), 5000);
-    //     });
-    // }
-    // const goToSignUp = (e) => {
-    //     e.preventDefault()
-    //     return <Redirect to="/signUp" />
-    //   }
-
-
     const loginAgencyDemo = async() => {
         const user = await login('demo@aa.io', 'password');
         if (!user.errors) {
@@ -162,9 +142,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             window.localStorage.setItem("agencyId", user.id);
             window.localStorage.setItem("userId",user.id)
-            console.log('login demo - redirecting to agencyView')
-            // return <Redirect to="/agencyView" />
-            history.push('/agencyView')
+            history.push('/calendar')
         } else {
             setErrors(user.errors);
         }
@@ -184,11 +162,9 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                     dispatch(setCompanyId(company.id));
                     dispatch(setCompanyName(company.companyName));
                     window.localStorage.setItem("companyId", company.id);
-                    // return <Redirect to="/companyView"></Redirect>
-                    history.push('companyView')
+                    history.push('/calendar');
                 } else {
                     setErrors(company.errors);
-                    // return <Redirect to="/companyInfo" />
                     history.push('companyInfo')
                 }
             }
@@ -203,7 +179,6 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         window.localStorage.setItem("userType", user.userType)
         window.localStorage.setItem("userId",user.id)
         if (!user.errors) {
-            console.log("LoginForm:  loginContractorDemo: Received the following user info: ", user);
             dispatch(setUserEmail(user.email));
             dispatch(setUserId(user.id));
             dispatch(setUserName(user.username));
@@ -215,12 +190,9 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 if (!contractor.errors) {
                     dispatch(setContractorId(contractor.contractorId));
                     window.localStorage.setItem("contractorId", contractor.contractorId);
-                    //   window.location.href="/"
-                    // return <Redirect to="/contractorView" />
-                    history.push('/contractorView')
+                    history.push('/calendar')
                 } else {
                     setErrors(contractor.errors);
-                    // return <Redirect to="/contractorInfo" />
                     history.push('contractorInfo')
                 }
             }
@@ -230,35 +202,18 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     };
 
     if (authenticated) {
-        console.log("Authenticated is true", authenticated);
         let contractorId = null
         let companyId = null
         let agencyId = null
         setTimeout(function() {}, 2000);
-             contractorId = window.localStorage.getItem("contractorId");
-             companyId = window.localStorage.getItem("companyId");
-             agencyId = window.localStorage.getItem("agencyId");
-        // }
-
-        if (contractorId) {
-            console.log("We have a contractorId, redirecting:  ", contractorId, " with authenticated: ", authenticated);
-            // window.location.replace('/contractorView')
-            // return <Redirect to='/contractorView' />
-            history.push('/contractorView')
-        } else if (companyId) {
-            console.log("We have a companyId, redirecting: ", companyId, " with authenticated: ", authenticated);
-            // window.location.replace('/companyView')
-            // return <Redirect to='/companyView'/>
-            history.push('/companyView')
-        } else if (agencyId) {
-            console.log("We have an agencyId, redirecting: ", agencyId, " with authenticated: ", authenticated);
-            // window.location.replace('/agencyView')
-            // return <Redirect to='/agencyView' />
-            history.push('/agencyView')
+        contractorId = window.localStorage.getItem("contractorId");
+        companyId = window.localStorage.getItem("companyId");
+        agencyId = window.localStorage.getItem("agencyId");
+        if (contractorId || companyId || agencyId) {
+            history.push('/calendar')
         } else {
             return null;
         }
-
     }
 
     if (!open) {

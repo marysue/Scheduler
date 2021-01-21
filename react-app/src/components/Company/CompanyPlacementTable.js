@@ -21,7 +21,7 @@ import { Table,
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import moment from 'moment';
-import { setCompanyId, setCompanyLocations, getCompanyInfo } from '../../store/company';
+import { setCompanyId } from '../../store/company';
 import { setUserType } from '../../store/authentication'
 import { setContractorId } from '../../store/contractor';
 import { setAgencyId } from '../../store/agencyInfo';
@@ -70,7 +70,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
@@ -226,63 +225,59 @@ const CompanyPlacementTable = () => {
 
   console.log(" ********************PlacementsTable View********************")
 
-  const setInitialAuth = () => {
-    if (!userType) {
-      userType = window.localStorage.getItem("userType")
-      dispatch(setUserType(userType));
-     }
-    if (!companyId && userType === 'company') {
-      companyId = window.localStorage.getItem("companyId");
-      dispatch(setCompanyId(companyId));
-     }
-    if (!contractorId && userType === 'contractor') {
-      contractorId = window.localStorage.getItem("contractorId");
-      dispatch(setContractorId(contractorId));
-     }
-     if (!agencyId && userType === 'agency') {
-       agencyId = window.localStorage.getItem("agencyId");
-       dispatch(setAgencyId(agencyId));
-     }
-  }
-
   useEffect (() => {
-    if (!userType) { setInitialAuth() };
-    setPlacementTableInfo();
-  }, [] )
-
-  async function setPlacementTableInfo() {
-    console.log("CompanyPlacementTable: setPlacementTableInfo, userType:  ", userType);
-    if (userType === 'contractor') {
-      const pd = await getContractorPlacementTableInfo(contractorId);
-      if (!pd.errors) {
-          console.log("I'm a contractor.  Placements length = ", pd.placements.length);
+    if (!userType) {
+      (async() => {
+        if (!userType) {
+          dispatch(setUserType(window.localStorage.getItem("userType")));
+         }
+        if (!companyId && userType === 'company') {
+          dispatch(setCompanyId(window.localStorage.getItem("companyId")));
+         }
+        if (!contractorId && userType === 'contractor') {
+          dispatch(setContractorId(window.localStorage.getItem("contractorId")));
+         }
+         if (!agencyId && userType === 'agency') {
+           dispatch(setAgencyId(window.localStorage.getItem("agencyId")));
+         }
+      })()
+    };
+    (async () => {
+        console.log("CompanyPlacementTable: setPlacementTableInfo, userType:  ", userType);
+      if (userType === 'contractor') {
+        const pd = await getContractorPlacementTableInfo(contractorId);
+        if (!pd.errors) {
+            console.log("I'm a contractor.  Placements length = ", pd.placements.length);
+            console.log("placement dates:  ", pd.placements);
+            dispatch(setPlacementInfo(pd.placements));
+        } else {
+            console.log("CompanyPlacementTable: Error with getContractorPlacementTable fetch call");
+        }
+      } else if (userType === 'agency') {
+        console.log("CompanyPlacementTable: calling getAllAgencyTableInfo() fetch");
+        const pd = await getAllAgencyTableInfo();
+        if (!pd.errors) {
+          console.log("CompanyPlacementTable: Agency:  placement length:  ", pd.placements.length);
           console.log("placement dates:  ", pd.placements);
           dispatch(setPlacementInfo(pd.placements));
-      } else {
-          console.log("CompanyPlacementTable: Error with getContractorPlacementTable fetch call");
+        } else {
+          console.log("Error setting placement Table info for agency");
+        }
+      } else if (userType === 'company') {
+        console.log("CompanyPlacementTable:  calling getCompanyPlacementTableInfo() fetch ...");
+        const pd = await getCompanyPlacementTableInfo(companyId);
+        if (!pd.errors) {
+          console.log("Company:  placements length is: ", pd.placements.length);
+          console.log("placement dates:  ", pd.placements);
+          dispatch(setPlacementInfo(pd.placements));
+        } else {
+          console.log("Error setting placement calendar info for company");
+        }
       }
-    } else if (userType === 'agency') {
-      console.log("CompanyPlacementTable: calling getAllAgencyTableInfo() fetch");
-      const pd = await getAllAgencyTableInfo();
-      if (!pd.errors) {
-        console.log("CompanyPlacementTable: Agency:  placement length:  ", pd.placements.length);
-        console.log("placement dates:  ", pd.placements);
-        dispatch(setPlacementInfo(pd.placements));
-      } else {
-        console.log("Error setting placement Table info for agency");
-      }
-    } else if (userType === 'company') {
-      console.log("CompanyPlacementTable:  calling getCompanyPlacementTableInfo() fetch ...");
-      const pd = await getCompanyPlacementTableInfo(companyId);
-      if (!pd.errors) {
-        console.log("Company:  placements length is: ", pd.placements.length);
-        console.log("placement dates:  ", pd.placements);
-        dispatch(setPlacementInfo(pd.placements));
-      } else {
-        console.log("Error setting placement calendar info for company");
-      }
-    }
-  }
+    })()
+  }, [dispatch, userType, companyId, contractorId, agencyId] )
+
+  
 
   function createData(name, staffType, phone, email, city, startDate, endDate) {
       return { name, staffType, phone, email, city, startDate, endDate };

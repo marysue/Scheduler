@@ -65,7 +65,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
@@ -214,7 +213,7 @@ if (contractorInfo) {
         }
     })()
 
-}, []) ;
+}, [dispatch]) ;
 
 
   console.log(" ******************* Contractor Table View********************")
@@ -238,7 +237,7 @@ useEffect (() => {
       }
   })()
 
-}, []) ;
+}, [dispatch]) ;
 
   function createData(name, address, phone, email, staffType ) {
       return { name, address, phone, email, staffType };
@@ -251,10 +250,6 @@ if(contractors) {
     console.log("contractors: ")
     console.log(contractors)
     for (let i=0; i < contractors.length; i++) {
-      const contractorName = contractors[i].contractorName;
-      //contractorName, locationName, address, contactName, contactPhone, contactEmail
-        console.log(contractors[i]);
-
         const name = contractors[i].contractorContact.name;
         const address = contractors[i].contractorContact.addr1 + " " + contractors[i].contractorContact.addr2 + ", " + contractors[i].contractorContact.city + ", " + contractors[i].contractorContact.state + " " + contractors[i].contractorContact.zip
         const phone = contractors[i].contractorContact.phone;

@@ -18,7 +18,6 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_PLACEMENT_DATES: {
             const newState = { ...state}
             newState.placementDates = action.placementDatesArray;
-            console.log("Setting placement dates array: ", newState.placementDates)
             return newState;
         }
         case REMOVE_CONTRACTOR_PLACEMENT_DATES: {
@@ -29,7 +28,6 @@ export default function reducer (state = {}, action) {
         case SET_CONTRACTOR_PLACEMENT_INFO: {
             const newState = { ...state}
             newState.placementInfo = action.placementInfoArray;
-            console.log("Set placement info: ", newState.placementInfo)
             return newState
         }
         case REMOVE_CONTRACTOR_PLACEMENT_INFO: {

@@ -13,7 +13,6 @@ import { setContractorId } from '../../store/contractor';
 import {setCompanyId} from '../../store/company';
 import { setUserType } from '../../store/authentication';
 import {  getAllAgencyCalendarInfo, getContractorPlacementCalendar, getCompanyPlacementCalendarInfo, setPlacementDates } from "../../store/placement";
-import { baseUrl } from '../../config';
 import { createBlocked } from '../../store/blocked';
 import { Button } from '@material-ui/core';
 
@@ -50,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Calendar () {
-  console.log("**********Calendar: Loading component ...***********")
   const dispatch = useDispatch();
   const classes = useStyles();
   const [calendar, setCalendar] = useState([]);
@@ -60,7 +58,6 @@ export default function Calendar () {
   const contractorId = useSelector(state => state.contractor.contractorId);
   const blockedDates = useSelector(state=>state.blocked.blocked);
   const companyId = useSelector(state=>state.company.companyId);
-  //let blockedDates = [];
   const placementDates = useSelector(state=>state.placement.placementDates);
 
   useEffect(() => {
@@ -76,59 +73,49 @@ export default function Calendar () {
         dispatch(setCompanyId(cid));
       }
     }
-    if (userType === 'contractor') { getBlockedDates(contractorId); }
-    setCalendar(buildCalendar(selectedDate));
-    setPlacementCalendarInfo();
-  }, [userType, contractorId, selectedDate]);
-
-  async function getBlockedDates(cid) {
-    //We only get blocked dates for contractor
-    const bd = await getAllBlocked(cid);
-
-    //Now change this into an array of dates only
-    if (!bd.errors) {
-          let bda = bd["blockedDates"]
-          console.log("Calendar getBlockedDates:  Received bd from backend:  ", bda.length);
-          const blockedArr = []
-          for (let i = 0; i < bda.length; i++) {
-              const date = bda[i].blocked.replace(" GMT", "")
-              blockedArr.push(moment(date).local());
-          }
-          console.log("Calendar:  getBlockedDates: contractorId: ", contractorId, " blockedArr length: ", blockedArr.length);
-          dispatch(setBlocked(blockedArr));
-          console.log("Calendar:  getBlockedDates: Blocked array:  ", blockedArr);
-    }
-  }
-
-  //Backend calls to retrieve the calendar information
-  //Sets the Redux store
-  async function setPlacementCalendarInfo() {
     if (userType === 'contractor') {
-      const pd = await getContractorPlacementCalendar(contractorId);
-      if (!pd.errors) {
-          // console.log("I'm a contractor.  Placements length = ", pd.length);
-          // console.log("placement dates:  ", pd);
-          dispatch(setPlacementDates(pd));
-      } else {
-          console.log("Calendar: Error with getContractorPlacementCalendar fetch call");
-      }
+      (async() => {
+        const bd = await getAllBlocked(contractorId);
+        //Now change this into an array of dates only
+        if (!bd.errors) {
+              let bda = bd["blockedDates"]
+              const blockedArr = []
+              for (let i = 0; i < bda.length; i++) {
+                  const date = bda[i].blocked.replace(" GMT", "")
+                  blockedArr.push(moment(date).local());
+              }
+              dispatch(setBlocked(blockedArr));
+        }
+      })()
+    }
+    setCalendar(buildCalendar(selectedDate));
+    (async () => {
+      if (userType === 'contractor') {
+        const pd = await getContractorPlacementCalendar(contractorId);
+        if (!pd.errors) {
+            dispatch(setPlacementDates(pd));
+        } else {
+            console.log("Calendar: Error with getContractorPlacementCalendar fetch call");
+        }
 
-  } else if (userType === 'agency') {
-    const pd = await getAllAgencyCalendarInfo();
-    if (!pd.errors) {
-      dispatch(setPlacementDates(pd));
-    } else {
-      console.log("Error setting placement calendar info for agency");
-    }
-  } else if (userType === 'company') {
-    const pd = await getCompanyPlacementCalendarInfo(companyId);
-    if (!pd.errors) {
-      dispatch(setPlacementDates(pd));
-    } else {
-      console.log("Calendar: Error setting placement calendar info for company");
-    }
-  }
-}
+      } else if (userType === 'agency') {
+        const pd = await getAllAgencyCalendarInfo();
+        if (!pd.errors) {
+          dispatch(setPlacementDates(pd));
+        } else {
+          console.log("Error setting placement calendar info for agency");
+        }
+      } else if (userType === 'company') {
+        const pd = await getCompanyPlacementCalendarInfo(companyId);
+        if (!pd.errors) {
+          dispatch(setPlacementDates(pd));
+        } else {
+          console.log("Calendar: Error setting placement calendar info for company");
+        }
+      }
+    })();
+  }, [dispatch, companyId, userType, contractorId, selectedDate]);
+
 
   function dayInPlacements(day) {
     const dayStr = day.format('YYYY-MM-DD')
@@ -141,6 +128,7 @@ export default function Calendar () {
 
   }
 
+  //eslint-disable-next-line
   const printDatesArray = (da) => {
     for (let i = 0; i < da.length; i++) {
       console.log("Calendar:", da[i])
@@ -174,7 +162,6 @@ export default function Calendar () {
       }
   }
   function dayInBlocked(day) {
-    //console.log("Calendar: dayInBlocked: blockedDates:  ", blockedDates);
     let thisDay = moment(day).local()
     if (blockedDates) {
       for (let i=0; i < blockedDates.length; i++) {
@@ -206,16 +193,14 @@ export default function Calendar () {
   }
   const saveDates = async () => {
     const blocked = await createBlocked(contractorId, blockedDates)
-    if (!blocked.errors) {
-        console.log("Calendar: saved blocked dates to redux store")
-    } else {
+    if (blocked.errors) {
         console.log("Calendar: Error setting dates blocked to backend.")
     }
 }
   return (
       <>
-        <div style={{alignItems:"center"}}>
-          {userType === 'contractor' ? <p>View your assignments, or double click a date to block it from receiving assignments.</p> : null }
+        <div style={{alignItems:"center", leftMargin: "20px"}}>
+          {userType === 'contractor' ? <p style={{paddingLeft:"40px"}}>View your assignments, or select a date to block it from receiving assignments.  Scroll down to save your changes.</p> : null }
         <Grid container width="1040px">
 
             <Grid item xs={12} >
@@ -258,7 +243,7 @@ export default function Calendar () {
             )})}
           </Grid>
           { userType === 'contractor' ?
-                    <Button onClick={saveDates} style={{backgroundColor: "#648dae", color: "white", marginTop:"5px"}}>SAVE</Button> : null }
+                    <Button onClick={saveDates} style={{backgroundColor: "#648dae", color: "white", marginTop:"5px", marginLeft:"50%"}}>SAVE</Button> : null }
       </div>
     </>
   );

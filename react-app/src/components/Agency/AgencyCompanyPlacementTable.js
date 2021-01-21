@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setAgencyCompanyPlacementDates, setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementCalendarInfo, getAllAgencyCompanyPlacementTableInfo } from '../../store/agencyCompanyPlacements';
+import { setAgencyCompanyPlacementInfo, getAllAgencyCompanyPlacementTableInfo } from '../../store/agencyCompanyPlacements';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -19,12 +19,8 @@ import { Table,
         Tooltip,
         FormControlLabel,
         Switch } from '@material-ui/core'
-
 import DeleteIcon from '@material-ui/icons/Delete';
-//import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-
-
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -68,7 +64,6 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
 
   return (
     <TableHead>
@@ -227,7 +222,7 @@ const AgencyCompanyPlacementTable = () => {
 
     })()
 
-  }, [] )
+  }, [dispatch] )
 
   function createData(company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate) {
       return { company, contactName, contactPhone, contactEmail, contractorName, staffType, startDate, endDate };
@@ -242,10 +237,7 @@ if(placements) {
         let companyName = placementArr[i].agencyInfo.companyName + " " + placementArr[i].agencyInfo.contactAddress + ", " + placementArr[i].agencyInfo.contactCity + ", " + placementArr[i].agencyInfo.contactState + "  " + placementArr[i].agencyInfo.contactZip
         let start = moment(placementArr[i].agencyInfo.startDate).format('MM/DD/YYYY');
         let end = moment(placementArr[i].agencyInfo.endDate).format('MM/DD/YYYY');
-        let city = placementArr[i].agencyInfo.contractorCity
-        let companyContactName = placementArr[i].agencyInfo.contactName
-        console.log("Start: ", start.toString());
-        console.log("End: ", end.toString())
+
         rows.push(createData(
           companyName,
           placementArr[i].agencyInfo.contactName,

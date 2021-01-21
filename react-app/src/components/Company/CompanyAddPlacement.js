@@ -34,14 +34,14 @@ export default function CompanyAddPlacement() {
   const companyId = useSelector(state => state.company.companyId);
   const dispatch = useDispatch();
   const [errors, setErrors] = useState('');
-  const [state, setLocalState] = useState('');
+  // const [, setLocalState] = useState('');
   const [staffType, setLocalStaffType] = useState('');
   const [location, setLocation] = useState('');
-  const [values, setValues] = useState({
-    staffType: '',
-    startDate: '',
-    endDate: '',
-  });
+  // const [values, setValues] = useState({
+  //   staffType: '',
+  //   startDate: '',
+  //   endDate: '',
+  // });
   const [selectedDateFrom, setSelectedDateFrom] = React.useState(new Date());
   const [selectedDateTo, setSelectedDateTo] = React.useState(new Date());
   const contractorsAvailable = [];
@@ -51,8 +51,23 @@ export default function CompanyAddPlacement() {
   const agencyId = useSelector(store => store.agencyInfo.agencyId);
 
 
-  const setInitialAuth = () => {
-    console.log("CompanyAddPlacement: setInitialAuth(): userType: ", userType);
+
+
+  console.log("CompanyAddPlacement: setInitialAuth(): Locations: ", locations);
+  if (locations) {
+      for(let i = 0; i < locations.length; i++) {
+        console.log(locations[i].name)
+        console.log(locations[i].addr1 + " " + locations[i].addr2)
+        console.log(locations[i].city)
+      }
+  }
+
+
+  useEffect (() => {
+
+    (async() => {
+      if (!userType || !companyId) {
+        console.log("CompanyAddPlacement: setInitialAuth(): userType: ", userType);
     if (!userType) {
       const ut = window.localStorage.getItem("userType")
       dispatch(setUserType(ut));
@@ -72,43 +87,25 @@ export default function CompanyAddPlacement() {
        dispatch(setAgencyId(aid));
      }
 
-  }
-
-  console.log("CompanyAddPlacement: setInitialAuth(): Locations: ", locations);
-  if (locations) {
-      for(let i = 0; i < locations.length; i++) {
-        console.log(locations[i].name)
-        console.log(locations[i].addr1 + " " + locations[i].addr2)
-        console.log(locations[i].city)
-      }
-  }
-
-  async function loadCompanyLocations() {
-    console.log("CompanyAddPlacement: loadCompanyLocations: companyId: ", companyId);
-    const locs = await getCompanyInfo(companyId);
-    console.log("locs:  ", locs.companyContacts);
-    if (!locs.errors) {
-
-      console.log("Received locations:  ", locs.companyContacts);
-      dispatch(setCompanyLocations(locs.companyContacts));
-
-    } else {
-      console.log("Errors received from fetch call to get company locations");
-    }
-  }
-
-  useEffect (() => {
-    if (!userType || !companyId) {
-      setInitialAuth()
-    };
-    console.log("CompanyAddPlacement: useEffect(): locations: ", locations)
-    if (!locations) {
-      console.log("companyId: ", companyId)
-       loadCompanyLocations(companyId)
-      console.log("CompanyAddPlacement:  locations:  ", locations);
       };
+      console.log("CompanyAddPlacement: useEffect(): locations: ", locations)
+      if (!locations) {
+        console.log("companyId: ", companyId)
+        console.log("CompanyAddPlacement: loadCompanyLocations: companyId: ", companyId);
+        const locs = await getCompanyInfo(companyId);
+        console.log("locs:  ", locs.companyContacts);
+        if (!locs.errors) {
 
-  }, [companyId, locations] )
+          console.log("Received locations:  ", locs);
+          dispatch(setCompanyLocations(locs.companyContacts));
+
+        } else {
+          console.log("Errors received from fetch call to get company locations");
+        }
+        console.log("CompanyAddPlacement:  locations:  ", locations);
+        };
+    })()
+  }, [dispatch, agencyId, contractorId, userType, companyId, locations] )
   const handleDateChangeFrom = (date) => {
     setSelectedDateFrom(date);
   };
@@ -129,7 +126,7 @@ export default function CompanyAddPlacement() {
         marginRight: "auto"
     },
     root: {
-        color: theme.primary,
+        color: theme.palette.primary.main,
         input: {
             textAlign: "center"
         },
@@ -145,19 +142,19 @@ export default function CompanyAddPlacement() {
   const submit = async (e) => {
     e.preventDefault();
 }
-  const cancel = () => {
-      console.log("CompanyAddPlacement: Cancel button pressed, should be redirecting to '/' ...");
-    // return <Redirect to="/" />
-  }
+  // const cancel = () => {
+  //     console.log("CompanyAddPlacement: Cancel button pressed, should be redirecting to '/' ...");
+  //   // return <Redirect to="/" />
+  // }
 
-  const handleChange = (prop) => (event) => {
-    setValues({...values, [prop]: event.target.value});
-  }
+  // const handleChange = (prop) => (event) => {
+  //   setValues({...values, [prop]: event.target.value});
+  // }
 
   //Because the select didn't work with handleChange at all
-  const handleStateChange = (event) => {
-    setLocalState(event.target.value);
-  };
+  // const handleStateChange = (event) => {
+  //   setLocalState(event.target.value);
+  // };
 
   const handleStaffTypeChange = (event) => {
       setLocalStaffType(event.target.value);
@@ -204,110 +201,111 @@ export default function CompanyAddPlacement() {
     const cid = window.localStorage.getItem("companyId");
     dispatch(setCompanyId(cid));
   }
-return locations ?
+
+  return (
     <>
-    <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
-      <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Select your staffing needs ...</Typography>
-    </DialogContent>
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <Grid container direction="column" justify="space-around" alignItems="center" spacing={2}>
-              <div className={classes.root}>
-                {errors ? <Alert severity="error">{errors}</Alert> : <div></div> }
-              </div>
-              <ValidatorForm
-                  onSubmit={submit}
-                  //style={{width:"75%",}}
-                  >
-                  <br />
+      <DialogContent style={{width:"100%", marginLeft:"auto", marginRight:"auto", justifyContent:"center"}}>
+        <Typography component="h6" variant="h6" align="center" color="primary" style={{marginTop: "20px", fontWeight:"bold"}}>Select your staffing needs ...</Typography>
+      </DialogContent>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Grid container direction="column" justify="space-around" alignItems="center" spacing={2}>
+                <div className={classes.root}>
+                  {errors ? <Alert severity="error">{errors}</Alert> : <div></div> }
+                </div>
+                <ValidatorForm
+                    onSubmit={submit}
+                    //style={{width:"75%",}}
+                    >
+                    <br />
 
-                  <FormControl  variant="outlined"  className={classes.formControl}>
+                    <FormControl  variant="outlined"  className={classes.formControl}>
 
-                    { locations && locations.length > 1 ?
-                    <>
-                      <InputLabel id="staffType">Choose location </InputLabel>
+                      { locations  && locations.length > 0 ?
+                      <>
+                        <InputLabel id="staffType" >Choose location </InputLabel>
+                        <Select
+                        style={{marginRight:"20px"}}
+                          labelId="location"
+                          id="location"
+                          value={location}
+                          onChange={handleLocationChange}
+                          label="staffType"
+                          className={classes.select}
+                        >
+                        { locations.map( (location) => {
+                          return (
+                            <MenuItem key={location.id} value={location.id}>{location.name}<br/>{location.addr1 + " " + location.addr2}<br/>{location.city}</MenuItem>
+                          )
+                        })}
+                        </Select>
+                        </> : null }
+
+                      </FormControl>
+
+
+                      <FormControl  variant="outlined"  className={classes.formControl}>
+                      <InputLabel   id="staffType">Choose staff type</InputLabel>
                       <Select
-                        labelId="location"
-                        id="location"
-                        value={location}
-                        onChange={handleLocationChange}
+                        labelId="staffType"
+                        id="staffType"
+                        value={staffType}
+                        onChange={handleStaffTypeChange}
                         label="staffType"
                         className={classes.select}
                       >
-                      { locations.map( (location) => {
-                        return (
-                          <MenuItem key={location.id} value={location.id}>{location.name}<br/>{location.addr1 + " " + location.addr2}<br/>{location.city}</MenuItem>
-                        )
-                      })}
+                      <MenuItem value=""><em>None</em></MenuItem>
+                      <MenuItem value={"Dental Assistant"}>Dental Assistant</MenuItem>
+                      <MenuItem value={"Dentist"}>Dentist</MenuItem>
+                      <MenuItem value={"Front Office"}>Front Office</MenuItem>
+                      <MenuItem value={"Back Office"}>Back Office</MenuItem>
+                      <MenuItem value={"Dental Hygenist"}>Dental Hygenist</MenuItem>
                       </Select>
-                      </> : null }
-
                     </FormControl>
-
-
-                    <FormControl  variant="outlined"  className={classes.formControl}>
-                    <InputLabel   id="staffType">Choose staff type</InputLabel>
-                    <Select
-                      labelId="staffType"
-                      id="staffType"
-                      value={staffType}
-                      onChange={handleStaffTypeChange}
-                      label="staffType"
-                      className={classes.select}
+                  </ValidatorForm>
+            <KeyboardDatePicker
+              margin="normal"
+              id="date-picker-dialog-from"
+              label="Select Starting Date"
+              format="MM/dd/yyyy"
+              value={selectedDateFrom}
+              onChange={handleDateChangeFrom}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
+            <KeyboardDatePicker
+              margin="normal"
+              id="date-picker-dialog-to"
+              label="Select Ending Date"
+              format="MM/dd/yyyy"
+              value={selectedDateTo}
+              onChange={handleDateChangeTo}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
+            <Button
+                      color="primary"
+                      variant="contained"
+                      type="button"
+                      className="cancel"
+                      value="Submit without validation"
+                      onClick={search}
+                      style={{marginTop:"20px", justifyContent:"center", marginBottom:"20px", marginLeft:"20%", marginRight:"0px"}}
                     >
-                    <MenuItem value=""><em>None</em></MenuItem>
-                    <MenuItem value={"Dental Assistant"}>Dental Assistant</MenuItem>
-                    <MenuItem value={"Dentist"}>Dentist</MenuItem>
-                    <MenuItem value={"Front Office"}>Front Office</MenuItem>
-                    <MenuItem value={"Back Office"}>Back Office</MenuItem>
-                    <MenuItem value={"Dental Hygenist"}>Dental Hygenist</MenuItem>
-                    </Select>
-                  </FormControl>
-                </ValidatorForm>
-          <KeyboardDatePicker
-            margin="normal"
-            id="date-picker-dialog-from"
-            label="Select Starting Date"
-            format="MM/dd/yyyy"
-            value={selectedDateFrom}
-            onChange={handleDateChangeFrom}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
-          <KeyboardDatePicker
-            margin="normal"
-            id="date-picker-dialog-to"
-            label="Select Ending Date"
-            format="MM/dd/yyyy"
-            value={selectedDateTo}
-            onChange={handleDateChangeTo}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
-           <Button
-                    color="primary"
-                    variant="contained"
-                    type="button"
-                    className="cancel"
-                    value="Submit without validation"
-                    onClick={search}
-                    style={{marginTop:"20px", justifyContent:"center", marginBottom:"20px", marginLeft:"20%", marginRight:"0px"}}
-                  >
-                    {
-                        ('Search')
-                    }
-                  </Button>
+                      {
+                          ('Search')
+                      }
+                    </Button>
 
-            { contractorsAvailable.map((contractor, index) => {
-              <div key={index}>{contractor}</div>
-            })}
-        </Grid>
-        </MuiPickersUtilsProvider>
-        <CompanyPlacementPickerTable locationId={location} startDate={selectedDateFrom} endDate={selectedDateTo}></CompanyPlacementPickerTable>
+              { contractorsAvailable.map((contractor, index) => {
+                return(<div key={index}>{contractor}</div>)
+              })}
+          </Grid>
+          </MuiPickersUtilsProvider>
+          <CompanyPlacementPickerTable locationId={location} startDate={selectedDateFrom} endDate={selectedDateTo}></CompanyPlacementPickerTable>
 
-</>
-  : <div> Loading locations...</div>
-
+    </>
+  )
 
 }

@@ -1,27 +1,11 @@
 //eslint-disable-next-line
 import { baseUrl } from '../config';
 
-export const SET_CONTRACTOR_ID = 'user/placement/SET_CONTRACTOR_ID';
-export const REMOVE_CONTRACTOR_ID = 'user/placement/REMOVE_CONTRACTOR_ID';
-export const SET_COMPANY_CONTACT_ID = '/user/placement/SET_COMPANY_CONTACT_ID';
-export const REMOVE_COMPANY_CONTACT_ID = '/user/placement/REMOVE_COMPANY_CONTACT_ID';
-export const SET_START_DATE = '/user/placement/SET_START_DATE';
-export const REMOVE_START_DATE = '/user/placement/REMOVE_START_DATE';
-export const SET_END_DATE = '/user/placement/SET_END_DATE';
-export const REMOVE_END_DATE = '/user/placement/REMOVE_END_DATE';
 export const SET_PLACEMENT_DATES = '/user/placement/SET_PLACEMENT_DATES';
 export const REMOVE_PLACEMENT_DATES = '/user/placement/REMOVE_PLACEMENT_DATES';
 export const SET_PLACEMENT_INFO = '/user/placement/SET_PLACEMENT_INFO';
 export const REMOVE_PLACEMENT_INFO = '/user/placement/REMOVE_PLACEMENT_INFO';
 
-export const setContractorId = id => ({ type: SET_CONTRACTOR_ID, id})
-export const removeContractorId = () => ({ type: REMOVE_CONTRACTOR_ID})
-export const setCompanyContactId = id => ({ type: SET_COMPANY_CONTACT_ID, id})
-export const removeCompanyContactId = () => ({ type: REMOVE_COMPANY_CONTACT_ID})
-export const setStartDate = startDate => ({ type: SET_START_DATE, startDate})
-export const removeStartDate = () => ({ type: REMOVE_START_DATE})
-export const setEndDate = endDate => ({ type: SET_END_DATE, endDate})
-export const removeEndDate = () => ({ type: REMOVE_END_DATE})
 export const setPlacementDates = placementDatesArray => ({ type: SET_PLACEMENT_DATES, placementDatesArray})
 export const removePlacementDates = () => ({ type: REMOVE_PLACEMENT_DATES})
 export const setPlacementInfo = placementInfoArray => ({ type: SET_PLACEMENT_INFO, placementInfoArray})
@@ -29,52 +13,9 @@ export const removePlacementInfo = () => ({ type: REMOVE_PLACEMENT_INFO})
 
 export default function reducer (state = {}, action) {
     switch (action.type) {
-        case SET_CONTRACTOR_ID: {
-            const newState = { ...state};
-            newState.contractorId = action.id;
-            console.log("Redux Placement Store : Setting contractor id: ", newState.contractorId);
-            return newState;
-          }
-        case REMOVE_CONTRACTOR_ID: {
-            const newState = { ...state};
-            console.log("Redux Placement Store : Removing contractor id: ", newState.contractorId);
-            delete newState.contractorId;
-            return newState;
-        }
-        case SET_COMPANY_CONTACT_ID: {
-            const newState = { ...state};
-            newState.companyContactId = action.id;
-            console.log("Redux Placement Store : Setting contactId for placement: ", newState.companyContactId);
-            return newState;
-        }
-        case REMOVE_COMPANY_CONTACT_ID: {
-            const newState = { ...state};
-            console.log("Redux Placement Store : Removing company contact id: ", newState.companyContactId);
-            delete newState.companyContactId;
-            return newState;
-        }
-        case SET_START_DATE: {
-            const newState = { ...state};
-            newState.startDate = action.startDate;
-            console.log("Redux Placement Store : Setting start date for placement: ", newState.startDate);
-            return newState;
-        }
-        case REMOVE_START_DATE: {
-            const newState = { ...state};
-            console.log("Redux Placement Store : Removing start date for placement: ", newState.startDate);
-            delete newState.startDate;
-            return newState;
-        }
-        case SET_END_DATE: {
-            const newState = { ...state};
-            newState.endDate = action.endDate;
-            console.log("Redux Placement Store : Setting end date for placement: ", newState.endDate);
-            return newState;
-        }
         case SET_PLACEMENT_DATES: {
             const newState = { ...state}
             newState.placementDates = action.placementDatesArray;
-            console.log("Redux Placement Store : Setting placement dates array: ", newState.placementDates)
             return newState;
         }
         case REMOVE_PLACEMENT_DATES: {
@@ -85,13 +26,10 @@ export default function reducer (state = {}, action) {
         case SET_PLACEMENT_INFO: {
             const newState = { ...state}
             newState.placementInfo = action.placementInfoArray;
-            console.log("Redux Placement Store : Set placement info: ", newState.placementInfo)
-
             return newState
         }
         case REMOVE_PLACEMENT_INFO: {
             const newState = { ...state}
-            console.log("Redux Placement Store : Removing placement info: ")
             delete newState.placementInfo
             return newState;
         }
@@ -119,14 +57,6 @@ export const createPlacement = async (companyId, contractorId, companyContactId,
     return await response.json();
   }
 //  ****************** AGENCY ********************
-export const getAllAgencyPlacements = async () => {
-    const response = await fetch('/api/placement/agency/all', {
-        headers: {
-            "Content-Type": "application/json",
-        }});
-    return await response.json();
-}
-
 export const getAllAgencyCalendarInfo = async () => {
     const response = await fetch('/api/placement/agency/calendarInfo', {
         headers: {
@@ -144,16 +74,6 @@ export const getAllAgencyTableInfo = async () => {
 }
 
 // **********************CONTRACTOR******************
-//Not formatted - but currently used in ContractorView
-//Need at some point to shift over to save logic in Contractor View
-export const getContractorPlacements = async (contractorId) => {
-    const response = await fetch(`/api/placement/contractor/${contractorId}`, {
-        headers: {
-            "Content-Type": "application/json",
-        }});
-    return await response.json();
-}
-
 export const getContractorPlacementCalendar = async (contractorId) => {
     const response = await fetch(`/api/placement/contractor/calendarInfo/${contractorId}`, {
         headers: {
@@ -164,14 +84,6 @@ export const getContractorPlacementCalendar = async (contractorId) => {
 
 export const getContractorPlacementTableInfo = async (contractorId) => {
     const response = await fetch(`/api/placement/contractor/tableInfo/${contractorId}`, {
-        headers: {
-            "Content-Type": "application/json",
-        }});
-    return await response.json();
-}
-
-export const getContractorPlacementCalendarInfo = async (contractorId) => {
-    const response = await fetch(`/api/placement/contractor/calendarInfo/${contractorId}`, {
         headers: {
             "Content-Type": "application/json",
         }});

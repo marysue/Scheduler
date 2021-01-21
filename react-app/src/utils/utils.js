@@ -18,13 +18,10 @@ export const formatDateString = (date) => {
     console.log("  year: ", year);
     console.log("  month: ", month);
     console.log("  day: ", day);
-    // let hour = date.getHours();
-    // hour = formatValue(hour)
-    // let minute = date.getMinutes();
-    // minute = formatValue(minute)
-    let hour = "00"
-    let minute = "00"
-    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + "00"
+    let hour = date.getHours();
+    hour = formatValue(hour)
+    let minute = date.getMinutes();
+    minute = formatValue(minute)
+
+    return year + "-" + month + "-" + day + " " + hour  + ":" + minute + ":00"
   }
-
-

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
@@ -20,10 +20,12 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
+//eslint-disable-next-line
 import FilterListIcon from '@material-ui/icons/FilterList';
 import moment from 'moment';
-
-
+import { getContractorPlacementTableInfo, setPlacementInfo } from '../../store/placement';
+import { setUserId, setUserType } from '../../store/authentication';
+import {setContractorId} from '../../store/contractor';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -66,7 +68,7 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-  const userType = useSelector(state => state.authentication.userType);
+
 
   return (
     <TableHead>
@@ -204,18 +206,36 @@ const ContractorPlacementTable = () => {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const userType = useSelector(state => state.authentication.userType);
   const placements = useSelector(state => state.placement.placementInfo)
-  console.log("*****************PlacementsTable View********************")
+  const contractorId = useSelector(state => state.contractor.contractorId);
+  const userType = useSelector(state => state.authentication.userType);
+  const dispatch = useDispatch();
 
   useEffect (() => {
-    if (placements) {
-      for (let i = 0; i < placements.length; i++) {
-        console.log("Placements: ", placements[i]);
-      }
-    } else {
-        console.log("Placements:  No placements yet...")
+    if (!userType) {
+      dispatch(setUserType(window.localStorage.getItem("userType")));
+      dispatch(setUserId(window.localStorage.getItem("userId")));
+      dispatch(setContractorId(window.localStorage.getItem("contractorId")));
     }
+    console.log("ContractorId: ", contractorId);
+    console.log("Placements: ", placements);
+    if (contractorId && !placements) {
+      (async () => {
+        const pl = await getContractorPlacementTableInfo(contractorId);
+        dispatch(setPlacementInfo(pl));
+
+      })();
+      console.log("No placements at all...");
+    } else {
+      console.log("Either no contractorId: ", contractorId, " or no placements: ", placements);
+    }
+    // if (placements) {
+    //   for (let i = 0; i < placements.length; i++) {
+    //     console.log("Placements: ", placements[i]);
+    //   }
+    // } else {
+    //     console.log("Placements:  No placements yet...")
+    // }
   }, [placements] )
 
   function createData(companyName, contact, phone, email, address, startDate, endDate) {
@@ -245,7 +265,7 @@ if(placements) {
         }
 
       }
-      console.log("rows.length:  ", rows.length)
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');

@@ -19,7 +19,7 @@ const AgencyCompanies = () => {
             }
         })()
 
-}, []) ;
+}, [dispatch]) ;
     return (
         <AgencyCompanyTable></AgencyCompanyTable>
     )

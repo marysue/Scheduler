@@ -247,7 +247,7 @@ if (placementInfo) {
       }
   })()
 
-  }, [] )
+  }, [dispatch] )
 
   function createData(name, staffType, phone, email, city, office, startDate, endDate) {
       return { name, staffType, phone, email, city, office, startDate, endDate };

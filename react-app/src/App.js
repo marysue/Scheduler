@@ -3,7 +3,6 @@ import { CssBaseline } from "@material-ui/core";
 import Theme from "./Theme"
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import LoginForm from "./components/auth/LoginForm";
-// import NavBar from "./components/NavBar";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
@@ -14,10 +13,7 @@ import CompanyAddPlacement from "./components/Company/CompanyAddPlacement";
 import CompanyPlacementTable from "./components/Company/CompanyPlacementTable";
 import { authenticate } from "./services/auth";
 import SignUpForm from "./components/auth/SignUpForm"
-import ContractorView from "./components/Contractor/ContractorView";
 import ContractorPlacementTable from "./components/Contractor/ContractorPlacementTable";
-import CompanyView from "./components/Company/CompanyView";
-import AgencyView from "./components/Agency/AgencyView";
 import "./index.css";
 import AgencyCompanies from "./components/Agency/AgencyCompanies";
 import AgencyContractors from "./components/Agency/AgencyContractors";
@@ -25,30 +21,24 @@ import AgencyContractorPlacements from './components/Agency/AgencyContractorPlac
 import AgencyCompanyPlacementTable from './components/Agency/AgencyCompanyPlacementTable';
 import NavBar2 from './components/navigator/NavBar';
 import AgencyContractorPlacementTable from './components/Agency/AgencyContractorPlacementTable';
+import Calendar from './components/CalendarComponent/Calendar';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  console.log("App.js: main");
 
   useEffect(() => {
     (async() => {
-      console.log("App.js: Looking for authentication")
       const user = await authenticate();
       if (!user.errors) {
         setAuthenticated(true);
         window.localStorage.setItem("userId", user.id)
-        console.log("App.js: useEffect:  authenticate(): Set localStorage to userId and authenticated = true");
-      } else {
-        console.log("App.js:  useEffect:  received errors in setting authenticated...", user.errors)
       }
-      console.log("App.js:  useEffect: Setting loaded to true.")
       setLoaded(true);
     })();
   }, []);
 
   if (!loaded) {
-    console.log("App.js:  Not loaded ... returning null");
     return null;
   }
 
@@ -78,32 +68,23 @@ function App() {
                   setAuthenticated={setAuthenticated}>
                 </SignUpForm>
               </Route>
+              <ProtectedRoute path="/calendar" exact={true} authenticated={authenticated}>
+                <Calendar></Calendar>
+              </ProtectedRoute>
               <ProtectedRoute path="/companyInfo" exact={true} authenticated={authenticated}>
                 <CompanyInfo></CompanyInfo>
               </ProtectedRoute>
               <Route path="/contractorInfo" exact={true} authenticated={authenticated}>
                 <ContractorInfo></ContractorInfo>
               </Route>
-              <ProtectedRoute path="/contractorView" exact={true} authenticated={authenticated}>
-                <ContractorView></ContractorView>
-              </ProtectedRoute>
               <ProtectedRoute path="/contractorTable" exact={true} authenticated={authenticated}>
                 <ContractorPlacementTable></ContractorPlacementTable>
-              </ProtectedRoute>
-              <ProtectedRoute path="/companyView" exact={true} authenticated={authenticated}>
-                <CompanyView></CompanyView>
               </ProtectedRoute>
               <ProtectedRoute path="/companyTable" exact={true} authenticated={authenticated}>
                 <CompanyPlacementTable></CompanyPlacementTable>
               </ProtectedRoute>
               <ProtectedRoute path="/companyAddPlacement" exact={true} authenticated={authenticated}>
                 <CompanyAddPlacement></CompanyAddPlacement>
-              </ProtectedRoute>
-              <ProtectedRoute path="/agencyView" exact={true} authenticated={authenticated}>
-                <AgencyView></AgencyView>
-              </ProtectedRoute>
-              <ProtectedRoute path="/agencyCalendar" exact={true} authenticated={authenticated}>
-                <AgencyView></AgencyView>
               </ProtectedRoute>
               <ProtectedRoute path="/agencyContractorPlacements" exact={true} authenticated={authenticated}>
                 <AgencyContractorPlacements></AgencyContractorPlacements>

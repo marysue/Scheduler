@@ -1,41 +1,18 @@
-//eslint-disable-next-line
-import { baseUrl } from '../config';
-
-export const SET_CONTRACTOR_ID = 'user/placement/SET_CONTRACTOR_ID';
-export const REMOVE_CONTRACTOR_ID = 'user/placement/REMOVE_CONTRACTOR_ID';
-
 export const SET_BLOCKED = '/user/placement/SET_BLOCKED';
 export const REMOVE_BLOCKED = '/user/placement/REMOVE_BLOCKED';
 
-export const setContractorId = id => ({ type: SET_CONTRACTOR_ID, id})
-export const removeContractorId = () => ({ type: REMOVE_CONTRACTOR_ID})
 export const setBlocked = blocked => ({ type: SET_BLOCKED, blocked})
 export const removeBlocked = () => ({ type: REMOVE_BLOCKED})
 
 export default function reducer (state = {}, action) {
     switch (action.type) {
-        case SET_CONTRACTOR_ID: {
-            const newState = { ...state};
-            newState.contractorId = action.id;
-            console.log("Redux Blocked Store: Setting contractor id: ", newState.contractorId);
-            return newState;
-          }
-        case REMOVE_CONTRACTOR_ID: {
-            const newState = { ...state};
-            console.log("Redux Blocked Store: Removing contractor id: ", newState.contractorId);
-            delete newState.contractorId;
-            return newState;
-        }
         case SET_BLOCKED: {
-            //Setting an array of moment objects here
             const newState = { ...state};
             newState.blocked = action.blocked;
-            console.log("Redux Blocked Store: setting Blocked array:  ", newState.blocked);
             return newState;
         }
         case REMOVE_BLOCKED: {
             const newState = { ...state};
-            console.log("Redux Blocked Store: Removing blocked array: ", newState.blocked);
             delete newState.blocked;
             return newState;
         }
@@ -45,15 +22,9 @@ export default function reducer (state = {}, action) {
 }
 
 export const createBlocked = async (contractorId, blocked) => {
-    //Not sure if I need to URI encode startDate, endDate - see contractor as I uri encoded a fetch call there
-    // for an example.  If I do uri encode it, it needs to be uncoded on the backend as well
-    console.log("Blocked:  ");
-
     let blockedStr = '';
     for (let i = 0; i < blocked.length; i++) {
-        console.log(blocked[i])
-        blockedStr += blocked[i].format('MM/DD/YYYY hh:mm:ss') //toString();
-
+        blockedStr += blocked[i].format('MM/DD/YYYY hh:mm:ss')
         if (i !== blocked.length - 1) {
             blockedStr += ','
         }
@@ -80,18 +51,3 @@ export const getAllBlocked = async (contractorId) => {
         }});
     return await response.json();
 }
-
-    // Couldn't assign the returned array to a state, reverting code
-    // let newDate = new Date(dateBlocked);
-    // console.log("New date object: ", newDate)
-    // console.log("Date(dates.blockedDates[0])):  ", new Date(dates.blockedDates[0].blocked));
-    // if (!retVal.errors) {
-    //     let dateArr = [];
-    //     for (let i=0; i<retVal.blockedDates.length; i++) {
-    //         dateArr.push(new Date(retVal.blockedDates[i].blocked))
-    //     }
-    //     console.log("FETCH:  Returning dateArr: ", dateArr);
-    //     return dateArr;
-    // } else {
-    //     console.log("FETCH:  Returning response object: ", retVal);
-    //     return retVal;

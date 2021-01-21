@@ -58,14 +58,14 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
+  const { classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow >
         <TableCell padding="checkbox">
           {/* <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -191,6 +191,12 @@ const useStyles = makeStyles((theme) => ({
   table: {
     minWidth: 750,
   },
+  highlightStyle: {
+    color: "cyan",
+  },
+  colorSecondary: {
+    color: "blue",
+  },
   visuallyHidden: {
     border: 0,
     clip: 'rect(0 0 0 0)',
@@ -210,9 +216,8 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
   const [orderBy, setOrderBy] = React.useState('name');
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
+  const [dense, ] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [contractorId, setContractorId] = React.useState();
   const [selectedContractorName, setSelectedContractorName] = React.useState();
   const [selectedContractorId, setSelectedContractorId] = React.useState();
   const rows = [];
@@ -258,18 +263,18 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  // const handleSelectAllClick = (event) => {
+  //   if (event.target.checked) {
+  //     const newSelecteds = rows.map((n) => n.name);
+  //     setSelected(newSelecteds);
+  //     return;
+  //   }
+  //   setSelected([]);
+  // };
 
-  const getSelectedContractorInfo = (id) => {
+  // const getSelectedContractorInfo = (id) => {
 
-  }
+  // }
 
   const handleClick = (event, name, id) => {
     if (selected.length > 0) {
@@ -298,9 +303,9 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
+  // const handleChangeDense = (event) => {
+  //   setDense(event.target.checked);
+  // };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -318,7 +323,7 @@ export default function CompanyPlacementPickerTable({locationId, startDate, endD
     const placement = await createPlacement(companyId, selectedContractorId, locationId, sd, ed)
     if (!placement.errors) {
       dispatch(setPlacementInfo(placement))
-      history.push('/companyView')
+      history.push('/calendar')
     } else {
         console.log("Error creating placement.")
     }

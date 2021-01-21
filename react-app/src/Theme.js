@@ -1,6 +1,5 @@
 import React from 'react';
 import { ThemeProvider, createMuiTheme } from '@material-ui/core';
-import { AutoComplete } from 'material-ui';
 
 const theme = createMuiTheme({
   gradientBackground: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
@@ -20,18 +19,12 @@ const theme = createMuiTheme({
       main: '#648dae',
     },
     secondary: {
-      main: '#0f0'
+      main: '#648dae'
     }
   },
   typography: {
     fontFamily: "Helvetica"
   },
-  switch: {
-    color: 'orange',
-  },
-  thumb: {
-    color: 'orange',
-  }
 });
 
 const Theme = props => {
