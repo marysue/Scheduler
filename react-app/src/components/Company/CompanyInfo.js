@@ -107,7 +107,7 @@ const CompanyInfo = () => {
   //   return <Redirect to="/" />;
   // }
 
-//   if (window.localStorage.getItem("userId")) {
+//   if (window.sessionStorage.getItem("userId")) {
 //     window.location.replace("/");
 //   }
   if (!userId) {

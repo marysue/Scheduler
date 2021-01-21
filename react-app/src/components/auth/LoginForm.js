@@ -18,6 +18,7 @@ import { getCompany, setCompanyId, setCompanyName, setCompanyContactName, setCom
 import FullLogo from '../../images/fullLogo.png';
 
 const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
+    console.log("LoginForm:  Hit loginForm...");
     const dispatch = useDispatch();
     const [values, setValues] = useState({
         email: '',
@@ -52,14 +53,17 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const history = useHistory();
 
     useEffect (() => {
+        console.log("LoginForm:  authenticated: ", authenticated);
+        console.log("LoginForm: openDialog: ", openDialog);
         setSubmitted(false);
         setOpen(openDialog);
+        console.log("LoginForm:  useEffect fired.");
     }, [openDialog]);
 
     const setLoginDetails = (userId) => {
         setAuthenticated(true);
         setOpen(false);
-        window.localStorage.setItem("userId", userId)
+        window.sessionStorage.setItem("userId", userId)
     }
 
     const dispatchLoginInfo = (email, id, username, userType) => {
@@ -101,13 +105,13 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         if (!user.errors) {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
             setLoginDetails(user.id);
-            window.localStorage.setItem("userId", user.id)
-            window.localStorage.setItem("userType", user.userType)
+            window.sessionStorage.setItem("userId", user.id)
+            window.sessionStorage.setItem("userType", user.userType)
             if (user.userType === "contractor") {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
                     dispatchSetContractorInfo(contractor.contractorId, contractor.name, contractor.email, contractor.phone, contractor.addr1, contractor.addr2, contractor.city, contractor.state, contractor.zip)
-                    window.localStorage.setItem("contractorId", contractor.contractorId);
+                    window.sessionStorage.setItem("contractorId", contractor.contractorId);
                     history.push('/calendar');
                 } else {
                     setErrors(contractor.errors);
@@ -117,7 +121,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 const company = await getCompany(user.id);
                 if (!company.errors) {
                     dispatchSetCompanyInfo(company.id, company.companyName, company.name, company.phone, company.email, company.addr1, company.addr2, company.city, company.state, company.zip);
-                    window.localStorage.setItem("companyId", company.id);
+                    window.sessionStorage.setItem("companyId", company.id);
                     history.push('/calendar');
                 } else { setErrors(company.errors);
                     history.push('/companyInfo')
@@ -137,11 +141,11 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const loginAgencyDemo = async() => {
         const user = await login('demo@aa.io', 'password');
         if (!user.errors) {
-            window.localStorage.setItem("userType", user.userType)
+            window.sessionStorage.setItem("userType", user.userType)
             setLoginDetails(user.id);
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
-            window.localStorage.setItem("agencyId", user.id);
-            window.localStorage.setItem("userId",user.id)
+            window.sessionStorage.setItem("agencyId", user.id);
+            window.sessionStorage.setItem("userId",user.id)
             history.push('/calendar')
         } else {
             setErrors(user.errors);
@@ -151,17 +155,17 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
 
     const loginCompanyDemo = async() => {
        const user = await login('co1@co1.com', 'password');
-       window.localStorage.setItem("userType", user.userType)
+       window.sessionStorage.setItem("userType", user.userType)
        if (!user.errors) {
             dispatchLoginInfo(user.email, user.id, user.username, user.userType)
-            window.localStorage.setItem("userId", user.id)
+            window.sessionStorage.setItem("userId", user.id)
             setLoginDetails(user.id);
             if (user.userType === "company") {
                 const company = await getCompany(user.id);
                 if (!company.errors) {
                     dispatch(setCompanyId(company.id));
                     dispatch(setCompanyName(company.companyName));
-                    window.localStorage.setItem("companyId", company.id);
+                    window.sessionStorage.setItem("companyId", company.id);
                     history.push('/calendar');
                 } else {
                     setErrors(company.errors);
@@ -176,8 +180,8 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
     const loginContractorDemo = async () => {
         // const user = await login('demo@aa.io', 'password');
         const user = await login('da2@da2.com', 'password');
-        window.localStorage.setItem("userType", user.userType)
-        window.localStorage.setItem("userId",user.id)
+        window.sessionStorage.setItem("userType", user.userType)
+        window.sessionStorage.setItem("userId",user.id)
         if (!user.errors) {
             dispatch(setUserEmail(user.email));
             dispatch(setUserId(user.id));
@@ -189,7 +193,7 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
                 const contractor = await getContractorInfo(user.id);
                 if (!contractor.errors) {
                     dispatch(setContractorId(contractor.contractorId));
-                    window.localStorage.setItem("contractorId", contractor.contractorId);
+                    window.sessionStorage.setItem("contractorId", contractor.contractorId);
                     history.push('/calendar')
                 } else {
                     setErrors(contractor.errors);
@@ -206,19 +210,22 @@ const LoginForm = ({ authenticated, setAuthenticated, openDialog}) => {
         let companyId = null
         let agencyId = null
         setTimeout(function() {}, 2000);
-        contractorId = window.localStorage.getItem("contractorId");
-        companyId = window.localStorage.getItem("companyId");
-        agencyId = window.localStorage.getItem("agencyId");
+        contractorId = window.sessionStorage.getItem("contractorId");
+        companyId = window.sessionStorage.getItem("companyId");
+        agencyId = window.sessionStorage.getItem("agencyId");
         if (contractorId || companyId || agencyId) {
             history.push('/calendar')
         } else {
-            return null;
+            console.log("LoginForm: if Authenticated() - returning null");
+            //return null;
         }
     }
 
     if (!open) {
+        console.log("LoginForm:  Not open:  ", open);
         return null
     } else {
+        console.log("LoginForm:  return statement ...");
         return (
             <div>
                 <Dialog open={open} style={{width:"100%"}} onClose={handleSignIn} aria-labelledby="form-dialog-title">

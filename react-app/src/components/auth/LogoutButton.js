@@ -52,11 +52,11 @@ const LogoutButton = ({setAuthenticated}) => {
     dispatch(removePlacementDates());
     dispatch(removePlacementInfo());
 
-    window.localStorage.removeItem("userId")
-    window.localStorage.removeItem("contractorId")
-    window.localStorage.removeItem("companyId")
-    window.localStorage.removeItem("agencyId");
-    window.localStorage.removeItem("userType");
+    window.sessionStorage.removeItem("userId")
+    window.sessionStorage.removeItem("contractorId")
+    window.sessionStorage.removeItem("companyId")
+    window.sessionStorage.removeItem("agencyId");
+    window.sessionStorage.removeItem("userType");
 
     //return <Redirect to='/splashPage'></Redirect>
     // window.location.replace("/splashPage")

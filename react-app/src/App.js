@@ -32,13 +32,18 @@ function App() {
       const user = await authenticate();
       if (!user.errors) {
         setAuthenticated(true);
-        window.localStorage.setItem("userId", user.id)
+        window.sessionStorage.setItem("userId", user.id)
       }
+
       setLoaded(true);
+      setTimeout(function() {}, 1000);
+
+      console.log("App.js:  setting Loaded to true: ", loaded)
     })();
   }, []);
 
   if (!loaded) {
+    console.log("App.js:  not loaded");
     return null;
   }
 

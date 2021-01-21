@@ -229,16 +229,16 @@ const CompanyPlacementTable = () => {
     if (!userType) {
       (async() => {
         if (!userType) {
-          dispatch(setUserType(window.localStorage.getItem("userType")));
+          dispatch(setUserType(window.sessionStorage.getItem("userType")));
          }
         if (!companyId && userType === 'company') {
-          dispatch(setCompanyId(window.localStorage.getItem("companyId")));
+          dispatch(setCompanyId(window.sessionStorage.getItem("companyId")));
          }
         if (!contractorId && userType === 'contractor') {
-          dispatch(setContractorId(window.localStorage.getItem("contractorId")));
+          dispatch(setContractorId(window.sessionStorage.getItem("contractorId")));
          }
          if (!agencyId && userType === 'agency') {
-           dispatch(setAgencyId(window.localStorage.getItem("agencyId")));
+           dispatch(setAgencyId(window.sessionStorage.getItem("agencyId")));
          }
       })()
     };
@@ -264,7 +264,7 @@ const CompanyPlacementTable = () => {
           console.log("Error setting placement Table info for agency");
         }
       } else if (userType === 'company') {
-        console.log("CompanyPlacementTable:  calling getCompanyPlacementTableInfo() fetch ...");
+        console.log("CompanyPlacementTable:  calling getCompanyPlacementTableInfo() fetch companyId: ", companyId);
         const pd = await getCompanyPlacementTableInfo(companyId);
         if (!pd.errors) {
           console.log("Company:  placements length is: ", pd.placements.length);
@@ -277,7 +277,7 @@ const CompanyPlacementTable = () => {
     })()
   }, [dispatch, userType, companyId, contractorId, agencyId] )
 
-  
+
 
   function createData(name, staffType, phone, email, city, startDate, endDate) {
       return { name, staffType, phone, email, city, startDate, endDate };

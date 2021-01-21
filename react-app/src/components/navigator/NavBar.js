@@ -28,8 +28,8 @@ const Home = ({ setAuthenticated }) => {
     // };
 
    // const options = [{"key": 0, "value":"home"}, {"key": 1, "value": "workouts"}, {"key": 2, "value": "routes"}, {"key": 3, "value": "explore"}, {"key": 4, "value": "user"}];
-    const userType = window.localStorage.getItem("userType");
-    // const userId = window.localStorage.getItem("userId");
+    const userType = window.sessionStorage.getItem("userType");
+    // const userId = window.sessionStorage.getItem("userId");
 
         return(
                 <Grid container>

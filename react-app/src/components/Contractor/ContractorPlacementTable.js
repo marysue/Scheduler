@@ -213,9 +213,9 @@ const ContractorPlacementTable = () => {
 
   useEffect (() => {
     if (!userType) {
-      dispatch(setUserType(window.localStorage.getItem("userType")));
-      dispatch(setUserId(window.localStorage.getItem("userId")));
-      dispatch(setContractorId(window.localStorage.getItem("contractorId")));
+      dispatch(setUserType(window.sessionStorage.getItem("userType")));
+      dispatch(setUserId(window.sessionStorage.getItem("userId")));
+      dispatch(setContractorId(window.sessionStorage.getItem("contractorId")));
     }
     console.log("ContractorId: ", contractorId);
     console.log("Placements: ", placements);

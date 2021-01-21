@@ -1,12 +1,11 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, {useEffect} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import { logout } from '../../../store/authentication';
-import { removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType } from  '../../../store/authentication'
+import { logout, removeUserId, removeUserName, removeUserEmail, removeToken, removeUserType, setUserType } from  '../../../store/authentication'
 import { removeCompanyLocations, removeCompanyId, removeCompanyName, removeCompanyContactName, removeCompanyPhone, removeCompanyEmail, removeCompanyAddr1, removeCompanyAddr2, removeCompanyCity, removeCompanyState, removeCompanyZip } from '../../../store/company'
 import { removeAvailableContractors, removeContractorId, removeStaffType, removeContractorName, removeContractorPhone, removeContractorEmail, removeContractorAddr1, removeContractorAddr2, removeContractorCity, removeContractorState, removeContractorZip } from '../../../store/contractor'
 import { removePlacementInfo, removePlacementDates } from '../../../store/placement'
@@ -60,10 +59,25 @@ export default function NavTabs({setAuthenticated}, props) {
 
   let tabNameToIndex = {};
   let indexToTabName = {};
+  const userType = useSelector(state => state.authentication.userType);
 
-  const userType = window.localStorage.getItem("userType");
+  useEffect(() => {
+    console.log("TabNavAll: Entering useEffect.  userType is: ", userType);
+    if (!userType) {
+      console.log("TabNavAll: useEffect: userType not set.  Attempting to set it.");
+      const user = window.sessionStorage.getItem("userType");
+      if (user) {
+        dispatch(setUserType(user));
+      } else {
+        dispatch(removeUserType());
+      }
+    }
+   // setIndices();
+  }, [userType] );
 
+//function setIndices() {
   if (userType === undefined) {
+    console.log("TabNavAll: userType = ", userType);
     if (page === undefined) {
       page = "splashPage"
     }
@@ -128,7 +142,7 @@ export default function NavTabs({setAuthenticated}, props) {
    }
  }
 
- const [selectedTab, setSelectedTab] = React.useState(indexToTabName[page]);
+ const [selectedTab, setSelectedTab] = React.useState(0);
 
 
   const handleChange = (event, newValue) => {
@@ -140,63 +154,69 @@ export default function NavTabs({setAuthenticated}, props) {
     setSelectedTab(newValue);
   };
   const onLogout = async () => {
+    console.log("TabNavAll:  Logout pressed ...")
     const retVal = await logout();
     if (!retVal.errors) {
-        setAuthenticated(false);
+      console.log("TabNavAll:  Removing sessionStorage items");
+      window.sessionStorage.removeItem("userId")
+      window.sessionStorage.removeItem("contractorId")
+      window.sessionStorage.removeItem("companyId")
+      window.sessionStorage.removeItem("agencyId");
+      window.sessionStorage.removeItem("userType");
 
-        dispatch(removeUserId());
-        dispatch(removeUserName());
-        dispatch(removeUserEmail());
-        dispatch(removeToken());
-        dispatch(removeUserType());
+      setAuthenticated(false);
 
-        dispatch(removeCompanyId());
-        dispatch(removeCompanyName());
-        dispatch(removeCompanyContactName());
-        dispatch(removeCompanyPhone());
-        dispatch(removeCompanyEmail());
-        dispatch(removeCompanyAddr1());
-        dispatch(removeCompanyAddr2());
-        dispatch(removeCompanyCity());
-        dispatch(removeCompanyState());
-        dispatch(removeCompanyZip());
-        dispatch(removeCompanyLocations());
+      dispatch(removeUserId());
+      dispatch(removeUserName());
+      dispatch(removeUserEmail());
+      dispatch(removeToken());
+      dispatch(removeUserType());
 
-        dispatch(removeContractorId());
-        dispatch(removeStaffType());
-        dispatch(removeContractorName());
-        dispatch(removeContractorPhone());
-        dispatch(removeContractorEmail());
-        dispatch(removeContractorAddr1());
-        dispatch(removeContractorAddr2());
-        dispatch(removeContractorCity());
-        dispatch(removeContractorState());
-        dispatch(removeContractorZip());
-        dispatch(removeAvailableContractors());
+      dispatch(removeCompanyId());
+      dispatch(removeCompanyName());
+      dispatch(removeCompanyContactName());
+      dispatch(removeCompanyPhone());
+      dispatch(removeCompanyEmail());
+      dispatch(removeCompanyAddr1());
+      dispatch(removeCompanyAddr2());
+      dispatch(removeCompanyCity());
+      dispatch(removeCompanyState());
+      dispatch(removeCompanyZip());
+      dispatch(removeCompanyLocations());
 
-        dispatch(removePlacementDates());
-        dispatch(removePlacementInfo());
+      dispatch(removeContractorId());
+      dispatch(removeStaffType());
+      dispatch(removeContractorName());
+      dispatch(removeContractorPhone());
+      dispatch(removeContractorEmail());
+      dispatch(removeContractorAddr1());
+      dispatch(removeContractorAddr2());
+      dispatch(removeContractorCity());
+      dispatch(removeContractorState());
+      dispatch(removeContractorZip());
+      dispatch(removeAvailableContractors());
 
-        window.localStorage.removeItem("userId")
-        window.localStorage.removeItem("contractorId")
-        window.localStorage.removeItem("companyId")
-        window.localStorage.removeItem("agencyId");
-        window.localStorage.removeItem("userType");
+      dispatch(removePlacementDates());
+      dispatch(removePlacementInfo());
 
-        console.log("Redirecting to splashPage");
+
+      console.log("TabNavAll:  Completed removing all data");
+
         history.push('/splashPage')
 
     } else {
       console.log("Error in fetch call for logout.")
     }
-
+    console.log("TabNavAll: userType after logout is:  ", userType);
 };
+if (true) {
+  console.log("TabNavAll:  hit return here. UserType:  ", userType)
   return (
     <div>
       <Tabs value={selectedTab} onChange={handleChange} indicatorColor="primary" textColor="primary" centered aria-label="simple tabs example">
-      {userType === 'contractor' ? <Tab label="Calendar" /> : null}
-      {userType === 'contractor' ? <Tab label='Assignments' /> : null}
-      {userType === 'contractor' ? <Tab label='Logout' onClick={onLogout}/> : null}
+      {userType === 'contractor' ? <Tab value={0} label="Calendar" /> : null}
+      {userType === 'contractor' ? <Tab value={1} label='Assignments' /> : null}
+      {userType === 'contractor' ? <Tab value={2} label='Logout' onClick={onLogout}/> : null}
 
       { userType === 'company' ? <Tab label='Calendar' /> :null}
       { userType === 'company' ? <Tab label='Placements Detail' /> :null}
@@ -210,10 +230,11 @@ export default function NavTabs({setAuthenticated}, props) {
       { userType === 'agency' ? <Tab label='Company List' /> :null}
       { userType === 'agency' ? <Tab label='Logout' onClick={onLogout}/> :null}
 
-      { userType === undefined ? <Tab label='Login' /> : null }
-      { userType === undefined ? <Tab label='Sign Up' /> : null }
+      {/* { userType === undefined ? <Tab label='Login' /> : null }
+      { userType === undefined ? <Tab label='Sign Up' /> : null } */}
 
       </Tabs>
     </div>
   );
+}
 }

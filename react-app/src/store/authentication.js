@@ -55,6 +55,7 @@ export default function reducer (state = {}, action) {
         case REMOVE_USER_TYPE: {
             const newState = {...state};
             delete newState.userType;
+            console.log("Redux Authentication : Removed userType from state:  ", newState);
             return newState;
         }
         case SET_USER_ID: {
@@ -113,7 +114,7 @@ export default function reducer (state = {}, action) {
 }
 
 export const loadToken = () => {
-    const token = window.localStorage.getItem(TOKEN_KEY);
+    const token = window.sessionStorage.getItem(TOKEN_KEY);
     if (token) {
     //   dispatch(setToken(token));
     }

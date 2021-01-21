@@ -69,21 +69,21 @@ export default function CompanyAddPlacement() {
       if (!userType || !companyId) {
         console.log("CompanyAddPlacement: setInitialAuth(): userType: ", userType);
     if (!userType) {
-      const ut = window.localStorage.getItem("userType")
+      const ut = window.sessionStorage.getItem("userType")
       dispatch(setUserType(ut));
      }
     if (!companyId && userType === 'company') {
-      const cid = window.localStorage.getItem("companyId");
+      const cid = window.sessionStorage.getItem("companyId");
       console.log("company ID:  ", cid);
       dispatch(setCompanyId(cid));
       console.log("company ID from store: ", companyId);
      }
     if (!contractorId && userType === 'contractor') {
-      const cid = window.localStorage.getItem("contractorId");
+      const cid = window.sessionStorage.getItem("contractorId");
       dispatch(setContractorId(cid));
      }
      if (!agencyId && userType === 'agency') {
-       const aid = window.localStorage.getItem("agencyId");
+       const aid = window.sessionStorage.getItem("agencyId");
        dispatch(setAgencyId(aid));
      }
 
@@ -198,7 +198,7 @@ export default function CompanyAddPlacement() {
 
   if (!companyId) {
     console.log("Setting companyId in redux store")
-    const cid = window.localStorage.getItem("companyId");
+    const cid = window.sessionStorage.getItem("companyId");
     dispatch(setCompanyId(cid));
   }
 

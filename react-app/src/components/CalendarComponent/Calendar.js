@@ -63,13 +63,13 @@ export default function Calendar () {
   useEffect(() => {
     let cid;
     if (!userType) {
-      const user = window.localStorage.getItem("userType");
+      const user = window.sessionStorage.getItem("userType");
       dispatch(setUserType(user));
       if (user === 'contractor' && !contractorId) {
-         cid = window.localStorage.getItem("contractorId");
+         cid = window.sessionStorage.getItem("contractorId");
          dispatch(setContractorId(cid));
       } else if (user === 'company') {
-        cid = window.localStorage.getItem("companyId");
+        cid = window.sessionStorage.getItem("companyId");
         dispatch(setCompanyId(cid));
       }
     }
